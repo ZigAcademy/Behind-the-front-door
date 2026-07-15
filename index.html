@@ -18,8 +18,14 @@
   }
   *{box-sizing:border-box}
   html,body{margin:0}
-  body{font-family:Arial,Helvetica,"Segoe UI",sans-serif;color:var(--ink);
-    background:radial-gradient(1200px 500px at 80% -10%, #FFF6E6 0%, var(--bg) 60%);min-height:100vh;line-height:1.5;-webkit-font-smoothing:antialiased}
+  body{font-family:Arial,Helvetica,"Segoe UI",sans-serif;color:var(--ink);min-height:100vh;line-height:1.5;-webkit-font-smoothing:antialiased;
+    background:
+      radial-gradient(900px 520px at 12% -12%, #FFF4DF 0%, transparent 55%),
+      radial-gradient(1100px 700px at 100% 0%, #F4E8CF 0%, transparent 52%),
+      radial-gradient(1500px 950px at 50% 125%, #E4D3AE 0%, transparent 55%),
+      linear-gradient(162deg,#F4EAD7,#EADCC0);
+    background-attachment:fixed}
+  @media (prefers-color-scheme:dark){body{background:radial-gradient(1200px 700px at 50% -10%, #17253f 0%, transparent 55%),linear-gradient(162deg,#101b31,#0b1322);background-attachment:fixed}}
   .wrap{max-width:1200px;margin:0 auto;padding:0 18px 70px}
   a{color:var(--blue)}
   button{font-family:inherit}
@@ -33,6 +39,10 @@
   .spacer{flex:1 1 auto}
   .join-chip{display:flex;align-items:center;gap:8px;background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:6px 10px;font-size:13px}
   .join-chip b{font-family:Consolas,monospace;letter-spacing:2px;color:var(--blue)}
+  .netchip{font-size:12px;font-weight:800;padding:6px 10px;border-radius:9px;white-space:nowrap}
+  .netchip.live{background:#e5f7ee;color:#137a44}.netchip.off{background:#fff1e0;color:#b3391b}
+  .pnet{font-size:13px;font-weight:700;border-radius:10px;padding:10px 12px;margin:0 0 16px;text-align:start;line-height:1.4}
+  .pnet.live{background:#e5f7ee;color:#137a44}.pnet.off{background:#fff1e0;color:#b3391b}
   .btn{border:0;border-radius:11px;padding:9px 15px;font-size:14px;font-weight:700;cursor:pointer;
     background:var(--blue);color:#fff;box-shadow:0 2px 0 rgba(0,0,0,.06);transition:transform .05s, filter .15s}
   .btn:hover{filter:brightness(1.06)} .btn:active{transform:translateY(1px)}
@@ -61,14 +71,19 @@
   .team .thead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px}
   .team .tname{font-weight:800;font-size:16px;border:0;background:transparent;color:var(--ink);width:60%;padding:2px 0}
   .team .tname:focus{outline:2px solid var(--blue);border-radius:6px}
-  .coins{font-weight:800;font-size:14px;background:var(--softwarm);color:#8a4b00;border:1px solid #f4d9b8;border-radius:9px;padding:3px 9px;white-space:nowrap}
-  @media (prefers-color-scheme:dark){.coins{color:#ffc38a;border-color:#5a3b12}}
+  .coins{font-weight:800;font-size:14px;color:#7a4100;border:1px solid #e7b768;border-radius:20px;padding:3px 11px;white-space:nowrap;
+    background:linear-gradient(180deg,#ffe392,#f3b73f);box-shadow:0 1px 2px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.65)}
   .meter{margin:9px 0}
   .meter .mlab{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:3px}
   .meter .mlab .v{font-weight:800}
-  .bar{height:9px;border-radius:6px;background:var(--line);overflow:hidden}
-  .bar > span{display:block;height:100%;border-radius:6px;background:linear-gradient(90deg,var(--blue),#4d7bff);transition:width .35s cubic-bezier(.4,1.3,.5,1)}
+  .bar{position:relative;height:13px;border-radius:8px;overflow:visible;border:1px solid #d7cfbd;
+    background:repeating-linear-gradient(90deg,#ece5d6 0,#ece5d6 calc(5% - 1.4px),#d1c9b6 calc(5% - 1.4px),#d1c9b6 5%)}
+  @media (prefers-color-scheme:dark){.bar{border-color:#2c3852;background:repeating-linear-gradient(90deg,#1c2740 0,#1c2740 calc(5% - 1.4px),#2c3852 calc(5% - 1.4px),#2c3852 5%)}}
+  .bar > span{display:block;height:100%;border-radius:7px 0 0 7px;background:linear-gradient(90deg,var(--blue),#4d7bff);position:relative;transition:width .45s cubic-bezier(.4,1.3,.5,1)}
+  .bar > span::after{content:"";position:absolute;right:-8px;top:50%;width:16px;height:16px;border-radius:50%;transform:translateY(-50%);z-index:2;
+    background:radial-gradient(circle at 34% 30%,#fff,#4d7bff 58%,var(--blue));box-shadow:0 2px 5px rgba(21,35,48,.4),inset 0 0 0 2px rgba(255,255,255,.55)}
   .bar.red > span{background:linear-gradient(90deg,var(--warn),#ff7a54)}
+  .bar.red > span::after{background:radial-gradient(circle at 34% 30%,#fff,#ff7a54 58%,var(--warn))}
   .step{display:flex;gap:5px;margin-top:4px}
   .step button{width:26px;height:24px;border-radius:7px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-weight:800;cursor:pointer;font-size:13px;line-height:1}
   .step button:hover{border-color:var(--blue);color:var(--blue)}
@@ -99,7 +114,7 @@
   @keyframes shuffle{0%{transform:none}25%{transform:translateX(-8px) rotate(-3deg)}50%{transform:translateX(8px) rotate(3deg)}75%{transform:translateX(-4px) rotate(-1deg)}100%{transform:none}}
   .drawwrap{text-align:center;margin-top:14px}
   .drawwrap .lead{font-size:14px;color:var(--muted);margin-bottom:10px}
-  .gc{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--card);box-shadow:var(--shadow);transform-origin:center}
+  .gc{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--card);box-shadow:0 18px 38px rgba(21,35,48,.18),0 3px 0 rgba(21,35,48,.05);transform-origin:center}
   .gc .illo{height:196px;background-size:cover;background-repeat:no-repeat;background-position:center;position:relative}
   .gc .illo .kind{position:absolute;left:0;bottom:0;margin:0;padding:6px 14px;font-size:11px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;color:#fff;border-top-right-radius:12px}
   .gc.scenario .illo .kind, .gc.journey .illo .kind{background:var(--blue)}
@@ -155,6 +170,8 @@
       <div class="brandline" id="brand"></div>
       <div class="spacer"></div>
       <div class="join-chip"><span id="roomLbl">Kamer</span>&nbsp;<b id="roomCode">----</b></div>
+      <span id="netStatus" class="netchip off"></span>
+      <button class="btn ghost sm" id="soundToggle" title="Geluid aan/uit">🔊</button>
       <button class="btn ghost sm langbtn" id="langToggle">EN</button>
       <button class="btn ghost sm" id="copyJoin">Join-link kopiëren</button>
       <button class="btn soft sm" id="resetGame">Nieuw spel</button>
@@ -202,6 +219,7 @@
   <div class="join-card">
     <div id="pLogo"></div>
     <div class="jc-cover" style="background-image:url('assets/buurt.jpg')"></div>
+    <div id="pNet" class="pnet"></div>
     <div id="joinForm">
       <h1 id="jfH">Doe mee</h1>
       <p class="s" id="jfSub"></p>
@@ -333,7 +351,7 @@ const T={
   finalH:"Eindstand",finalP:"Score = som van de vier meters + de helft van de resterende munten (afgerond naar beneden). Elke meter onder de 5 kost 5 strafpunten (verscherpt toezicht van de Autoriteit woningcorporaties).",
   kScen:"Scenario",kRev:"Achter de voordeur ·",kCris:"Crisis",kShock:"Budget shock",kJour:"Journey",foot:"Zig Grow · Talent Development — Behind the Front Door · digitaal spelbord. De voortgang wordt in deze browser bewaard.",footS:"Zig Grow · Talent Development",
   joinH:"Doe mee",joinSub:"Behind the Front Door — bestuur samen jullie corporatie.",roomcode:"Kamercode",yourname:"Jouw naam",teamw:"Team",joinbtn:"Meedoen →",
-  connecting:"Verbinden…",waitroom:"Wachten op de spelleider in kamer",checkcode:"Controleer de kamercode.",stillsetup:"De spelleider stelt het spel nog in. Je speelt zo mee met",discuss:"Overleg samen en kies:",youchose:"Jullie kozen",waitnext:"wacht op de volgende kaart.",done:"Klaar!",yourfinal:"Jullie eindscore:",seerank:"Bekijk de ranglijst op het scherm van de spelleider.",aw:"Aw-toezicht",
+  connecting:"Verbinden…",waitroom:"Wachten op de spelleider in kamer",checkcode:"Controleer de kamercode.",stillsetup:"De spelleider stelt het spel nog in. Je speelt zo mee met",discuss:"Overleg samen en kies:",youchose:"Jullie kozen",waitnext:"wacht op de volgende kaart.",done:"Klaar!",yourfinal:"Jullie eindscore:",seerank:"Bekijk de ranglijst op het scherm van de spelleider.",aw:"Aw-toezicht",netLive:"● Live-join actief",netOff:"● Offline — join niet actief",pNetLive:"✓ Live-verbinding klaar — spelers kunnen meedoen.",pNetOff:"⚠ Deze pagina heeft nog geen live-verbinding. Open de bijgewerkte, online-gehoste versie (met de Firebase-config erin).",
   youin:"Je bent binnen! 🎉",jwRoom:"kamer",waitstart:"Wachten tot de spelleider het spel start",jwBanner:"De live-verbinding met het spelbord wordt gekoppeld zodra de realtime-laag (Firebase) is ingesteld. Tot die tijd stuurt de spelleider het spel via het gedeelde scherm.",
   phases:["Setup","Eerste indruk","Achter de voordeur","Kwartaal 1","Kwartaal 2","Kwartaal 3","Budget shock","Kwartaal 4","Eindstand"],
   hints:{setup:"Stel de teams in en start het spel.",fase1:"Trek per beurt een scenariokaart. Teams noteren in 1 minuut: wat doen we, en welke afdelingen zijn betrokken? Nog geen metereffect.",fase2:"Trek de kaarten om te onthullen wat er achter de voordeur gebeurt. Ken bonusmunten toe met + munt: +1 bij drie of meer juiste afdelingen, +1 als het spanningsveld is benoemd (max 2 per scenario).",q1:"Trek de kaarten (drie journeys + één crisis, in willekeurige volgorde). Elk team kiest A of B onder zijn dashboard.",q2:"Deel eerst de huurinkomsten uit (+5). Trek daarna de kaarten van dit kwartaal.",q3:"Deel de huurinkomsten uit (+5, of +3 na een cyberaanval). Trek daarna de kaarten.",shock:"Trek de gezamenlijke schokkaart. Elk team kiest zijn optie.",q4:"Laatste kwartaal. Deel de inkomsten uit, trek de kaarten en ga daarna naar de eindstand.",scores:"Onthul de eindstand. Bespreek met elk team welke afwegingen het maakte en wat het liet vallen."}
@@ -347,7 +365,7 @@ const T={
   finalH:"Final standings",finalP:"Score = sum of the four meters + half of the remaining coins (rounded down). Each meter below 5 costs 5 penalty points (intensified supervision by the Housing Authority).",
   kScen:"Scenario",kRev:"Behind the front door ·",kCris:"Crisis",kShock:"Budget shock",kJour:"Journey",foot:"Zig Grow · Talent Development — Behind the Front Door · digital game board. Progress is saved in this browser.",footS:"Zig Grow · Talent Development",
   joinH:"Join",joinSub:"Behind the Front Door — steer your corporation together.",roomcode:"Room code",yourname:"Your name",teamw:"Team",joinbtn:"Join →",
-  connecting:"Connecting…",waitroom:"Waiting for the facilitator in room",checkcode:"Check the room code.",stillsetup:"The facilitator is still setting up. You'll play with",discuss:"Discuss together and choose:",youchose:"You chose",waitnext:"wait for the next card.",done:"Done!",yourfinal:"Your final score:",seerank:"See the ranking on the facilitator's screen.",aw:"Aw supervision",
+  connecting:"Connecting…",waitroom:"Waiting for the facilitator in room",checkcode:"Check the room code.",stillsetup:"The facilitator is still setting up. You'll play with",discuss:"Discuss together and choose:",youchose:"You chose",waitnext:"wait for the next card.",done:"Done!",yourfinal:"Your final score:",seerank:"See the ranking on the facilitator's screen.",aw:"Aw supervision",netLive:"● Live join active",netOff:"● Offline — join not active",pNetLive:"✓ Live connection ready — players can join.",pNetOff:"⚠ This page has no live connection yet. Open the updated, hosted version (with the Firebase config in it).",
   youin:"You're in! 🎉",jwRoom:"room",waitstart:"Waiting for the facilitator to start the game",jwBanner:"The live connection to the board is set up once the realtime layer (Firebase) is configured. Until then the facilitator drives the game via the shared screen.",
   phases:["Setup","First impression","Behind the front door","Quarter 1","Quarter 2","Quarter 3","Budget shock","Quarter 4","Final standings"],
   hints:{setup:"Set up the teams and start the game.",fase1:"Draw a scenario card each turn. Teams note in 1 minute: what do we do, and which departments are involved? No meter effect yet.",fase2:"Draw the cards to reveal what happens behind the front door. Award bonus coins with + coin: +1 for three or more correct departments, +1 if the tension was named (max 2 per scenario).",q1:"Draw the cards (three journeys + one crisis, in random order). Each team chooses A or B below its dashboard.",q2:"First distribute the rent income (+5). Then draw this quarter's cards.",q3:"Distribute the rent income (+5, or +3 after a cyberattack). Then draw the cards.",shock:"Draw the shared shock card. Each team chooses its option.",q4:"Final quarter. Distribute the income, draw the cards, then go to the final standings.",scores:"Reveal the final standings. Discuss with each team what trade-offs it made and what it let go."}
@@ -367,7 +385,7 @@ function TT(k){return T[L()][k];}
 function met(){return MET[L()];}
 function phaseLabel(id){return T[L()].phases[PHASE_ORDER_FOR_LABEL[id]];}
 function hint(p){return T[L()].hints[p]||"";}
-function freshState(){return {lang:"nl",phase:"setup",room:randCode(),setup:[{name:"Team 1",bonus:0},{name:"Team 2",bonus:0},{name:"Team 3",bonus:0}],teams:[],decks:{},drawn:{},usedCrises:[],choices:{},batches:{}};}
+function freshState(){return {lang:"nl",sound:true,phase:"setup",room:randCode(),setup:[{name:"Team 1",bonus:0},{name:"Team 2",bonus:0},{name:"Team 3",bonus:0}],teams:[],decks:{},drawn:{},usedCrises:[],choices:{},batches:{}};}
 function randCode(){const a="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";let s="";for(let i=0;i<4;i++)s+=a[Math.floor(Math.random()*a.length)];return s;}
 function shuffle(arr){const a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 function save(){try{localStorage.setItem(LS,JSON.stringify(state));}catch(e){}}
@@ -379,6 +397,13 @@ function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;","
 function logoSVG(){return document.getElementById("logoTpl").innerHTML;}
 function score(t){const base=t.sat+t.fin+t.comp+t.dur+Math.floor(t.coins/2);const flags=["sat","fin","comp","dur"].filter(k=>t[k]<5).length;return {total:base-flags*5,penalty:flags*5,flags};}
 function curContent(){return CONTENT[L()];}
+/* ---- board-game sounds (Web Audio, no files) ---- */
+let SOUND=true,_actx=null;
+function sfx(kind){if(!SOUND)return;try{_actx=_actx||new (window.AudioContext||window.webkitAudioContext)();const c=_actx,t=c.currentTime;
+  if(kind==="draw"){const o=c.createOscillator(),g=c.createGain();o.type="triangle";o.frequency.setValueAtTime(200,t);o.frequency.exponentialRampToValueAtTime(680,t+.18);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.11,t+.03);g.gain.exponentialRampToValueAtTime(.0001,t+.3);o.connect(g).connect(c.destination);o.start(t);o.stop(t+.32);}
+  else if(kind==="click"){const o=c.createOscillator(),g=c.createGain();o.type="square";o.frequency.setValueAtTime(520,t);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.07,t+.008);g.gain.exponentialRampToValueAtTime(.0001,t+.12);o.connect(g).connect(c.destination);o.start(t);o.stop(t+.13);}
+  else if(kind==="coin"){[880,1320].forEach((f,i)=>{const o=c.createOscillator(),g=c.createGain(),tt=t+i*.07;o.type="sine";o.frequency.setValueAtTime(f,tt);g.gain.setValueAtTime(.0001,tt);g.gain.exponentialRampToValueAtTime(.09,tt+.01);g.gain.exponentialRampToValueAtTime(.0001,tt+.2);o.connect(g).connect(c.destination);o.start(tt);o.stop(tt+.22);});}
+}catch(e){}}
 
 /* ---------------- Deck ---------------- */
 function pickCrisis(){const avail=CRIS_NL.map(c=>c.id).filter(id=>!state.usedCrises.includes(id));const pool=avail.length?avail:CRIS_NL.map(c=>c.id);const id=pool[Math.floor(Math.random()*pool.length)];state.usedCrises.push(id);return id;}
@@ -413,6 +438,8 @@ function applyChrome(){
   $("#addTeam").textContent=TT("addteam");$("#startGame").textContent=TT("startgame");
   $("#scoresH").textContent=TT("finalH");$("#scoresP").textContent=TT("finalP");
   $("#footNL").textContent=TT("foot");
+  const _live=fbReady();const _ns=$("#netStatus");if(_ns){_ns.className="netchip "+(_live?"live":"off");_ns.textContent=TT(_live?"netLive":"netOff");}
+  const _st=$("#soundToggle");if(_st)_st.textContent=SOUND?"🔊":"🔇";
   document.documentElement.lang=L();
 }
 function renderPhaseNav(){const nav=$("#phaseNav");nav.innerHTML="";PHASES.forEach(p=>{const b=document.createElement("button");b.className="phase"+(state.phase===p.id?" active":"");b.dataset.phase=p.id;b.innerHTML=(p.n?'<span class="n">'+p.n+'</span>':'')+esc(phaseLabel(p.id));nav.appendChild(b);});$("#phaseHint").textContent=hint(state.phase);}
@@ -470,18 +497,19 @@ function renderCards(){
 function renderScores(){const wrap=$("#scoreWrap");wrap.innerHTML="";const Mn=met();const ranked=state.teams.map(t=>({t,s:score(t)})).sort((a,b)=>b.s.total-a.s.total);ranked.forEach((r,i)=>{const el=document.createElement("div");el.className="rank"+(i===0?" first":"");el.innerHTML='<div class="pos">'+(i===0?"🏆":(i+1))+'</div><div><div class="rn">'+esc(r.t.name)+'</div><div class="rd">'+Mn.sat+' '+r.t.sat+' · '+Mn.fin+' '+r.t.fin+' · '+Mn.comp+' '+r.t.comp+' · '+Mn.dur+' '+r.t.dur+' · 🪙/2 '+Math.floor(r.t.coins/2)+(r.s.penalty?' · Aw −'+r.s.penalty:'')+'</div></div><div class="rs">'+r.s.total+'</div>';wrap.appendChild(el);});}
 
 /* ---------------- Actions ---------------- */
-function applyChoice(teamId,optIdx){const card=activeCard();if(!card||!card.options)return;const key=card.key;state.choices[key]=state.choices[key]||{};if(state.choices[key][teamId]!=null)return;const t=teamById(teamId);const snap={sat:t.sat,fin:t.fin,comp:t.comp,dur:t.dur,coins:t.coins};const o=card.options[optIdx];t.coins+=o.coins;Object.keys(o.fx||{}).forEach(k=>{t[k]=clamp(t[k]+o.fx[k],0,20);});if(t.coins<0)t.coins=0;state.choices[key][teamId]={opt:optIdx,snap};render();}
+function applyChoice(teamId,optIdx){const card=activeCard();if(!card||!card.options)return;const key=card.key;state.choices[key]=state.choices[key]||{};if(state.choices[key][teamId]!=null)return;const t=teamById(teamId);const snap={sat:t.sat,fin:t.fin,comp:t.comp,dur:t.dur,coins:t.coins};const o=card.options[optIdx];t.coins+=o.coins;Object.keys(o.fx||{}).forEach(k=>{t[k]=clamp(t[k]+o.fx[k],0,20);});if(t.coins<0)t.coins=0;state.choices[key][teamId]={opt:optIdx,snap};sfx("click");render();}
 function undoChoice(teamId){const card=activeCard();if(!card)return;const key=card.key,rec=(state.choices[key]||{})[teamId];if(!rec)return;const t=teamById(teamId);Object.assign(t,rec.snap);delete state.choices[key][teamId];if(typeof NET!=="undefined"&&NET.clearInput)NET.clearInput(key,teamId);render();}
-function applyIncome(amount){const q=state.phase;if(state.batches["inc-"+q+"-5"]||state.batches["inc-"+q+"-3"])return;state.teams.forEach(t=>{t.coins+=amount;});state.batches["inc-"+q+"-"+amount]=true;render();}
+function applyIncome(amount){const q=state.phase;if(state.batches["inc-"+q+"-5"]||state.batches["inc-"+q+"-3"])return;state.teams.forEach(t=>{t.coins+=amount;});state.batches["inc-"+q+"-"+amount]=true;sfx("coin");render();}
 function applyAllCost(amount,bk){if(state.batches[bk])return;state.teams.forEach(t=>{t.coins=Math.max(0,t.coins-amount);});state.batches[bk]=true;render();}
 function startGame(){state.teams=state.setup.map((s,i)=>({id:i+1,name:s.name||("Team "+(i+1)),sat:10,fin:10,comp:10,dur:10,coins:12+(parseInt(s.bonus)||0)}));state.phase="fase1";state.decks={};state.drawn={};state.usedCrises=[];state.choices={};state.batches={};render();}
-function hostDraw(){const dk=document.getElementById("deckEl");if(dk){dk.classList.add("shuffling");setTimeout(doDraw,430);}else doDraw();}
+function hostDraw(){sfx("draw");const dk=document.getElementById("deckEl");if(dk){dk.classList.add("shuffling");setTimeout(doDraw,430);}else doDraw();}
 function toggleLang(){state.lang=(L()==="nl"?"en":"nl");render();}
 
 /* ---------------- Facilitator events ---------------- */
 document.addEventListener("click",e=>{
-  const el=e.target.closest("[data-phase],[data-choose],[data-undo],[data-m],[data-coin],[data-income],[data-allcost],[data-delteam],[data-draw],#addTeam,#startGame,#resetGame,#copyJoin,#langToggle");
+  const el=e.target.closest("[data-phase],[data-choose],[data-undo],[data-m],[data-coin],[data-income],[data-allcost],[data-delteam],[data-draw],#addTeam,#startGame,#resetGame,#copyJoin,#langToggle,#soundToggle");
   if(!el)return;
+  if(el.id==="soundToggle"){SOUND=!SOUND;if(state)state.sound=SOUND;save();$("#soundToggle").textContent=SOUND?"🔊":"🔇";if(SOUND)sfx("click");return;}
   if(el.id==="langToggle"){toggleLang();return;}
   if(el.dataset.phase){state.phase=el.dataset.phase;render();return;}
   if(el.dataset.draw){hostDraw();return;}
@@ -522,7 +550,7 @@ const NET={db:null,role:null,room:null,lastDraw:0,
     this.db.ref("rooms/"+this.room+"/input").on("value",s=>this.processInput(s.val()||{}));
     this.db.ref("rooms/"+this.room+"/drawReq").on("value",s=>{const v=s.val()||0;if(v>this.lastDraw){this.lastDraw=v;if(DRAW_PHASES.includes(state.phase))doDraw();}});
     this.publish();},
-  processInput(v){const card=activeCard();if(!card||!card.options)return;const fc=v[card.key];if(!fc)return;let ch=false;Object.keys(fc).forEach(tid=>{const teamId=parseInt(tid),optIdx=fc[tid],t=teamById(teamId);if(!t)return;state.choices[card.key]=state.choices[card.key]||{};if(state.choices[card.key][teamId]==null){const snap={sat:t.sat,fin:t.fin,comp:t.comp,dur:t.dur,coins:t.coins};const o=card.options[optIdx];if(!o)return;t.coins+=o.coins;Object.keys(o.fx||{}).forEach(k=>{t[k]=clamp(t[k]+o.fx[k],0,20);});if(t.coins<0)t.coins=0;state.choices[card.key][teamId]={opt:optIdx,snap};ch=true;}});if(ch)render();},
+  processInput(v){const card=activeCard();if(!card||!card.options)return;const fc=v[card.key];if(!fc)return;let ch=false;Object.keys(fc).forEach(tid=>{const teamId=parseInt(tid),optIdx=fc[tid],t=teamById(teamId);if(!t)return;state.choices[card.key]=state.choices[card.key]||{};if(state.choices[card.key][teamId]==null){const snap={sat:t.sat,fin:t.fin,comp:t.comp,dur:t.dur,coins:t.coins};const o=card.options[optIdx];if(!o)return;t.coins+=o.coins;Object.keys(o.fx||{}).forEach(k=>{t[k]=clamp(t[k]+o.fx[k],0,20);});if(t.coins<0)t.coins=0;state.choices[card.key][teamId]={opt:optIdx,snap};ch=true;}});if(ch){sfx("click");render();}},
   publishIfHost(){if(this.role==="host"&&this.db)this.publish();},
   publish(){if(this.db)this.db.ref("rooms/"+this.room+"/pub").set(pubSnapshot());},
   clearInput(key,teamId){if(this.db&&this.role==="host")this.db.ref("rooms/"+this.room+"/input/"+key+"/"+teamId).remove();},
@@ -576,6 +604,7 @@ function initPlayer(room,plang){
   $("#facilitator").classList.add("hide");$("#player").classList.remove("hide");
   if(room)$("#pRoom").value=room;
   localizeJoin(plang);
+  const _live=fbReady();const _pn=$("#pNet");if(_pn){_pn.className="pnet "+(_live?"live":"off");_pn.textContent=pt(plang,_live?"pNetLive":"pNetOff");}
   document.addEventListener("click",e=>{
     const b=e.target.closest("[data-psend],[data-pdraw]");if(!b||!PLAYER)return;
     if(b.dataset.pdraw){NET.sendDraw(PLAYER.room);const dk=document.querySelector(".deck");if(dk)dk.classList.add("shuffling");b.disabled=true;return;}
