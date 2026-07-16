@@ -4,233 +4,163 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
-<title>Behind the Front Door — Digitaal spelbord · Zig Grow</title>
+<title>Behind the Front Door — Spelbord · Zig Grow</title>
 <style>
-  :root{
-    --blue:#1F5AFF; --orange:#FF9000; --navy:#152330; --white:#FFFFFF;
-    --ink:#152330; --muted:#5B6472; --line:#E4E3DC; --bg:#FBF7EE;
-    --card:#FFFFFF; --warn:#E4572E; --soft:#EAF0FF; --softwarm:#FFF1E0; --cream:#FBF3E4;
-    --shadow:0 10px 30px rgba(21,35,48,.10); --shadow-sm:0 4px 14px rgba(21,35,48,.07);
-  }
-  @media (prefers-color-scheme: dark){
-    :root{ --ink:#EDF1F7; --muted:#9AA7BD; --line:#26324A; --bg:#0D1626;
-      --card:#131E31; --soft:#16233D; --softwarm:#2A2010; --cream:#182338; --shadow:0 10px 30px rgba(0,0,0,.45); --shadow-sm:0 4px 14px rgba(0,0,0,.35);}
-  }
-  *{box-sizing:border-box}
-  html,body{margin:0}
+  :root{--blue:#1F5AFF;--orange:#FF9000;--navy:#152330;--ink:#152330;--muted:#5B6472;--line:#E4E3DC;--bg:#FBF7EE;
+    --card:#FFFFFF;--warn:#E4572E;--soft:#EAF0FF;--softwarm:#FFF1E0;--shadow:0 10px 30px rgba(21,35,48,.10);--shadow-sm:0 4px 14px rgba(21,35,48,.07);}
+  @media (prefers-color-scheme:dark){:root{--ink:#EDF1F7;--muted:#9AA7BD;--line:#26324A;--bg:#0D1626;--card:#131E31;--soft:#16233D;--softwarm:#2A2010;--shadow:0 10px 30px rgba(0,0,0,.45);--shadow-sm:0 4px 14px rgba(0,0,0,.35);}}
+  *{box-sizing:border-box}html,body{margin:0}
   body{font-family:Arial,Helvetica,"Segoe UI",sans-serif;color:var(--ink);min-height:100vh;line-height:1.5;-webkit-font-smoothing:antialiased;
-    background:
-      radial-gradient(900px 520px at 12% -12%, #FFF4DF 0%, transparent 55%),
-      radial-gradient(1100px 700px at 100% 0%, #F4E8CF 0%, transparent 52%),
-      radial-gradient(1500px 950px at 50% 125%, #E4D3AE 0%, transparent 55%),
-      linear-gradient(162deg,#F4EAD7,#EADCC0);
-    background-attachment:fixed}
-  @media (prefers-color-scheme:dark){body{background:radial-gradient(1200px 700px at 50% -10%, #17253f 0%, transparent 55%),linear-gradient(162deg,#101b31,#0b1322);background-attachment:fixed}}
+    background:radial-gradient(900px 520px at 12% -12%,#FFF4DF 0%,transparent 55%),radial-gradient(1100px 700px at 100% 0%,#F4E8CF 0%,transparent 52%),radial-gradient(1500px 950px at 50% 125%,#E4D3AE 0%,transparent 55%),linear-gradient(162deg,#F4EAD7,#EADCC0);background-attachment:fixed}
+  @media (prefers-color-scheme:dark){body{background:radial-gradient(1200px 700px at 50% -10%,#17253f 0%,transparent 55%),linear-gradient(162deg,#101b31,#0b1322);background-attachment:fixed}}
   .wrap{max-width:1200px;margin:0 auto;padding:0 18px 70px}
-  a{color:var(--blue)}
-  button{font-family:inherit}
-  .logo{height:30px;width:auto;display:block}
-  header.top{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--card) 88%, transparent);
-    backdrop-filter:saturate(1.4) blur(8px);border-bottom:1px solid var(--line)}
-  .top-in{max-width:1200px;margin:0 auto;padding:11px 18px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
-  .brandline{display:flex;align-items:center;gap:13px;min-width:0}
-  .brandline h1{font-size:17px;margin:0;font-weight:800;letter-spacing:-.2px;white-space:nowrap}
-  .brandline .sub{color:var(--muted);font-size:12px;white-space:nowrap}
+  button{font-family:inherit}.logo{height:30px;width:auto;display:block}
+  header.top{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--card) 88%,transparent);backdrop-filter:saturate(1.4) blur(8px);border-bottom:1px solid var(--line)}
+  .top-in{max-width:1200px;margin:0 auto;padding:11px 18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .brandline{display:flex;align-items:center;gap:13px;min-width:0}.brandline h1{font-size:17px;margin:0;font-weight:800;letter-spacing:-.2px;white-space:nowrap}.brandline .sub{color:var(--muted);font-size:12px;white-space:nowrap}
   .spacer{flex:1 1 auto}
-  .join-chip{display:flex;align-items:center;gap:8px;background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:6px 10px;font-size:13px}
-  .join-chip b{font-family:Consolas,monospace;letter-spacing:2px;color:var(--blue)}
-  .netchip{font-size:12px;font-weight:800;padding:6px 10px;border-radius:9px;white-space:nowrap}
-  .netchip.live{background:#e5f7ee;color:#137a44}.netchip.off{background:#fff1e0;color:#b3391b}
-  .pnet{font-size:13px;font-weight:700;border-radius:10px;padding:10px 12px;margin:0 0 16px;text-align:start;line-height:1.4}
-  .pnet.live{background:#e5f7ee;color:#137a44}.pnet.off{background:#fff1e0;color:#b3391b}
-  .btn{border:0;border-radius:11px;padding:9px 15px;font-size:14px;font-weight:700;cursor:pointer;
-    background:var(--blue);color:#fff;box-shadow:0 2px 0 rgba(0,0,0,.06);transition:transform .05s, filter .15s}
-  .btn:hover{filter:brightness(1.06)} .btn:active{transform:translateY(1px)}
+  .join-chip{display:flex;align-items:center;gap:8px;background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:6px 10px;font-size:13px}.join-chip b{font-family:Consolas,monospace;letter-spacing:2px;color:var(--blue)}
+  .netchip{font-size:12px;font-weight:800;padding:6px 10px;border-radius:9px;white-space:nowrap}.netchip.live{background:#e5f7ee;color:#137a44}.netchip.off{background:#fff1e0;color:#b3391b}
+  .btn{border:0;border-radius:11px;padding:9px 15px;font-size:14px;font-weight:700;cursor:pointer;background:var(--blue);color:#fff;box-shadow:0 2px 0 rgba(0,0,0,.06);transition:transform .05s,filter .15s}
+  .btn:hover{filter:brightness(1.06)}.btn:active{transform:translateY(1px)}
   .btn.ghost{background:transparent;color:var(--blue);border:1.5px solid var(--blue);box-shadow:none}
-  .btn.soft{background:var(--soft);color:var(--ink);border:1px solid var(--line);box-shadow:none}
-  .btn.warn{background:var(--orange)}
-  .btn.sm{padding:6px 11px;font-size:12.5px;border-radius:9px}
-  .btn.big{padding:13px 22px;font-size:16px;border-radius:13px}
-  .btn:disabled{opacity:.45;cursor:default;filter:none}
-  .langbtn{font-weight:800;letter-spacing:.5px}
-  .phases{display:flex;gap:6px;flex-wrap:wrap;margin:18px 0 6px}
-  .phase{border:1px solid var(--line);background:var(--card);color:var(--muted);border-radius:999px;padding:7px 14px;font-size:13px;font-weight:700;cursor:pointer;box-shadow:var(--shadow-sm)}
-  .phase.active{background:var(--navy);color:#fff;border-color:var(--navy)}
-  .phase .n{color:var(--orange);margin-inline-end:5px}
-  .hint{color:var(--muted);font-size:13.5px;margin:4px 2px 16px}
-  .grid{display:grid;grid-template-columns:1.12fr .88fr;gap:20px;align-items:start}
+  .btn.soft{background:var(--soft);color:var(--ink);border:1px solid var(--line);box-shadow:none}.btn.warn{background:var(--orange)}
+  .btn.sm{padding:6px 11px;font-size:12.5px;border-radius:9px}.btn.big{padding:13px 22px;font-size:16px;border-radius:13px}.btn:disabled{opacity:.45;cursor:default;filter:none}
+  .roundbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:16px 0 6px}
+  .roundbar .rpill{background:var(--navy);color:#fff;border-radius:999px;padding:7px 15px;font-weight:800;font-size:14px}
+  .roundbar .rpill .n{color:var(--orange);margin-inline-end:6px}
+  .hint{color:var(--muted);font-size:13.5px;margin:2px 2px 16px}
+  .grid{display:grid;grid-template-columns:.82fr 1.18fr;gap:20px;align-items:start}
   @media (max-width:940px){.grid{grid-template-columns:1fr}}
   .panel{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:18px}
   .panel h2{margin:0 0 12px;font-size:14px;text-transform:uppercase;letter-spacing:.7px;color:var(--muted)}
-  .teams{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-  @media (max-width:1200px){.teams{grid-template-columns:1fr}}
-  @media (max-width:940px){.teams{grid-template-columns:1fr 1fr}}
-  @media (max-width:620px){.teams{grid-template-columns:1fr}}
-  .team{border:1px solid var(--line);border-radius:15px;padding:14px;background:var(--card);position:relative;box-shadow:var(--shadow-sm)}
-  .team.flag{border-color:var(--warn);box-shadow:0 0 0 2px rgba(228,87,46,.14)}
-  .team .thead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px}
-  .team .tname{font-weight:800;font-size:16px;border:0;background:transparent;color:var(--ink);width:60%;padding:2px 0}
-  .team .tname:focus{outline:2px solid var(--blue);border-radius:6px}
-  .coins{font-weight:800;font-size:14px;color:#7a4100;border:1px solid #e7b768;border-radius:20px;padding:3px 11px;white-space:nowrap;
-    background:linear-gradient(180deg,#ffe392,#f3b73f);box-shadow:0 1px 2px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.65)}
-  .meter{margin:9px 0}
-  .meter .mlab{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:3px}
-  .meter .mlab .v{font-weight:800}
-  .bar{position:relative;height:13px;border-radius:8px;overflow:visible;border:1px solid #d7cfbd;
-    background:repeating-linear-gradient(90deg,#ece5d6 0,#ece5d6 calc(5% - 1.4px),#d1c9b6 calc(5% - 1.4px),#d1c9b6 5%)}
-  @media (prefers-color-scheme:dark){.bar{border-color:#2c3852;background:repeating-linear-gradient(90deg,#1c2740 0,#1c2740 calc(5% - 1.4px),#2c3852 calc(5% - 1.4px),#2c3852 5%)}}
-  .bar > span{display:block;height:100%;border-radius:7px 0 0 7px;background:linear-gradient(90deg,var(--blue),#4d7bff);position:relative;transition:width .45s cubic-bezier(.4,1.3,.5,1)}
-  .bar > span::after{content:"";position:absolute;right:-8px;top:50%;width:16px;height:16px;border-radius:50%;transform:translateY(-50%);z-index:2;
-    background:radial-gradient(circle at 34% 30%,#fff,#4d7bff 58%,var(--blue));box-shadow:0 2px 5px rgba(21,35,48,.4),inset 0 0 0 2px rgba(255,255,255,.55)}
-  .bar.red > span{background:linear-gradient(90deg,var(--warn),#ff7a54)}
-  .bar.red > span::after{background:radial-gradient(circle at 34% 30%,#fff,#ff7a54 58%,var(--warn))}
-  .step{display:flex;gap:5px;margin-top:4px}
-  .step button{width:26px;height:24px;border-radius:7px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-weight:800;cursor:pointer;font-size:13px;line-height:1}
-  .step button:hover{border-color:var(--blue);color:var(--blue)}
-  .team .score{margin-top:10px;padding-top:9px;border-top:1px dashed var(--line);display:flex;justify-content:space-between;align-items:center;font-size:13px}
-  .team .score b{font-size:17px}
-  .flagtag{font-size:11px;font-weight:800;color:#fff;background:var(--warn);border-radius:6px;padding:2px 7px}
-  .optrow{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
-  .optrow .btn.sm{flex:1 1 auto}
-  .chosen{font-size:12px;color:var(--muted);margin-top:9px}
-  .chosen b{color:var(--ink)}
-  .cstep{display:flex;gap:5px;margin:2px 0 6px}
-  .cardview{min-height:430px;display:flex;flex-direction:column}
-  .cvhead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
-  .cvhead .count{font-size:13px;color:var(--muted);font-weight:700}
-  .stage{flex:1;display:flex;flex-direction:column;justify-content:center;perspective:1400px}
-  .deck{position:relative;height:250px;display:flex;align-items:center;justify-content:center}
-  .deckstack{position:relative;width:200px;height:250px}
-  .cardback{position:absolute;inset:0;border-radius:16px;background:
-      radial-gradient(120px 120px at 30% 20%, rgba(255,144,0,.25), transparent 60%),
-      linear-gradient(150deg,#1b3fb0,var(--blue) 40%,var(--navy));
-    box-shadow:var(--shadow);border:2px solid rgba(255,255,255,.15);overflow:hidden}
-  .cardback::before{content:"↗";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:96px;font-weight:900;color:var(--orange);opacity:.9;transform:translateY(-4px)}
-  .cardback::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(255,255,255,.04) 0 10px,transparent 10px 20px)}
-  .deckstack .cardback:nth-child(1){transform:translate(10px,10px) rotate(4deg)}
-  .deckstack .cardback:nth-child(2){transform:translate(5px,5px) rotate(2deg)}
-  .deckstack .cardback:nth-child(3){transform:none}
-  .deck.shuffling .deckstack{animation:shuffle .5s ease}
-  @keyframes shuffle{0%{transform:none}25%{transform:translateX(-8px) rotate(-3deg)}50%{transform:translateX(8px) rotate(3deg)}75%{transform:translateX(-4px) rotate(-1deg)}100%{transform:none}}
-  .drawwrap{text-align:center;margin-top:14px}
-  .drawwrap .lead{font-size:14px;color:var(--muted);margin-bottom:10px}
+  /* standings */
+  .lane{display:flex;align-items:center;gap:9px;margin:8px 0}
+  .lane .rankn{flex:0 0 24px;text-align:center;font-weight:900;font-size:15px;color:var(--muted)}
+  .lane .lname{flex:0 0 84px;font-weight:800;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .lane .track{position:relative;flex:1;height:24px;border-radius:13px;border:1px solid #dcd3bf;background:repeating-linear-gradient(90deg,#efe8d8 0 7px,#e6ddc8 7px 14px)}
+  @media (prefers-color-scheme:dark){.lane .track{border-color:#2c3852;background:repeating-linear-gradient(90deg,#1b2740 0 7px,#223052 7px 14px)}}
+  .lane .track .finish{position:absolute;right:5px;top:50%;transform:translateY(-50%);font-size:14px;opacity:.75}
+  .lane .pawn{position:absolute;top:50%;transform:translate(-50%,-50%);width:23px;height:23px;border-radius:50%;border:2px solid #fff;box-shadow:0 2px 5px rgba(21,35,48,.4);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:12px;z-index:2;transition:left .6s cubic-bezier(.4,1.2,.5,1)}
+  .lane.up .pawn{outline:3px solid var(--orange);outline-offset:1px}
+  .lane .lscore{flex:0 0 30px;text-align:right;font-weight:800;font-size:14px}
+  /* team dashboards mini */
+  .twrap{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  @media (max-width:520px){.twrap{grid-template-columns:1fr}}
+  .tmini{border:1px solid var(--line);border-radius:12px;padding:10px 11px;background:var(--card);box-shadow:var(--shadow-sm)}
+  .tmini.up{outline:2px solid var(--orange)}
+  .tmini .th{display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:5px}
+  .tmini .tn{font-weight:800;font-size:13.5px;display:flex;align-items:center;gap:6px}
+  .tmini .dot{width:12px;height:12px;border-radius:50%;border:1.5px solid #fff;box-shadow:0 1px 2px rgba(0,0,0,.25)}
+  .coins{font-weight:800;font-size:12.5px;color:#7a4100;border:1px solid #e7b768;border-radius:20px;padding:2px 9px;white-space:nowrap;background:linear-gradient(180deg,#ffe392,#f3b73f);box-shadow:inset 0 1px 0 rgba(255,255,255,.65)}
+  .mrow{display:flex;gap:5px;align-items:center;font-size:11px;margin:3px 0}
+  .mrow .ml{flex:0 0 78px;color:var(--muted)}
+  .bar{position:relative;flex:1;height:9px;border-radius:6px;border:1px solid #d7cfbd;background:repeating-linear-gradient(90deg,#ece5d6 0,#ece5d6 calc(5% - 1px),#d1c9b6 calc(5% - 1px),#d1c9b6 5%);overflow:hidden}
+  @media (prefers-color-scheme:dark){.bar{border-color:#2c3852;background:repeating-linear-gradient(90deg,#1b2740 0,#1b2740 calc(5% - 1px),#2c3852 calc(5% - 1px),#2c3852 5%)}}
+  .bar>span{display:block;height:100%;border-radius:6px;background:linear-gradient(90deg,var(--blue),#4d7bff);transition:width .4s cubic-bezier(.4,1.3,.5,1)}
+  .bar.red>span{background:linear-gradient(90deg,var(--warn),#ff7a54)}
+  .mv{flex:0 0 20px;text-align:right;font-weight:800;font-size:11px}
+  .tmini .st{margin-top:6px;padding-top:6px;border-top:1px dashed var(--line);display:flex;justify-content:space-between;font-size:12px}.tmini .st b{font-size:15px}
+  .miniflag{font-size:9.5px;font-weight:800;color:#fff;background:var(--warn);border-radius:5px;padding:1px 5px}
+  .minichance{margin-top:7px;border-radius:9px;padding:6px 8px;font-size:11.5px;border:1px solid}
+  .minichance.good{background:#e9f9f0;border-color:#8fddb4;color:#137a44}.minichance.bad{background:#fdeee9;border-color:#f2b3a1;color:#b3391b}
+  @media (prefers-color-scheme:dark){.minichance.good{background:#12301f;border-color:#1f5a3a}.minichance.bad{background:#331912;border-color:#5a2a1c}}
+  /* stage */
+  .stage{min-height:430px;display:flex;flex-direction:column}
+  .announce{text-align:center;padding:20px 14px;border-radius:16px;color:#fff;font-weight:900;font-size:26px;letter-spacing:.3px;margin-bottom:14px;box-shadow:var(--shadow);animation:announce .75s cubic-bezier(.2,.9,.3,1.2) both}
+  .announce .sub{font-size:14px;font-weight:700;opacity:.92;margin-top:3px}
+  @keyframes announce{0%{opacity:0;transform:scale(.6) translateY(18px)}45%{opacity:1;transform:scale(1.05)}72%{transform:scale(.98)}100%{transform:scale(1)}}
   .gc{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--card);box-shadow:0 18px 38px rgba(21,35,48,.18),0 3px 0 rgba(21,35,48,.05);transform-origin:center}
-  .gc .illo{height:196px;background-size:cover;background-repeat:no-repeat;background-position:center;position:relative}
-  .gc .illo .kind{position:absolute;left:0;bottom:0;margin:0;padding:6px 14px;font-size:11px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;color:#fff;border-top-right-radius:12px}
-  .gc.scenario .illo .kind, .gc.journey .illo .kind{background:var(--blue)}
-  .gc.reveal .illo .kind{background:var(--navy)} .gc.crisis .illo .kind{background:var(--warn)} .gc.shock .illo .kind{background:var(--orange)}
-  .gc .body{padding:15px 16px}
-  .gc .ct{font-size:19px;font-weight:800;margin:0 0 8px;letter-spacing:-.2px}
-  .gc .cx{font-size:14.5px;margin:0 0 10px}
-  .gc .meta{font-size:13px;color:var(--muted);margin:8px 0 0}
-  .gc .meta b{color:var(--ink)}
-  .opt{border:1px solid var(--line);border-radius:11px;padding:9px 12px;margin-top:8px}
-  .opt .ol{font-weight:800;font-size:13.5px;margin-bottom:2px}
-  .opt .oe{font-size:12.5px;color:var(--muted)}
+  .gc.deal{animation:deal .7s cubic-bezier(.2,.9,.3,1.1) both}
+  @keyframes deal{0%{opacity:0;transform:translateY(30px) rotateY(70deg) scale(.92)}55%{opacity:1;transform:translateY(0) rotateY(-5deg) scale(1.01)}100%{transform:none}}
+  .gc .illo{height:170px;background-size:cover;background-position:center;position:relative}
+  .gc .illo .kind{position:absolute;left:0;bottom:0;padding:6px 14px;font-size:11px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;color:#fff;border-top-right-radius:12px}
+  .gc.scenario .illo .kind,.gc.journey .illo .kind{background:var(--blue)}.gc.crisis .illo .kind{background:var(--warn)}.gc.shock .illo .kind{background:var(--orange)}
+  .gc .body{padding:16px}.gc .ct{font-size:20px;font-weight:800;margin:0 0 8px;letter-spacing:-.2px}.gc .cx{font-size:15px;margin:0 0 10px}
+  .gc .meta{font-size:13px;color:var(--muted);margin:8px 0 0}.gc .meta b{color:var(--ink)}
+  .opt{border:1px solid var(--line);border-radius:12px;padding:11px 13px;margin-top:9px}.opt .ol{font-weight:800;font-size:14px;margin-bottom:2px}.opt .oe{font-size:12.5px;color:var(--muted)}
   .tag{display:inline-block;font-size:11px;font-weight:800;border-radius:6px;padding:2px 7px;margin:3px 4px 0 0}
-  .tag.pay{background:var(--softwarm);color:#8a4b00}.tag.gain{background:#e5f7ee;color:#137a44}
-  .tag.up{background:#e5f0ff;color:#0a44c9}.tag.down{background:#fdece9;color:#b3391b}
-  .banner{background:var(--soft);border:1px solid var(--line);border-inline-start:5px solid var(--orange);border-radius:11px;padding:11px 13px;font-size:13.5px;margin-top:12px}
-  .banner b{color:var(--ink)}
-  .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+  .tag.pay{background:var(--softwarm);color:#8a4b00}.tag.gain{background:#e5f7ee;color:#137a44}.tag.up{background:#e5f0ff;color:#0a44c9}.tag.down{background:#fdece9;color:#b3391b}
+  .pickbtns{display:flex;flex-direction:column;gap:9px;margin-top:12px}
+  .pickbtns .btn{text-align:start;padding:13px 15px;font-size:15px}
+  .quiz{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+  @media (max-width:540px){.quiz{grid-template-columns:1fr}}
+  .qopt{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:10px;padding:9px 11px;cursor:pointer;font-size:13.5px;font-weight:700;background:var(--card)}
+  .qopt input{width:17px;height:17px;accent-color:var(--blue)}
+  .banner{background:var(--soft);border:1px solid var(--line);border-inline-start:5px solid var(--orange);border-radius:12px;padding:12px 14px;font-size:14px;margin-top:12px}.banner b{color:var(--ink)}
+  .result{border-radius:14px;padding:14px 16px;margin-top:12px;border:1px solid;animation:deal .5s ease both}
+  .result.good{background:#e9f9f0;border-color:#8fddb4}.result.bad{background:#fdeee9;border-color:#f2b3a1}.result.neu{background:var(--soft);border-color:var(--line)}
+  .result .rh{font-weight:800;font-size:15px;margin-bottom:4px}
+  .result .delta{font-weight:900;font-size:15px;margin-top:6px}
+  @media (prefers-color-scheme:dark){.result.good{background:#12301f;border-color:#1f5a3a}.result.bad{background:#331912;border-color:#5a2a1c}}
+  .ctrls{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px;justify-content:flex-end}
+  .waitline{color:var(--muted);font-size:14px;text-align:center;padding:14px}
+  /* deck back for chance */
+  .deckmini{width:64px;height:88px;border-radius:11px;background:radial-gradient(60px 60px at 30% 20%,rgba(255,144,0,.25),transparent 60%),linear-gradient(150deg,#1b3fb0,var(--blue) 40%,var(--navy));box-shadow:var(--shadow);border:2px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;color:var(--orange);font-size:34px;font-weight:900}
   select,input[type=text],input[type=number]{font-family:inherit;font-size:14px;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:9px;padding:8px 10px}
   label.fld{display:block;font-size:12.5px;color:var(--muted);font-weight:700;margin:0 0 4px}
   .setup-row{display:grid;grid-template-columns:1.4fr .6fr auto;gap:10px;align-items:end;margin-bottom:10px}
-  .cover{height:230px;border-radius:14px;background-size:contain;background-repeat:no-repeat;background-position:center;background-color:#FBF3E4;margin-bottom:14px;box-shadow:var(--shadow-sm)}
+  .cover{height:220px;border-radius:14px;background:#FBF3E4 center/contain no-repeat;margin-bottom:14px;box-shadow:var(--shadow-sm)}
   .rank{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--line);border-radius:13px;margin-bottom:10px;background:var(--card);box-shadow:var(--shadow-sm)}
-  .rank .pos{font-size:22px;font-weight:900;color:var(--blue);width:34px;text-align:center}
-  .rank.first{border-color:var(--orange);background:var(--softwarm)}
-  .rank .rn{font-weight:800;font-size:16px}
-  .rank .rs{margin-inline-start:auto;font-size:22px;font-weight:900}
-  .rank .rd{font-size:12px;color:var(--muted)}
-  .raceboard{margin-bottom:20px}
-  .lane{display:flex;align-items:center;gap:10px;margin:8px 0}
-  .lane .rankn{flex:0 0 26px;text-align:center;font-weight:900;font-size:15px;color:var(--muted)}
-  .lane .lname{flex:0 0 96px;font-weight:800;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .lane .track{position:relative;flex:1;height:26px;border-radius:14px;border:1px solid #dcd3bf;background:repeating-linear-gradient(90deg,#efe8d8 0 7px,#e6ddc8 7px 14px)}
-  @media (prefers-color-scheme:dark){.lane .track{border-color:#2c3852;background:repeating-linear-gradient(90deg,#1b2740 0 7px,#223052 7px 14px)}}
-  .lane .track .finish{position:absolute;right:5px;top:50%;transform:translateY(-50%);font-size:15px;opacity:.75}
-  .lane .pawn{position:absolute;top:50%;transform:translate(-50%,-50%);width:24px;height:24px;border-radius:50%;border:2px solid #fff;box-shadow:0 2px 5px rgba(21,35,48,.4);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:12px;z-index:2;transition:left .55s cubic-bezier(.4,1.2,.5,1)}
-  .lane .lscore{flex:0 0 32px;text-align:right;font-weight:800;font-size:14px}
-  .chancebtn{width:100%;margin-top:10px}
-  .chancecard{margin-top:10px;border-radius:12px;padding:11px 13px;border:1px solid;position:relative;overflow:hidden}
-  .chancecard.good{background:#e9f9f0;border-color:#8fddb4}.chancecard.bad{background:#fdeee9;border-color:#f2b3a1}
-  @media (prefers-color-scheme:dark){.chancecard.good{background:#12301f;border-color:#1f5a3a}.chancecard.bad{background:#331912;border-color:#5a2a1c}}
-  .chancecard .ctt{font-weight:800;font-size:13.5px;margin-bottom:2px}
-  .chancecard .cxx{font-size:12.5px;color:var(--muted)}
-  .chancecard .cff{font-size:12px;font-weight:800;margin-top:5px}
-  .chancecard.good .cff{color:#137a44}.chancecard.bad .cff{color:#b3391b}
-  .chancecard .emoji{position:absolute;right:10px;top:8px;font-size:22px;opacity:.5}
+  .rank .pos{font-size:22px;font-weight:900;color:var(--blue);width:34px;text-align:center}.rank.first{border-color:var(--orange);background:var(--softwarm)}
+  .rank .rn{font-weight:800;font-size:16px}.rank .rs{margin-inline-start:auto;font-size:22px;font-weight:900}.rank .rd{font-size:12px;color:var(--muted)}
   footer{color:var(--muted);font-size:12.5px;text-align:center;margin-top:34px;padding-top:16px;border-top:1px solid var(--line)}
   .hide{display:none!important}
-  @keyframes deal{0%{opacity:0;transform:translateY(38px) rotateY(85deg) scale(.9)}55%{opacity:1;transform:translateY(0) rotateY(-6deg) scale(1.015)}100%{transform:none}}
-  .deal{animation:deal .72s cubic-bezier(.2,.9,.3,1.1) both;position:relative}
-  .deal::after{content:"";position:absolute;inset:0;border-radius:16px;pointer-events:none;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.55) 50%,transparent 70%);transform:translateX(-120%);animation:shine .9s ease .12s 1}
-  @keyframes shine{to{transform:translateX(120%)}}
-  @media (prefers-reduced-motion:reduce){.deal,.deal::after,.deck.shuffling .deckstack{animation:none}}
+  /* player */
   .player-shell{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
   .join-card{background:var(--card);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);padding:30px;max-width:430px;width:100%;text-align:center}
-  .join-card .logo{height:34px;margin:0 auto 8px}
-  .join-card .jc-cover{height:150px;border-radius:14px;background-size:contain;background-repeat:no-repeat;background-position:center;background-color:#FBF3E4;margin:6px 0 18px}
+  .join-card .logo{height:34px;margin:0 auto 8px}.join-card .jc-cover{height:150px;border-radius:14px;background:#FBF3E4 center/contain no-repeat;margin:6px 0 18px}
   .join-card h1{font-size:22px;margin:0 0 4px}.join-card p.s{color:var(--muted);font-size:14px;margin:0 0 18px}
   .join-card .fldwrap{text-align:start;margin-bottom:14px}.join-card input,.join-card select{width:100%}
-  .waiting{display:none}
-  .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--orange);margin:0 3px;animation:pulse 1.2s infinite}
-  .dot:nth-child(2){animation-delay:.2s}.dot:nth-child(3){animation-delay:.4s}
+  .pnet{font-size:13px;font-weight:700;border-radius:10px;padding:10px 12px;margin:0 0 16px;text-align:start;line-height:1.4}.pnet.live{background:#e5f7ee;color:#137a44}.pnet.off{background:#fff1e0;color:#b3391b}
+  .yourturn{text-align:center;padding:16px;border-radius:16px;color:#fff;font-weight:900;font-size:22px;margin-bottom:14px;box-shadow:var(--shadow);animation:announce .7s cubic-bezier(.2,.9,.3,1.2) both}
+  .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--orange);margin:0 3px;animation:pulse 1.2s infinite}.dot:nth-child(2){animation-delay:.2s}.dot:nth-child(3){animation-delay:.4s}
   @keyframes pulse{0%,100%{opacity:.3}50%{opacity:1}}
 </style>
 </head>
 <body>
 
 <div id="facilitator">
-  <header class="top">
-    <div class="top-in">
-      <div class="brandline" id="brand"></div>
-      <div class="spacer"></div>
-      <div class="join-chip"><span id="roomLbl">Kamer</span>&nbsp;<b id="roomCode">----</b></div>
-      <span id="netStatus" class="netchip off"></span>
-      <button class="btn ghost sm" id="soundToggle" title="Geluid aan/uit">🔊</button>
-      <button class="btn ghost sm" id="fxToggle" title="Effecten tonen/verbergen">👁</button>
-      <button class="btn ghost sm langbtn" id="langToggle">EN</button>
-      <button class="btn ghost sm" id="copyJoin">Join-link kopiëren</button>
-      <button class="btn soft sm" id="resetGame">Nieuw spel</button>
-    </div>
-  </header>
+  <header class="top"><div class="top-in">
+    <div class="brandline" id="brand"></div><div class="spacer"></div>
+    <div class="join-chip"><span id="roomLbl">Kamer</span>&nbsp;<b id="roomCode">----</b></div>
+    <span id="netStatus" class="netchip off"></span>
+    <button class="btn ghost sm" id="soundToggle" title="Geluid">🔊</button>
+    <button class="btn ghost sm" id="fxToggle" title="Effecten">👁</button>
+    <button class="btn ghost sm" id="langToggle">EN</button>
+    <button class="btn ghost sm" id="copyJoin">Join-link</button>
+    <button class="btn soft sm" id="resetGame">Nieuw spel</button>
+  </div></header>
   <div class="wrap">
-    <div class="phases" id="phaseNav"></div>
-    <div class="hint" id="phaseHint"></div>
+    <div class="roundbar" id="roundBar"></div>
+    <div class="hint" id="roundHint"></div>
 
     <section id="view-setup" class="panel hide">
       <div class="cover" style="background-image:url('assets/buurt.jpg')"></div>
       <h2 id="setupH">Teams instellen</h2>
       <p class="hint" id="setupP" style="margin-top:0"></p>
       <div id="setupRows"></div>
-      <div class="toolbar" style="margin-top:6px">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">
         <button class="btn soft sm" id="addTeam">+ Team toevoegen</button>
         <button class="btn warn" id="startGame">Spel starten →</button>
       </div>
     </section>
 
-    <section id="view-play" class="hide">
-      <div class="panel raceboard"><h2 id="raceTitle">Stand</h2><div id="raceBoard"></div></div>
-      <div class="grid">
-        <div><div class="panel">
-          <h2 id="teamsTitle">Teams</h2>
-          <div class="toolbar" id="incomeBar"></div>
-          <div class="teams" id="teamsWrap"></div>
-        </div></div>
-        <div><div class="panel cardview">
-          <div class="cvhead"><span class="count" id="cardCount"></span></div>
-          <div class="stage" id="cardHost"></div>
-          <div class="banner" id="phaseTip"></div>
-        </div></div>
-      </div>
+    <section id="view-play" class="grid hide">
+      <div><div class="panel">
+        <h2 id="standH">Stand</h2>
+        <div id="standBoard"></div>
+        <div style="height:12px"></div>
+        <div class="twrap" id="teamMini"></div>
+      </div></div>
+      <div><div class="panel"><div class="stage" id="stage"></div></div></div>
     </section>
 
     <section id="view-scores" class="panel hide">
       <h2 id="scoresH">Eindstand</h2>
       <p class="hint" id="scoresP" style="margin-top:0"></p>
       <div id="scoreWrap"></div>
+      <div style="margin-top:12px"><button class="btn soft sm" id="againBtn">Nieuw spel</button></div>
     </section>
 
     <footer id="footNL"></footer>
@@ -243,20 +173,13 @@
     <div class="jc-cover" style="background-image:url('assets/buurt.jpg')"></div>
     <div id="pNet" class="pnet"></div>
     <div id="joinForm">
-      <h1 id="jfH">Doe mee</h1>
-      <p class="s" id="jfSub"></p>
+      <h1 id="jfH">Doe mee</h1><p class="s" id="jfSub"></p>
       <div class="fldwrap"><label class="fld" id="jfRoomL" for="pRoom">Kamercode</label><input type="text" id="pRoom" maxlength="6" placeholder="AB3K" autocomplete="off"></div>
       <div class="fldwrap"><label class="fld" id="jfNameL" for="pName">Jouw naam</label><input type="text" id="pName" autocomplete="off"></div>
-      <div class="fldwrap"><label class="fld" id="jfTeamL" for="pTeam">Team</label>
-        <select id="pTeam"><option value="1">Team 1</option><option value="2">Team 2</option><option value="3">Team 3</option><option value="4">Team 4</option></select></div>
+      <div class="fldwrap"><label class="fld" id="jfTeamL" for="pTeam">Team</label><select id="pTeam"><option value="1">Team 1</option><option value="2">Team 2</option><option value="3">Team 3</option><option value="4">Team 4</option><option value="5">Team 5</option><option value="6">Team 6</option></select></div>
       <button class="btn warn big" id="joinBtn" style="width:100%">Meedoen →</button>
     </div>
-    <div class="waiting" id="joinWaiting">
-      <h1 id="jwH">Je bent binnen! 🎉</h1>
-      <p class="s"><b id="joinWho"></b> — <span id="jwRoomL">kamer</span> <b id="joinRoomEcho"></b></p>
-      <p style="font-size:14px" id="jwWait"></p>
-      <div class="banner" id="jwBanner" style="text-align:start"></div>
-    </div>
+    <div id="joinWaiting" style="display:none"><h1 id="jwH">Je bent binnen! 🎉</h1><p class="s"><b id="joinWho"></b> — <span id="jwRoomL">kamer</span> <b id="joinRoomEcho"></b></p><p style="font-size:14px" id="jwWait"></p><div class="pnet off" id="jwBanner" style="text-align:start"></div></div>
   </div>
 </div>
 
@@ -273,8 +196,6 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script>
-/* ====== FIREBASE — plak hier de configuratie uit je eigen (gratis) Firebase-project.
-   Zie README.md → "Live join met Firebase". Zolang dit leeg is, werkt het bord offline. ====== */
 window.FIREBASE_CONFIG = {
   apiKey: "AIzaSyDxq1zhg1o2-2J-yCOieyuLKBipqQrjUeY",
   authDomain: "behind-the-door-c06f5.firebaseapp.com",
@@ -288,442 +209,439 @@ window.FIREBASE_CONFIG = {
 </script>
 <script>
 "use strict";
-/* ============ i18n ============ */
-const MET={nl:{sat:"Tevredenheid",fin:"Financieel",comp:"Compliance",dur:"Duurzaamheid"},
-          en:{sat:"Satisfaction",fin:"Financial health",comp:"Compliance",dur:"Sustainability"}};
-const CAT={A:"onderhoud",B:"toewijzing",C:"sociaal",D:"duurzaam",E:"onderhoud",
-  J1:"onderhoud",J2:"digitaal",J3:"sociaal",J4:"toewijzing",J5:"financien",J6:"sociaal",J7:"financien",J8:"toewijzing",J9:"duurzaam",J10:"digitaal",J11:"sociaal",J12:"toewijzing",
-  C1:"duurzaam",C2:"digitaal",C3:"duurzaam",C4:"onderhoud",C5:"financien",C6:"financien",S:"onderhoud"};
-
-/* ---- Dutch content ---- */
+/* ============ data ============ */
+const MET={nl:{sat:"Tevredenheid",fin:"Financieel",comp:"Compliance",dur:"Duurzaamheid"},en:{sat:"Satisfaction",fin:"Financial",comp:"Compliance",dur:"Sustainability"}};
+const DEPTS=[{nl:"Onderhoud",en:"Maintenance"},{nl:"Klantcontact (KCC)",en:"Customer contact"},{nl:"Financiën",en:"Finance"},{nl:"Inkoop",en:"Procurement"},{nl:"Data & rapportage",en:"Data & reporting"},{nl:"Verhuur & toewijzing",en:"Letting & allocation"},{nl:"Compliance",en:"Compliance"},{nl:"ICT & systemen",en:"IT & systems"},{nl:"Datamanagement",en:"Data management"},{nl:"Sociaal beheer",en:"Social management"},{nl:"Juridische zaken",en:"Legal affairs"},{nl:"Wijkbeheer",en:"Neighbourhood mgmt"},{nl:"Vastgoed & projecten",en:"Real estate & projects"},{nl:"Assetmanagement",en:"Asset management"},{nl:"Bewonerscommunicatie",en:"Resident communication"},{nl:"Strategie",en:"Strategy"}];
+const CAT={A:"onderhoud",B:"toewijzing",C:"sociaal",D:"duurzaam",E:"onderhoud",J1:"onderhoud",J2:"digitaal",J3:"sociaal",J4:"toewijzing",J5:"financien",J6:"sociaal",J7:"financien",J8:"toewijzing",J9:"duurzaam",J10:"digitaal",J11:"sociaal",J12:"toewijzing",C1:"duurzaam",C2:"digitaal",C3:"duurzaam",C4:"onderhoud",C5:"financien",C6:"financien",S:"onderhoud"};
 const SCEN_NL=[
-  {id:"A",t:"De schimmelmelding",x:"Een huurder meldt via het portaal schimmel in de slaapkamer. Er woont een baby van vier maanden. Foto erbij, en: dit duurt al drie weken.",afd:"Onderhoud · Klantcontact (KCC) · Financiën · Inkoop · Data en rapportage",sp:"Klanttevredenheid versus kostenbeheersing. Bij een baby komen reputatie en zorgplicht erbij — één bericht op sociale media en het is een mediakwestie."},
-  {id:"B",t:"De zzp'er",x:"Een zelfstandige met sterk wisselend inkomen reageert op een sociale huurwoning. Vorig jaar te veel verdiend, dit jaar ruim eronder. Staat al zeven jaar ingeschreven.",afd:"Verhuur en toewijzing · Compliance · ICT en systemen · Datamanagement",sp:"Snelheid versus compliance, en wettelijke kaders versus de menselijke maat. Zeven jaar wachten voelt onrechtvaardig, maar accountant en Aw toetsen op de regels."},
-  {id:"C",t:"De stille achterstand",x:"Een huurder heeft twee maanden achterstand en reageert nergens op. De buren zeggen dat ze hem al weken niet hebben gezien.",afd:"Financiën (incasso) · Sociaal beheer · Klantcontact · Juridische zaken · Wijkbeheer",sp:"Financiële continuïteit versus maatschappelijke verantwoordelijkheid. Ontruimen is het duurste én het slechtste scenario, voor iedereen."},
-  {id:"D",t:"De weigeraar",x:"Jullie willen een portiekflat van 24 woningen isoleren en van zonnepanelen voorzien. Nodig: instemming van 70%. Zes huurders weigeren — bang voor huurverhoging en gedoe.",afd:"Vastgoed en projecten · Assetmanagement · Bewonerscommunicatie · Financiën · Strategie",sp:"Betaalbaarheid versus klimaatdoelen. De labels moeten naar A, maar de huurder van nu betaalt de rekening en voelt vooral het gedoe."},
-  {id:"E",t:"De verbouwde woning",x:"Een vertrekkende huurder zegt op. Bij inspectie blijkt een muur doorgebroken en de badkamer verbouwd — zonder toestemming. Ziet er strak uit, maar niets is gedocumenteerd.",afd:"Onderhoud · Verhuur · Financiën · Juridische zaken",sp:"Leegstandsverlies versus kwaliteit. Elke week discussie over die badkamer is een week geen huurinkomsten, terwijl er tien jaar wachtlijst staat."}
+ {id:"A",t:"De schimmelmelding",x:"Een huurder meldt schimmel in de slaapkamer. Er woont een baby van vier maanden. Dit duurt al drie weken.",dep:[0,1,2,3,4],sp:"Klanttevredenheid versus kostenbeheersing. Bij een baby komen reputatie en zorgplicht erbij."},
+ {id:"B",t:"De zzp'er",x:"Een zelfstandige met wisselend inkomen reageert op een sociale huurwoning. Staat al zeven jaar ingeschreven.",dep:[5,6,7,8],sp:"Snelheid versus compliance, en wettelijke kaders versus de menselijke maat."},
+ {id:"C",t:"De stille achterstand",x:"Een huurder heeft twee maanden achterstand en reageert nergens op. Buren zagen hem al weken niet.",dep:[2,9,1,10,11],sp:"Financiële continuïteit versus maatschappelijke verantwoordelijkheid."},
+ {id:"D",t:"De weigeraar",x:"Jullie willen 24 woningen isoleren en zonnepanelen plaatsen. Zes huurders weigeren — bang voor huurverhoging.",dep:[12,13,14,2,15],sp:"Betaalbaarheid versus klimaatdoelen."},
+ {id:"E",t:"De verbouwde woning",x:"Een vertrekkende huurder blijkt zonder toestemming een muur doorgebroken en de badkamer verbouwd te hebben.",dep:[0,5,2,10],sp:"Leegstandsverlies versus kwaliteit."}
+];
+const SCEN_EN=[
+ {id:"A",t:"The mould report",x:"A tenant reports mould in the bedroom. A four-month-old baby lives there. It has been going on for three weeks.",dep:[0,1,2,3,4],sp:"Customer satisfaction versus cost control. With a baby, reputation and duty of care come on top."},
+ {id:"B",t:"The freelancer",x:"A self-employed person with fluctuating income applies for a social rental home. Registered for seven years.",dep:[5,6,7,8],sp:"Speed versus compliance, and legal frameworks versus the human dimension."},
+ {id:"C",t:"The silent arrears",x:"A tenant is two months in arrears and responds to nothing. Neighbours haven't seen him for weeks.",dep:[2,9,1,10,11],sp:"Financial continuity versus social responsibility."},
+ {id:"D",t:"The refuser",x:"You want to insulate 24 homes and add solar panels. Six tenants refuse — afraid of a rent increase.",dep:[12,13,14,2,15],sp:"Affordability versus climate goals."},
+ {id:"E",t:"The renovated home",x:"A departing tenant turns out to have knocked through a wall and rebuilt the bathroom without permission.",dep:[0,5,2,10],sp:"Vacancy loss versus quality."}
 ];
 const JOUR_NL=[
-  {id:"J1",t:"Ketels in de kou",x:"Half januari vallen de cv-ketels van twaalf woningen definitief uit. Bewoners zitten in de kou en bellen het KCC plat.",o:[{l:"A · Vervangen door warmtepompen",e:"Duurder, maar toekomstvast.",coins:-4,fx:{sat:1,dur:2}},{l:"B · Nieuwe cv-ketels",e:"Snel en vertrouwd.",coins:-2,fx:{sat:1,dur:-1}}]},
-  {id:"J2",t:"Het datalek",x:"Een medewerker mailt per ongeluk een lijst met huurdersgegevens, inclusief betalingsachterstanden, naar een extern adres.",o:[{l:"A · Melden bij de AP + huurders informeren",e:"",coins:-1,fx:{comp:2,sat:-1}},{l:"B · Intern oplossen",e:"De ontvanger belooft de mail te verwijderen.",coins:0,fx:{comp:-3,sat:-1},note:"Consequentie (voorlezen): drie weken later meldt een huurder het lek zelf bij de Autoriteit Persoonsgegevens. Er volgt een onderzoek naar de niet-nakoming van de meldplicht."}]},
-  {id:"J3",t:"De speeltuin",x:"De bewonerscommissie van een verloederd complex eist al twee jaar een opgeknapte binnentuin. Ze dreigen met de lokale krant.",o:[{l:"A · Investeren, samen met bewoners ontwerpen",e:"",coins:-2,fx:{sat:2}},{l:"B · Doorschuiven naar volgend jaar",e:"Het onderhoudsbudget is al krap.",coins:0,fx:{sat:-1}}]},
-  {id:"J4",t:"De schrijnende afwijzing",x:"Een alleenstaande moeder reageert op een woning. Haar inkomen ligt 800 euro boven de grens. Situatie schrijnend en goed gedocumenteerd.",o:[{l:"A · Afwijzen",e:"Regels zijn regels, en de accountant controleert.",coins:0,fx:{comp:1,sat:-1}},{l:"B · Toewijzen via de vrije ruimte, volledig dossier",e:"",coins:-1,fx:{sat:1}}]},
-  {id:"J5",t:"Het onderhoudscontract",x:"Een aannemer biedt 15% korting bij een driejarig contract, maar wil deze week tekenen. Geen tijd voor vergelijking.",o:[{l:"A · Tekenen",e:"Die korting is te goed om te laten lopen.",coins:2,fx:{comp:-1}},{l:"B · Korte meervoudige uitvraag bij drie partijen",e:"",coins:0,fx:{comp:1}}]},
-  {id:"J6",t:"De statushouders",x:"De gemeente vraagt dit kwartaal extra statushouders te huisvesten. De wachtlijst voor reguliere woningzoekenden is al lang.",o:[{l:"A · Volledig toezeggen",e:"Prestatieafspraken zijn er om na te komen.",coins:0,fx:{comp:2,sat:-1}},{l:"B · De helft toezeggen, rest faseren",e:"",coins:0,fx:{comp:1}}]},
-  {id:"J7",t:"De huurverhoging",x:"Het is 1 juli. De inflatie is hoog en jullie investeringsagenda ook. De jaarlijkse huurverhoging moet worden vastgesteld.",o:[{l:"A · De maximaal toegestane verhoging",e:"",coins:2,fx:{sat:-2}},{l:"B · Gematigde verhoging onder het maximum",e:"",coins:1,fx:{}}]},
-  {id:"J8",t:"De hennepgeur",x:"De wijkbeheerder meldt een sterke hennepgeur en afgeplakte ramen. Buren klagen over warmte-overlast en angst.",o:[{l:"A · Direct schakelen met politie, ontbinding starten",e:"",coins:-1,fx:{comp:1,sat:1}},{l:"B · Eerst zelf aankijken en bewijs verzamelen",e:"",coins:0,fx:{comp:-2}}]},
-  {id:"J9",t:"Zonnepanelen met subsidie",x:"Een regeling dekt de helft van zonnepanelen op 100 woningen. Deadline over drie weken, de organisatie is druk.",o:[{l:"A · Doen — alle hens aan dek",e:"",coins:-3,fx:{dur:2,sat:1}},{l:"B · Overslaan",e:"Volgend jaar komt er vast weer een regeling.",coins:0,fx:{dur:-1}}]},
-  {id:"J10",t:"Het legacy-systeem",x:"De leverancier van jullie verouderde reparatiesysteem verhoogt de licentiekosten met 40%. Migreren kan, maar kost nu geld en aandacht.",o:[{l:"A · Betalen en doorschuiven",e:"Geen tijd voor een migratie.",coins:-2,fx:{}},{l:"B · Migreren naar het geïntegreerde platform",e:"",coins:-3,fx:{comp:1,fin:1}}]},
-  {id:"J11",t:"De verwarde huurder",x:"Een huurder met verward gedrag veroorzaakt ernstige overlast in een portiek. Buren dreigen te vertrekken. Zorg lijkt niet in beeld.",o:[{l:"A · Juridisch traject richting ontbinding",e:"",coins:-2,fx:{sat:1}},{l:"B · Zorgpartners en gemeente aanhaken",e:"",coins:-1,fx:{comp:1}}]},
-  {id:"J12",t:"De woningruil",x:"Twee huurders willen ruilen: een oudere dame in een eengezinswoning en een jong gezin in een appartement. Dubbele toetsing en administratie.",o:[{l:"A · Meewerken en volledig toetsen",e:"Betere match, blije huurders.",coins:-1,fx:{sat:1,comp:1}},{l:"B · Afwijzen",e:"Het mutatieteam zit al overvol.",coins:0,fx:{sat:-1}}]}
-];
-const CRIS_NL=[
-  {id:"C1",t:"Energieprijzen verdubbelen",x:"De energieprijzen exploderen. Huurders in slecht geïsoleerde woningen komen in de knel; de media staan erbovenop.",all:1,allTxt:"Alle teams betalen direct 1 munt extra bedrijfskosten.",o:[{l:"A · Noodfonds voor energiearmoede openen",e:"",coins:-2,fx:{sat:1}},{l:"B · Geen noodfonds — verwijzen naar gemeente/rijk",e:"",coins:0,fx:{sat:-2}}]},
-  {id:"C2",t:"Cyberaanval",x:"Ransomware legt het incassosysteem twee weken plat. Huurders kunnen niet betalen, de administratie loopt vast.",allTxt:"Let op: de huurinkomsten van het volgende kwartaal zijn 3 munten in plaats van 5.",o:[{l:"A · Forensisch bureau + melden bij toezichthouders",e:"",coins:-2,fx:{comp:1}},{l:"B · Zelf herstellen en stilhouden",e:"",coins:0,fx:{comp:-2}}]},
-  {id:"C3",t:"ESG-rapportage per direct",x:"Nieuwe EU-regelgeving verplicht per direct een duurzaamheidsrapportage. Jullie data ligt verspreid over vijf systemen en talloze Excels.",o:[{l:"A · Dataproject: alles centraal en herbruikbaar",e:"",coins:-2,fx:{comp:1,dur:1}},{l:"B · Minimaal rapporteren op wat er ligt",e:"",coins:0,fx:{comp:-2}}]},
-  {id:"C4",t:"Aannemer failliet",x:"Midden in de renovatie van 60 woningen gaat de hoofdaannemer failliet. Steigers verlaten, bewoners tussen het stof.",o:[{l:"A · Direct duurdere partij contracteren, doorbouwen",e:"",coins:-3,fx:{sat:1,dur:1}},{l:"B · Project half jaar pauzeren en opnieuw aanbesteden",e:"",coins:-1,fx:{sat:-2,dur:-1}}]},
-  {id:"C5",t:"Mediastorm om toewijzing",x:"Een landelijk dagblad kopt dat jullie toewijzingsalgoritme groepen benadeelt. De wethouder stelt vragen, huurdersorganisaties eisen opheldering.",o:[{l:"A · Onafhankelijk onderzoek, uitkomsten openbaar",e:"",coins:-1,fx:{comp:2}},{l:"B · Verweren met een persbericht",e:"Onze cijfers kloppen.",coins:0,fx:{sat:-2,comp:-1}}]},
-  {id:"C6",t:"Verhuurderheffing 2.0",x:"Het rijk kondigt onverwacht een nieuwe heffing aan op sociale huurwoningen.",all:3,allTxt:"Alle teams betalen direct 3 munten. Er is geen keuze, alleen een gesprek.",o:[{l:"A · Bespreek: wat schrappen jullie komend kwartaal?",e:"En hoe leg je dat uit aan huurders en gemeente?",coins:0,fx:{},note:"Geen metereffect. De spelleider vraagt één team dit plenair toe te lichten."}]}
-];
-const SHOCK_NL={id:"S",t:"Constructieve gebreken",x:"Bij een inspectie blijken de galerijen van een jaren-60-flat constructief onveilig. Dertig woningen hebben per direct herstel nodig. Uitstel brengt de veiligheid van bewoners in gevaar.",o:[{l:"A · Direct herstellen uit eigen middelen",e:"",coins:-4,fx:{}},{l:"B · Geborgde lening via het WSW",e:"Kost nu 2 munten en 1 munt rente in kwartaal 4.",coins:-2,fx:{},note:"Noteer: 1 munt rente in kwartaal 4."},{l:"C · Herstel gefaseerd, galerijen deels afsluiten",e:"",coins:-2,fx:{sat:-2,comp:-2}}]};
-
-/* ---- English content ---- */
-const SCEN_EN=[
-  {id:"A",t:"The mould report",x:"A tenant reports mould in the bedroom via the portal. A four-month-old baby lives there. A photo is attached, and: this has been going on for three weeks.",afd:"Maintenance · Customer contact (KCC) · Finance · Procurement · Data & reporting",sp:"Customer satisfaction versus cost control. With a baby, reputation and duty of care come on top — one social-media post and it's a media issue."},
-  {id:"B",t:"The freelancer",x:"A self-employed person with strongly fluctuating income applies for a social rental home. Last year they earned too much, this year well below the limit. Registered for seven years.",afd:"Letting & allocation · Compliance · IT & systems · Data management",sp:"Speed versus compliance, and legal frameworks versus the human dimension. Seven years of waiting feels unfair, but the accountant and the Aw test against the rules."},
-  {id:"C",t:"The silent arrears",x:"A tenant is two months in arrears and responds to nothing. The neighbours say they haven't seen him for weeks.",afd:"Finance (collections) · Social management · Customer contact · Legal affairs · Neighbourhood management",sp:"Financial continuity versus social responsibility. Eviction is the most expensive and the worst outcome, for everyone."},
-  {id:"D",t:"The refuser",x:"You want to insulate a 24-home block and add solar panels. You need 70% consent. Six tenants refuse — afraid of a rent increase and hassle.",afd:"Real estate & projects · Asset management · Resident communication · Finance · Strategy",sp:"Affordability versus climate goals. The labels must reach A, but today's tenant pays the bill and mostly feels the hassle."},
-  {id:"E",t:"The renovated home",x:"A departing tenant gives notice. Inspection reveals a knocked-through wall and a rebuilt bathroom — without permission. It looks slick, but nothing is documented.",afd:"Maintenance · Letting · Finance · Legal affairs",sp:"Vacancy loss versus quality. Every week arguing about that bathroom is a week without rent income, while there's a ten-year waiting list at the door."}
+ {id:"J1",t:"Ketels in de kou",x:"Half januari vallen de cv-ketels van twaalf woningen definitief uit.",o:[{l:"A · Warmtepompen",e:"Duurder, maar toekomstvast.",coins:-4,fx:{sat:1,dur:2}},{l:"B · Nieuwe cv-ketels",e:"Snel en vertrouwd.",coins:-2,fx:{sat:1,dur:-1}}]},
+ {id:"J2",t:"Het datalek",x:"Een medewerker mailt per ongeluk huurdersgegevens naar een extern adres.",o:[{l:"A · Melden bij de AP",e:"En huurders informeren.",coins:-1,fx:{comp:2,sat:-1}},{l:"B · Intern oplossen",e:"De ontvanger belooft te verwijderen.",coins:0,fx:{comp:-3,sat:-1}}]},
+ {id:"J3",t:"De speeltuin",x:"De bewonerscommissie eist al twee jaar een opgeknapte binnentuin. Ze dreigen met de krant.",o:[{l:"A · Investeren",e:"Samen met bewoners ontwerpen.",coins:-2,fx:{sat:2}},{l:"B · Doorschuiven",e:"Het budget is krap.",coins:0,fx:{sat:-1}}]},
+ {id:"J4",t:"De schrijnende afwijzing",x:"Een alleenstaande moeder zit 800 euro boven de inkomensgrens. Schrijnend en goed gedocumenteerd.",o:[{l:"A · Afwijzen",e:"Regels zijn regels.",coins:0,fx:{comp:1,sat:-1}},{l:"B · Toewijzen via vrije ruimte",e:"Volledig dossier.",coins:-1,fx:{sat:1}}]},
+ {id:"J5",t:"Het onderhoudscontract",x:"Een aannemer biedt 15% korting bij een driejarig contract, maar wil deze week tekenen.",o:[{l:"A · Tekenen",e:"Korting te goed om te laten lopen.",coins:2,fx:{comp:-1}},{l:"B · Meervoudige uitvraag",e:"Bij drie partijen.",coins:0,fx:{comp:1}}]},
+ {id:"J6",t:"De statushouders",x:"De gemeente vraagt extra statushouders te huisvesten. De wachtlijst is al lang.",o:[{l:"A · Volledig toezeggen",e:"Prestatieafspraken nakomen.",coins:0,fx:{comp:2,sat:-1}},{l:"B · Helft toezeggen",e:"Rest faseren.",coins:0,fx:{comp:1}}]},
+ {id:"J7",t:"De huurverhoging",x:"De inflatie is hoog en jullie investeringsagenda ook. Stel de jaarlijkse huurverhoging vast.",o:[{l:"A · Maximaal verhogen",e:"",coins:2,fx:{sat:-2}},{l:"B · Gematigd verhogen",e:"Onder het maximum.",coins:1,fx:{}}]},
+ {id:"J8",t:"De hennepgeur",x:"Sterke hennepgeur en afgeplakte ramen. Buren klagen over overlast en angst.",o:[{l:"A · Politie + ontbinding",e:"Direct schakelen.",coins:-1,fx:{comp:1,sat:1}},{l:"B · Eerst aankijken",e:"Bewijs verzamelen.",coins:0,fx:{comp:-2}}]},
+ {id:"J9",t:"Zonnepanelen met subsidie",x:"Een regeling dekt de helft van zonnepanelen op 100 woningen. Deadline over drie weken.",o:[{l:"A · Doen",e:"Alle hens aan dek.",coins:-3,fx:{dur:2,sat:1}},{l:"B · Overslaan",e:"Volgend jaar weer.",coins:0,fx:{dur:-1}}]},
+ {id:"J10",t:"Het legacy-systeem",x:"De leverancier verhoogt de licentiekosten met 40%. Migreren kost nu geld en aandacht.",o:[{l:"A · Betalen",e:"Geen tijd voor migratie.",coins:-2,fx:{}},{l:"B · Migreren",e:"Naar het geïntegreerde platform.",coins:-3,fx:{comp:1,fin:1}}]},
+ {id:"J11",t:"De verwarde huurder",x:"Ernstige overlast in een portiek. Buren dreigen te vertrekken. Zorg is niet in beeld.",o:[{l:"A · Juridisch traject",e:"Richting ontbinding.",coins:-2,fx:{sat:1}},{l:"B · Zorgpartners aanhaken",e:"Met de gemeente.",coins:-1,fx:{comp:1}}]},
+ {id:"J12",t:"De woningruil",x:"Twee huurders willen ruilen. Vergt dubbele toetsing en administratie.",o:[{l:"A · Meewerken",e:"Volledig toetsen.",coins:-1,fx:{sat:1,comp:1}},{l:"B · Afwijzen",e:"Mutatieteam zit vol.",coins:0,fx:{sat:-1}}]}
 ];
 const JOUR_EN=[
-  {id:"J1",t:"Boilers in the cold",x:"In mid-January the boilers of twelve homes fail for good. Residents are in the cold and flood the customer-contact centre with calls.",o:[{l:"A · Replace with heat pumps",e:"More expensive, but future-proof.",coins:-4,fx:{sat:1,dur:2}},{l:"B · New gas boilers",e:"Fast and familiar.",coins:-2,fx:{sat:1,dur:-1}}]},
-  {id:"J2",t:"The data breach",x:"An employee accidentally emails a list of tenant data, including payment arrears, to an external address.",o:[{l:"A · Report to the DPA + inform tenants",e:"",coins:-1,fx:{comp:2,sat:-1}},{l:"B · Handle it internally",e:"The recipient promises to delete the mail.",coins:0,fx:{comp:-3,sat:-1},note:"Consequence (read aloud): three weeks later a tenant reports the breach themselves to the Data Protection Authority. An investigation follows into the failure to report."}]},
-  {id:"J3",t:"The playground",x:"The residents' committee of a run-down complex has demanded a renovated courtyard for two years. They threaten to go to the local paper.",o:[{l:"A · Invest, design together with residents",e:"",coins:-2,fx:{sat:2}},{l:"B · Postpone to next year",e:"The maintenance budget is already tight.",coins:0,fx:{sat:-1}}]},
-  {id:"J4",t:"The heartbreaking rejection",x:"A single mother applies for a home. Her income is 800 euros over the limit. Her situation is distressing and well documented.",o:[{l:"A · Reject",e:"Rules are rules, and the accountant checks.",coins:0,fx:{comp:1,sat:-1}},{l:"B · Allocate via the free-allocation margin, full file",e:"",coins:-1,fx:{sat:1}}]},
-  {id:"J5",t:"The maintenance contract",x:"A contractor offers 15% off for a three-year contract, but wants to sign this week. No time to compare.",o:[{l:"A · Sign",e:"That discount is too good to miss.",coins:2,fx:{comp:-1}},{l:"B · A quick multiple quote from three parties",e:"",coins:0,fx:{comp:1}}]},
-  {id:"J6",t:"The status holders",x:"The municipality asks you to house extra status holders this quarter. The waiting list for regular applicants is already long.",o:[{l:"A · Commit fully",e:"Performance agreements are there to be met.",coins:0,fx:{comp:2,sat:-1}},{l:"B · Commit half, phase the rest",e:"",coins:0,fx:{comp:1}}]},
-  {id:"J7",t:"The rent increase",x:"It's 1 July. Inflation is high and so is your investment agenda. The annual rent increase must be set.",o:[{l:"A · Apply the maximum permitted increase",e:"",coins:2,fx:{sat:-2}},{l:"B · A moderate increase below the maximum",e:"",coins:1,fx:{}}]},
-  {id:"J8",t:"The cannabis smell",x:"The neighbourhood manager reports a strong cannabis smell and blocked-out windows. Neighbours complain of heat nuisance and fear.",o:[{l:"A · Engage the police immediately, start termination",e:"",coins:-1,fx:{comp:1,sat:1}},{l:"B · Watch it yourself first and gather evidence",e:"",coins:0,fx:{comp:-2}}]},
-  {id:"J9",t:"Solar panels with subsidy",x:"A scheme covers half of solar panels on 100 homes. Deadline in three weeks, the organisation is busy.",o:[{l:"A · Do it — all hands on deck",e:"",coins:-3,fx:{dur:2,sat:1}},{l:"B · Skip it",e:"There's bound to be another scheme next year.",coins:0,fx:{dur:-1}}]},
-  {id:"J10",t:"The legacy system",x:"The vendor of your outdated repair system raises the licence fee by 40%. Migrating is possible, but costs money and attention now.",o:[{l:"A · Pay and postpone",e:"No time for a migration.",coins:-2,fx:{}},{l:"B · Migrate to the integrated platform",e:"",coins:-3,fx:{comp:1,fin:1}}]},
-  {id:"J11",t:"The confused tenant",x:"A tenant with confused behaviour causes serious nuisance in a stairwell. Neighbours threaten to leave. Care seems out of the picture.",o:[{l:"A · Start the legal route toward termination",e:"",coins:-2,fx:{sat:1}},{l:"B · Bring in care partners and the municipality",e:"",coins:-1,fx:{comp:1}}]},
-  {id:"J12",t:"The home swap",x:"Two tenants want to swap: an older lady in a family home and a young family in an apartment. It requires double checking and admin.",o:[{l:"A · Cooperate and check fully",e:"Better match, happy tenants.",coins:-1,fx:{sat:1,comp:1}},{l:"B · Reject",e:"The mutation team is already overloaded.",coins:0,fx:{sat:-1}}]}
+ {id:"J1",t:"Boilers in the cold",x:"In mid-January the boilers of twelve homes fail for good.",o:[{l:"A · Heat pumps",e:"Pricier, but future-proof.",coins:-4,fx:{sat:1,dur:2}},{l:"B · New gas boilers",e:"Fast and familiar.",coins:-2,fx:{sat:1,dur:-1}}]},
+ {id:"J2",t:"The data breach",x:"An employee accidentally emails tenant data to an external address.",o:[{l:"A · Report to the DPA",e:"And inform tenants.",coins:-1,fx:{comp:2,sat:-1}},{l:"B · Handle internally",e:"Recipient promises to delete.",coins:0,fx:{comp:-3,sat:-1}}]},
+ {id:"J3",t:"The playground",x:"The residents' committee has demanded a renovated courtyard for two years.",o:[{l:"A · Invest",e:"Design with residents.",coins:-2,fx:{sat:2}},{l:"B · Postpone",e:"The budget is tight.",coins:0,fx:{sat:-1}}]},
+ {id:"J4",t:"The hard rejection",x:"A single mother is 800 euros over the income limit. Distressing and well documented.",o:[{l:"A · Reject",e:"Rules are rules.",coins:0,fx:{comp:1,sat:-1}},{l:"B · Allocate via free margin",e:"Full file.",coins:-1,fx:{sat:1}}]},
+ {id:"J5",t:"The maintenance contract",x:"A contractor offers 15% off for a three-year deal, but wants to sign this week.",o:[{l:"A · Sign",e:"Too good to miss.",coins:2,fx:{comp:-1}},{l:"B · Get three quotes",e:"",coins:0,fx:{comp:1}}]},
+ {id:"J6",t:"The status holders",x:"The municipality asks you to house extra status holders. The waiting list is long.",o:[{l:"A · Commit fully",e:"Meet the agreements.",coins:0,fx:{comp:2,sat:-1}},{l:"B · Commit half",e:"Phase the rest.",coins:0,fx:{comp:1}}]},
+ {id:"J7",t:"The rent increase",x:"Inflation is high and so is your investment agenda. Set the annual rent increase.",o:[{l:"A · Maximum increase",e:"",coins:2,fx:{sat:-2}},{l:"B · Moderate increase",e:"Below the maximum.",coins:1,fx:{}}]},
+ {id:"J8",t:"The cannabis smell",x:"Strong cannabis smell and blocked windows. Neighbours complain of nuisance and fear.",o:[{l:"A · Police + termination",e:"Act immediately.",coins:-1,fx:{comp:1,sat:1}},{l:"B · Watch first",e:"Gather evidence.",coins:0,fx:{comp:-2}}]},
+ {id:"J9",t:"Solar panels with subsidy",x:"A scheme covers half of solar panels on 100 homes. Deadline in three weeks.",o:[{l:"A · Do it",e:"All hands on deck.",coins:-3,fx:{dur:2,sat:1}},{l:"B · Skip it",e:"Next year again.",coins:0,fx:{dur:-1}}]},
+ {id:"J10",t:"The legacy system",x:"The vendor raises the licence fee by 40%. Migrating costs money and attention now.",o:[{l:"A · Pay",e:"No time to migrate.",coins:-2,fx:{}},{l:"B · Migrate",e:"To the integrated platform.",coins:-3,fx:{comp:1,fin:1}}]},
+ {id:"J11",t:"The confused tenant",x:"Serious nuisance in a stairwell. Neighbours threaten to leave. Care is not in the picture.",o:[{l:"A · Legal route",e:"Toward termination.",coins:-2,fx:{sat:1}},{l:"B · Bring in care partners",e:"With the municipality.",coins:-1,fx:{comp:1}}]},
+ {id:"J12",t:"The home swap",x:"Two tenants want to swap. It requires double checking and admin.",o:[{l:"A · Cooperate",e:"Check fully.",coins:-1,fx:{sat:1,comp:1}},{l:"B · Reject",e:"The team is overloaded.",coins:0,fx:{sat:-1}}]}
+];
+const CRIS_NL=[
+ {id:"C1",t:"Energieprijzen verdubbelen",x:"Huurders in slecht geïsoleerde woningen komen in de knel; de media staan erbovenop.",o:[{l:"A · Noodfonds openen",e:"Voor energiearmoede.",coins:-2,fx:{sat:1}},{l:"B · Geen noodfonds",e:"Verwijzen naar gemeente/rijk.",coins:0,fx:{sat:-2}}]},
+ {id:"C2",t:"Cyberaanval",x:"Ransomware legt het incassosysteem twee weken plat.",o:[{l:"A · Forensisch + melden",e:"Bij de toezichthouders.",coins:-2,fx:{comp:1}},{l:"B · Stilhouden",e:"Zelf herstellen.",coins:0,fx:{comp:-2}}]},
+ {id:"C3",t:"ESG-rapportage per direct",x:"Nieuwe EU-regels: duurzaamheidsrapportage per direct. Jullie data ligt verspreid.",o:[{l:"A · Dataproject",e:"Alles centraal.",coins:-2,fx:{comp:1,dur:1}},{l:"B · Minimaal rapporteren",e:"Op wat er ligt.",coins:0,fx:{comp:-2}}]},
+ {id:"C4",t:"Aannemer failliet",x:"Midden in de renovatie van 60 woningen gaat de hoofdaannemer failliet.",o:[{l:"A · Doorbouwen",e:"Duurdere partij.",coins:-3,fx:{sat:1,dur:1}},{l:"B · Pauzeren",e:"Opnieuw aanbesteden.",coins:-1,fx:{sat:-2,dur:-1}}]},
+ {id:"C5",t:"Mediastorm om toewijzing",x:"Een dagblad kopt dat jullie algoritme groepen benadeelt. De wethouder stelt vragen.",o:[{l:"A · Onafhankelijk onderzoek",e:"Uitkomsten openbaar.",coins:-1,fx:{comp:2}},{l:"B · Verweren",e:"Met een persbericht.",coins:0,fx:{sat:-2,comp:-1}}]},
+ {id:"C6",t:"Verhuurderheffing 2.0",x:"Het rijk kondigt onverwacht een nieuwe heffing aan op sociale huurwoningen.",o:[{l:"A · Bezuinigen & uitleggen",e:"Schrap iets, leg het uit.",coins:-3,fx:{comp:1}},{l:"B · Investeringen schrappen",e:"Duurzaamheid inleveren.",coins:-1,fx:{dur:-2}}]}
 ];
 const CRIS_EN=[
-  {id:"C1",t:"Energy prices double",x:"Energy prices explode. Tenants in poorly insulated homes get into trouble; the media are all over it.",all:1,allTxt:"All teams pay 1 extra coin in operating costs immediately.",o:[{l:"A · Open an emergency fund for energy poverty",e:"",coins:-2,fx:{sat:1}},{l:"B · No fund — refer to the municipality/state",e:"",coins:0,fx:{sat:-2}}]},
-  {id:"C2",t:"Cyberattack",x:"Ransomware takes the collections system down for two weeks. Tenants can't pay, the administration jams.",allTxt:"Note: next quarter's rent income is 3 coins instead of 5.",o:[{l:"A · Forensic firm + report to regulators",e:"",coins:-2,fx:{comp:1}},{l:"B · Fix it yourself and keep it quiet",e:"",coins:0,fx:{comp:-2}}]},
-  {id:"C3",t:"ESG reporting, effective now",x:"New EU regulation requires a sustainability report immediately. Your data is spread across five systems and countless spreadsheets.",o:[{l:"A · Start a data project: central and reusable",e:"",coins:-2,fx:{comp:1,dur:1}},{l:"B · Report minimally on what's available",e:"",coins:0,fx:{comp:-2}}]},
-  {id:"C4",t:"Contractor bankrupt",x:"Halfway through the renovation of 60 homes the main contractor goes bankrupt. Scaffolding stands abandoned, residents amid the dust.",o:[{l:"A · Contract a pricier party immediately, keep building",e:"",coins:-3,fx:{sat:1,dur:1}},{l:"B · Pause the project for six months and re-tender",e:"",coins:-1,fx:{sat:-2,dur:-1}}]},
-  {id:"C5",t:"Media storm over allocation",x:"A national newspaper headlines that your allocation algorithm disadvantages certain groups. The alderman asks questions, tenant organisations demand answers.",o:[{l:"A · Commission independent research, publish it",e:"",coins:-1,fx:{comp:2}},{l:"B · Defend with a press release",e:"Our figures are correct.",coins:0,fx:{sat:-2,comp:-1}}]},
-  {id:"C6",t:"Landlord levy 2.0",x:"The state unexpectedly announces a new levy on social rental homes.",all:3,allTxt:"All teams pay 3 coins immediately. There is no choice, only a conversation.",o:[{l:"A · Discuss: what will you cut next quarter?",e:"And how do you explain it to tenants and the municipality?",coins:0,fx:{},note:"No meter effect. The facilitator asks one team to present its answer to everyone."}]}
+ {id:"C1",t:"Energy prices double",x:"Tenants in poorly insulated homes get into trouble; the media are all over it.",o:[{l:"A · Open a fund",e:"For energy poverty.",coins:-2,fx:{sat:1}},{l:"B · No fund",e:"Refer to the state.",coins:0,fx:{sat:-2}}]},
+ {id:"C2",t:"Cyberattack",x:"Ransomware takes the collections system down for two weeks.",o:[{l:"A · Forensics + report",e:"To regulators.",coins:-2,fx:{comp:1}},{l:"B · Keep it quiet",e:"Fix it yourself.",coins:0,fx:{comp:-2}}]},
+ {id:"C3",t:"ESG reporting now",x:"New EU rules: sustainability report immediately. Your data is scattered.",o:[{l:"A · Data project",e:"All central.",coins:-2,fx:{comp:1,dur:1}},{l:"B · Report minimally",e:"On what's there.",coins:0,fx:{comp:-2}}]},
+ {id:"C4",t:"Contractor bankrupt",x:"Halfway through renovating 60 homes the main contractor goes bankrupt.",o:[{l:"A · Keep building",e:"Pricier party.",coins:-3,fx:{sat:1,dur:1}},{l:"B · Pause",e:"Re-tender.",coins:-1,fx:{sat:-2,dur:-1}}]},
+ {id:"C5",t:"Media storm over allocation",x:"A paper headlines your algorithm disadvantages groups. The alderman asks questions.",o:[{l:"A · Independent research",e:"Publish results.",coins:-1,fx:{comp:2}},{l:"B · Defend",e:"With a press release.",coins:0,fx:{sat:-2,comp:-1}}]},
+ {id:"C6",t:"Landlord levy 2.0",x:"The state unexpectedly announces a new levy on social rental homes.",o:[{l:"A · Cut & explain",e:"Trim something, explain it.",coins:-3,fx:{comp:1}},{l:"B · Cut investments",e:"Sacrifice sustainability.",coins:-1,fx:{dur:-2}}]}
 ];
-const SHOCK_EN={id:"S",t:"Structural defects",x:"During an inspection the galleries of a 1960s block turn out to be structurally unsafe. Thirty homes need immediate repair. Delay puts residents' safety at risk.",o:[{l:"A · Repair immediately from own funds",e:"",coins:-4,fx:{}},{l:"B · A guaranteed loan via the WSW",e:"Costs 2 coins now and 1 coin interest in quarter 4.",coins:-2,fx:{},note:"Note: 1 coin interest in quarter 4."},{l:"C · Phase the repair, partly close the galleries",e:"",coins:-2,fx:{sat:-2,comp:-2}}]};
-
-/* ---- Chance cards (mazzel/pech) ---- */
+const SHOCK_NL={id:"S",t:"Constructieve gebreken",x:"De galerijen van een jaren-60-flat blijken onveilig. Dertig woningen hebben per direct herstel nodig.",o:[{l:"A · Direct herstellen",e:"Uit eigen middelen.",coins:-4,fx:{}},{l:"B · Geborgde lening (WSW)",e:"Kost nu 2 munten.",coins:-2,fx:{comp:1}},{l:"C · Gefaseerd",e:"Galerijen deels afsluiten.",coins:-2,fx:{sat:-2,comp:-2}}]};
+const SHOCK_EN={id:"S",t:"Structural defects",x:"The galleries of a 1960s block turn out unsafe. Thirty homes need immediate repair.",o:[{l:"A · Repair now",e:"From own funds.",coins:-4,fx:{}},{l:"B · Guaranteed loan (WSW)",e:"Costs 2 coins now.",coins:-2,fx:{comp:1}},{l:"C · Phased",e:"Partly close galleries.",coins:-2,fx:{sat:-2,comp:-2}}]};
 const CHANCE_NL=[
-  {id:"K1",good:true,t:"Snelle verhuur",x:"Een leegstaande woning is razendsnel opnieuw verhuurd.",coins:2,fx:{}},
-  {id:"K2",good:true,t:"Subsidie eerder binnen",x:"Een toegekende subsidie wordt eerder uitgekeerd.",coins:1,fx:{dur:1}},
-  {id:"K3",good:true,t:"Lovend huurderspanel",x:"Het huurderspanel is lovend in de lokale media.",coins:0,fx:{sat:2}},
-  {id:"K4",good:true,t:"Meevallende aanbesteding",x:"Een aanbesteding pakt goedkoper uit dan gedacht.",coins:2,fx:{}},
-  {id:"K5",good:true,t:"Schone audit",x:"Een controle levert geen enkele bevinding op.",coins:0,fx:{comp:2}},
-  {id:"K6",good:true,t:"Vrijwilligers in de wijk",x:"Bewoners knappen samen de binnentuin op.",coins:0,fx:{sat:1}},
-  {id:"K7",good:true,t:"Collectieve energiedeal",x:"Een gezamenlijke energiedeal verlaagt de lasten.",coins:1,fx:{dur:1}},
-  {id:"K8",good:false,t:"Onverwachte lekkage",x:"Een leiding breekt; snel herstel is nodig.",coins:-1,fx:{sat:-1}},
-  {id:"K9",good:false,t:"ICT-storing",x:"Een systeemstoring legt de administratie even plat.",coins:-1,fx:{comp:-1}},
-  {id:"K10",good:false,t:"Vandalisme",x:"Vernielingen in een portiek moeten worden hersteld.",coins:-1,fx:{sat:-1}},
-  {id:"K11",good:false,t:"Hogere onderhoudskosten",x:"De onderhoudskosten vallen fors tegen.",coins:-2,fx:{}},
-  {id:"K12",good:false,t:"Kritisch krantenartikel",x:"Een kritisch artikel zet jullie imago onder druk.",coins:0,fx:{sat:-1,comp:-1}},
-  {id:"K13",good:false,t:"Uitgestelde renovatie",x:"Een renovatie loopt vertraging op.",coins:0,fx:{dur:-1,sat:-1}},
-  {id:"K14",good:false,t:"Naheffing",x:"Een onverwachte naheffing komt binnen.",coins:-2,fx:{}}
+ {id:"K1",good:true,t:"Snelle verhuur",x:"Een woning is razendsnel opnieuw verhuurd.",coins:2,fx:{}},
+ {id:"K2",good:true,t:"Subsidie eerder binnen",x:"Een subsidie wordt eerder uitgekeerd.",coins:1,fx:{dur:1}},
+ {id:"K3",good:true,t:"Lovend huurderspanel",x:"Het huurderspanel is lovend in de media.",coins:0,fx:{sat:2}},
+ {id:"K4",good:true,t:"Meevallende aanbesteding",x:"Een aanbesteding pakt goedkoper uit.",coins:2,fx:{}},
+ {id:"K5",good:true,t:"Schone audit",x:"Een controle levert geen bevinding op.",coins:0,fx:{comp:2}},
+ {id:"K6",good:true,t:"Vrijwilligers in de wijk",x:"Bewoners knappen de binnentuin op.",coins:0,fx:{sat:1}},
+ {id:"K7",good:true,t:"Energiedeal",x:"Een collectieve energiedeal verlaagt de lasten.",coins:1,fx:{dur:1}},
+ {id:"K8",good:false,t:"Onverwachte lekkage",x:"Een leiding breekt; snel herstel nodig.",coins:-1,fx:{sat:-1}},
+ {id:"K9",good:false,t:"ICT-storing",x:"Een storing legt de administratie plat.",coins:-1,fx:{comp:-1}},
+ {id:"K10",good:false,t:"Vandalisme",x:"Vernielingen in een portiek moeten worden hersteld.",coins:-1,fx:{sat:-1}},
+ {id:"K11",good:false,t:"Hogere onderhoudskosten",x:"De onderhoudskosten vallen tegen.",coins:-2,fx:{}},
+ {id:"K12",good:false,t:"Kritisch krantenartikel",x:"Een kritisch artikel zet jullie imago onder druk.",coins:0,fx:{sat:-1,comp:-1}},
+ {id:"K13",good:false,t:"Uitgestelde renovatie",x:"Een renovatie loopt vertraging op.",coins:0,fx:{dur:-1,sat:-1}},
+ {id:"K14",good:false,t:"Naheffing",x:"Een onverwachte naheffing komt binnen.",coins:-2,fx:{}}
 ];
 const CHANCE_EN=[
-  {id:"K1",good:true,t:"Quick re-let",x:"A vacant home is re-let remarkably fast.",coins:2,fx:{}},
-  {id:"K2",good:true,t:"Subsidy arrives early",x:"An awarded subsidy is paid out sooner.",coins:1,fx:{dur:1}},
-  {id:"K3",good:true,t:"Glowing tenant panel",x:"The tenant panel praises you in local media.",coins:0,fx:{sat:2}},
-  {id:"K4",good:true,t:"Favourable tender",x:"A tender comes in cheaper than expected.",coins:2,fx:{}},
-  {id:"K5",good:true,t:"Clean audit",x:"An inspection finds nothing to report.",coins:0,fx:{comp:2}},
-  {id:"K6",good:true,t:"Neighbourhood volunteers",x:"Residents fix up the courtyard together.",coins:0,fx:{sat:1}},
-  {id:"K7",good:true,t:"Collective energy deal",x:"A collective energy deal lowers costs.",coins:1,fx:{dur:1}},
-  {id:"K8",good:false,t:"Unexpected leak",x:"A pipe bursts; a quick repair is needed.",coins:-1,fx:{sat:-1}},
-  {id:"K9",good:false,t:"IT outage",x:"A system outage briefly halts the admin.",coins:-1,fx:{comp:-1}},
-  {id:"K10",good:false,t:"Vandalism",x:"Damage in a stairwell has to be repaired.",coins:-1,fx:{sat:-1}},
-  {id:"K11",good:false,t:"Higher maintenance costs",x:"Maintenance costs overshoot badly.",coins:-2,fx:{}},
-  {id:"K12",good:false,t:"Critical article",x:"A critical article pressures your image.",coins:0,fx:{sat:-1,comp:-1}},
-  {id:"K13",good:false,t:"Delayed renovation",x:"A renovation runs into delays.",coins:0,fx:{dur:-1,sat:-1}},
-  {id:"K14",good:false,t:"Extra tax bill",x:"An unexpected additional levy arrives.",coins:-2,fx:{}}
+ {id:"K1",good:true,t:"Quick re-let",x:"A home is re-let remarkably fast.",coins:2,fx:{}},
+ {id:"K2",good:true,t:"Subsidy early",x:"A subsidy is paid out sooner.",coins:1,fx:{dur:1}},
+ {id:"K3",good:true,t:"Glowing tenant panel",x:"The tenant panel praises you in the media.",coins:0,fx:{sat:2}},
+ {id:"K4",good:true,t:"Favourable tender",x:"A tender comes in cheaper.",coins:2,fx:{}},
+ {id:"K5",good:true,t:"Clean audit",x:"An inspection finds nothing.",coins:0,fx:{comp:2}},
+ {id:"K6",good:true,t:"Volunteers",x:"Residents fix up the courtyard.",coins:0,fx:{sat:1}},
+ {id:"K7",good:true,t:"Energy deal",x:"A collective energy deal lowers costs.",coins:1,fx:{dur:1}},
+ {id:"K8",good:false,t:"Unexpected leak",x:"A pipe bursts; quick repair needed.",coins:-1,fx:{sat:-1}},
+ {id:"K9",good:false,t:"IT outage",x:"An outage halts the admin.",coins:-1,fx:{comp:-1}},
+ {id:"K10",good:false,t:"Vandalism",x:"Damage in a stairwell must be repaired.",coins:-1,fx:{sat:-1}},
+ {id:"K11",good:false,t:"Higher maintenance",x:"Maintenance costs overshoot.",coins:-2,fx:{}},
+ {id:"K12",good:false,t:"Critical article",x:"A critical article pressures your image.",coins:0,fx:{sat:-1,comp:-1}},
+ {id:"K13",good:false,t:"Delayed renovation",x:"A renovation runs into delays.",coins:0,fx:{dur:-1,sat:-1}},
+ {id:"K14",good:false,t:"Extra tax bill",x:"An unexpected levy arrives.",coins:-2,fx:{}}
 ];
-const CONTENT={nl:{scenario:idx(SCEN_NL),journey:idx(JOUR_NL),crisis:idx(CRIS_NL),shock:{S:SHOCK_NL},chance:idx(CHANCE_NL)},
-               en:{scenario:idx(SCEN_EN),journey:idx(JOUR_EN),crisis:idx(CRIS_EN),shock:{S:SHOCK_EN},chance:idx(CHANCE_EN)}};
-function idx(arr){return Object.fromEntries(arr.map(o=>[o.id,o]));}
-const CHANCE_IDS=CHANCE_NL.map(c=>c.id);
+function idx(a){return Object.fromEntries(a.map(o=>[o.id,o]));}
+const CONTENT={nl:{scenario:idx(SCEN_NL),journey:idx(JOUR_NL),crisis:idx(CRIS_NL),shock:{S:SHOCK_NL},chance:idx(CHANCE_NL)},en:{scenario:idx(SCEN_EN),journey:idx(JOUR_EN),crisis:idx(CRIS_EN),shock:{S:SHOCK_EN},chance:idx(CHANCE_EN)}};
 const TEAM_COLORS=["#1F5AFF","#FF9000","#2FBF71","#8B5CF6","#E4572E","#0EA5B5"];
-
+const POOL_SRC={scenario:["A","B","C","D","E"],action:["J1","J2","J3","J4","J5","J6","J7","J8","J9","J10","J11","J12","C1","C2","C3","C4","C5","C6"]};
+const ROUNDS=[
+ {id:"intro",type:"scenario",income:0,chance:false},
+ {id:"q1",type:"action",income:0,chance:true},
+ {id:"q2",type:"action",income:5,chance:true},
+ {id:"q3",type:"action",income:5,chance:true},
+ {id:"shock",type:"shock",income:0,chance:false},
+ {id:"q4",type:"action",income:5,chance:true}
+];
 const T={
- nl:{sub_f:"Digitaal spelbord · spelleider",sub_p:"Speler · kamer ",room:"Kamer",copy:"Join-link kopiëren",copied:"Gekopieerd ✓",newgame:"Nieuw spel",
-  confirm:"Nieuw spel starten? De huidige stand wordt gewist.",setupH:"Teams instellen",setupP:"Elk team is het managementteam van een fictieve corporatie met 500 woningen. Meters starten op 10 (schaal 0–20), startbudget is 12 munten plus de bonus uit de kenniscompetitie (0–4).",
-  tname:"Teamnaam",qbonus:"Quizbonus (0–4)",remove:"Verwijderen",addteam:"+ Team toevoegen",startgame:"Spel starten →",teams:"Teams",
-  inc5:"+5 munten huurinkomsten",inc3:"+3 (na cyberaanval)",distributed:"✓ uitgedeeld",mcoin:"− munt",pcoin:"+ munt",score:"Score",choice:"Keuze:",change:"↺ wijzig",
-  cardN:"Kaart",cards:"kaarten",drawOne:"🃏 Trek een kaart",drawNext:"🃏 Trek volgende kaart",left1:"Nog ",leftDeck:" in het potje",card1:"kaart",cardN2:"kaarten",allDrawn:"Alle kaarten getrokken.",allRound:"Alle kaarten van deze ronde getrokken.",
-  taskL:"Opdracht (1 min):",taskT:"wat doen jullie, en welke afdelingen zijn betrokken?",depts:"Betrokken afdelingen:",tension:"Spanningsveld:",bonusB:"Ken bonusmunten toe met de + munt-knop (max 2 per scenario).",chooseAB:"Elk team kiest hieronder A of B; kosten en effecten worden automatisch verwerkt.",nocost:"geen kosten",minusAll1:"−",minusAll2:" munt bij alle teams",
-  finalH:"Eindstand",finalP:"Score = som van de vier meters + de helft van de resterende munten (afgerond naar beneden). Elke meter onder de 5 kost 5 strafpunten (verscherpt toezicht van de Autoriteit woningcorporaties).",
-  kScen:"Scenario",kRev:"Achter de voordeur ·",kCris:"Crisis",kShock:"Budget shock",kJour:"Journey",foot:"Zig Grow · Talent Development — Behind the Front Door · digitaal spelbord. De voortgang wordt in deze browser bewaard.",footS:"Zig Grow · Talent Development",
+ nl:{sub:"Hoofdspelbord · spelleider",room:"Kamer",newgame:"Nieuw spel",copy:"Join-link",copied:"Gekopieerd ✓",confirm:"Nieuw spel starten? De stand wordt gewist.",
+  setupH:"Teams instellen",setupP:"Elk team bestuurt een fictieve corporatie met 500 woningen. Meters starten op 10 (0–20), budget op 12 munten + quizbonus (0–4). Teams zijn om de beurt aan zet.",
+  tname:"Teamnaam",qbonus:"Quizbonus (0–4)",remove:"Verwijderen",addteam:"+ Team toevoegen",startgame:"Spel starten →",stand:"Stand",
+  finalH:"Eindstand",finalP:"Score = som van de vier meters + helft van de resterende munten. Elke meter onder de 5 kost 5 strafpunten (Aw-toezicht).",
+  foot:"Zig Grow · Talent Development — Behind the Front Door · hoofdspelbord.",footS:"Zig Grow · Talent Development",
+  rounds:{intro:"Eerste indruk",q1:"Kwartaal 1",q2:"Kwartaal 2",q3:"Kwartaal 3",shock:"Budget shock",q4:"Kwartaal 4"},
+  roundhint:{intro:"Elk team krijgt om de beurt een situatie en kiest welke afdelingen erbij horen. Goede antwoorden leveren automatisch munten op.",
+   q1:"Elk team is om de beurt aan zet, trekt een eigen kaart en kiest A of B. Aan het eind trekt elk team een kanskaart.",
+   q2:"Huurinkomsten uitgedeeld (+5). Elk team is om de beurt aan zet. Aan het eind: kanskaart.",
+   q3:"Huurinkomsten uitgedeeld (+5). Elk team is om de beurt aan zet. Aan het eind: kanskaart.",
+   shock:"Eén gezamenlijke schokkaart: elk team is om de beurt aan zet en kiest zijn aanpak.",
+   q4:"Laatste kwartaal. Huurinkomsten uitgedeeld (+5). Aan het eind: kanskaart, dan de eindstand."},
+  beginRound:"Begin ronde →",income:"Huurinkomsten uitgedeeld: +{n} munten voor elk team.",
+  aanzet:"aan zet!",theirTurn:"is aan zet",waitTurn:"Wachten tot je aan de beurt bent",
+  opdracht:"De opdracht",chooseDeps:"Welke afdelingen zijn hierbij betrokken? Kies er drie of meer.",confirm2:"Bevestig",
+  chooseAB:"Kies jullie aanpak:",hostPickHint:"Kies namens dit team (of laat het team op hun eigen scherm kiezen).",
+  nextTurn:"Volgende beurt →",toChance:"Naar de kansronde →",nextRound:"Volgende ronde →",toScores:"Naar de eindstand →",
+  chanceH:"Kansronde",chanceHint:"Elk team trekt nu een kanskaart — mazzel of pech, met directe impact op de score.",drawChance:"🎲 Trek kanskaart",chanceDrawn:"Kanskaart getrokken",waitChance:"Wacht tot alle teams hun kanskaart hebben getrokken.",
+  quizResult:"Je koos {c} juiste afdelingen{w}. {p}",quizWrong:" en {w} onjuiste",quizPts:"+{n} munten!",quizNo:"Geen munten dit keer.",correctWas:"De juiste afdelingen:",tension:"Spanningsveld:",
+  chose:"Koos",noEff:"geen effect",resultTitle:"Resultaat",yourResult:"Jullie resultaat",
+  netLive:"● Live-join actief",netOff:"● Offline",pNetLive:"✓ Live-verbinding klaar — je kunt meedoen.",pNetOff:"⚠ Deze pagina heeft nog geen live-verbinding. Open de online-gehoste versie.",
   joinH:"Doe mee",joinSub:"Behind the Front Door — bestuur samen jullie corporatie.",roomcode:"Kamercode",yourname:"Jouw naam",teamw:"Team",joinbtn:"Meedoen →",
-  connecting:"Verbinden…",waitroom:"Wachten op de spelleider in kamer",checkcode:"Controleer de kamercode.",stillsetup:"De spelleider stelt het spel nog in. Je speelt zo mee met",discuss:"Overleg samen en kies:",youchose:"Jullie kozen",waitnext:"wacht op de volgende kaart.",done:"Klaar!",yourfinal:"Jullie eindscore:",seerank:"Bekijk de ranglijst op het scherm van de spelleider.",aw:"Aw-toezicht",netLive:"● Live-join actief",netOff:"● Offline — join niet actief",pNetLive:"✓ Live-verbinding klaar — spelers kunnen meedoen.",pNetOff:"⚠ Deze pagina heeft nog geen live-verbinding. Open de bijgewerkte, online-gehoste versie (met de Firebase-config erin).",standing:"Stand",drawChance:"Trek kanskaart",
-  youin:"Je bent binnen! 🎉",jwRoom:"kamer",waitstart:"Wachten tot de spelleider het spel start",jwBanner:"De live-verbinding met het spelbord wordt gekoppeld zodra de realtime-laag (Firebase) is ingesteld. Tot die tijd stuurt de spelleider het spel via het gedeelde scherm.",
-  phases:["Setup","Eerste indruk","Achter de voordeur","Kwartaal 1","Kwartaal 2","Kwartaal 3","Budget shock","Kwartaal 4","Eindstand"],
-  hints:{setup:"Stel de teams in en start het spel.",fase1:"Trek per beurt een scenariokaart. Teams noteren in 1 minuut: wat doen we, en welke afdelingen zijn betrokken? Nog geen metereffect.",fase2:"Trek de kaarten om te onthullen wat er achter de voordeur gebeurt. Ken bonusmunten toe met + munt: +1 bij drie of meer juiste afdelingen, +1 als het spanningsveld is benoemd (max 2 per scenario).",q1:"Trek de kaarten (drie journeys + één crisis, in willekeurige volgorde). Elk team kiest A of B onder zijn dashboard.",q2:"Deel eerst de huurinkomsten uit (+5). Trek daarna de kaarten van dit kwartaal.",q3:"Deel de huurinkomsten uit (+5, of +3 na een cyberaanval). Trek daarna de kaarten.",shock:"Trek de gezamenlijke schokkaart. Elk team kiest zijn optie.",q4:"Laatste kwartaal. Deel de inkomsten uit, trek de kaarten en ga daarna naar de eindstand.",scores:"Onthul de eindstand. Bespreek met elk team welke afwegingen het maakte en wat het liet vallen."}
- },
- en:{sub_f:"Digital game board · facilitator",sub_p:"Player · room ",room:"Room",copy:"Copy join link",copied:"Copied ✓",newgame:"New game",
-  confirm:"Start a new game? The current state will be cleared.",setupH:"Set up teams",setupP:"Each team is the management team of a fictional housing corporation with 500 homes. Meters start at 10 (scale 0–20); the starting budget is 12 coins plus the bonus from the knowledge quiz (0–4).",
-  tname:"Team name",qbonus:"Quiz bonus (0–4)",remove:"Remove",addteam:"+ Add team",startgame:"Start game →",teams:"Teams",
-  inc5:"+5 coins rent income",inc3:"+3 (after cyberattack)",distributed:"✓ distributed",mcoin:"− coin",pcoin:"+ coin",score:"Score",choice:"Choice:",change:"↺ change",
-  cardN:"Card",cards:"cards",drawOne:"🃏 Draw a card",drawNext:"🃏 Draw next card",left1:"",leftDeck:" left in the deck",card1:"card",cardN2:"cards",allDrawn:"All cards drawn.",allRound:"All cards for this round drawn.",
-  taskL:"Task (1 min):",taskT:"what do you do, and which departments are involved?",depts:"Departments involved:",tension:"Tension:",bonusB:"Award bonus coins with the + coin button (max 2 per scenario).",chooseAB:"Each team chooses A or B below; costs and effects are applied automatically.",nocost:"no cost",minusAll1:"−",minusAll2:" coins for all teams",
-  finalH:"Final standings",finalP:"Score = sum of the four meters + half of the remaining coins (rounded down). Each meter below 5 costs 5 penalty points (intensified supervision by the Housing Authority).",
-  kScen:"Scenario",kRev:"Behind the front door ·",kCris:"Crisis",kShock:"Budget shock",kJour:"Journey",foot:"Zig Grow · Talent Development — Behind the Front Door · digital game board. Progress is saved in this browser.",footS:"Zig Grow · Talent Development",
+  youin:"Je bent binnen! 🎉",jwRoom:"kamer",waitstart:"Wachten tot de spelleider het spel start",jwBanner:"De live-verbinding wordt gekoppeld zodra de realtime-laag is ingesteld.",
+  yourTurn:"JULLIE ZIJN AAN ZET!",done:"Klaar!",yourFinal:"Jullie eindscore:",seeBoard:"Bekijk het hoofdbord bij de spelleider."},
+ en:{sub:"Main board · facilitator",room:"Room",newgame:"New game",copy:"Join link",copied:"Copied ✓",confirm:"Start a new game? The state will be cleared.",
+  setupH:"Set up teams",setupP:"Each team runs a fictional housing corporation with 500 homes. Meters start at 10 (0–20), budget at 12 coins + quiz bonus (0–4). Teams take turns.",
+  tname:"Team name",qbonus:"Quiz bonus (0–4)",remove:"Remove",addteam:"+ Add team",startgame:"Start game →",stand:"Standings",
+  finalH:"Final standings",finalP:"Score = sum of the four meters + half of the remaining coins. Each meter below 5 costs 5 penalty points (Aw supervision).",
+  foot:"Zig Grow · Talent Development — Behind the Front Door · main board.",footS:"Zig Grow · Talent Development",
+  rounds:{intro:"First impression",q1:"Quarter 1",q2:"Quarter 2",q3:"Quarter 3",shock:"Budget shock",q4:"Quarter 4"},
+  roundhint:{intro:"Each team takes a turn with a situation and picks which departments are involved. Correct answers earn coins automatically.",
+   q1:"Each team takes a turn, draws its own card and picks A or B. At the end each team draws a chance card.",
+   q2:"Rent income distributed (+5). Each team takes a turn. At the end: a chance card.",
+   q3:"Rent income distributed (+5). Each team takes a turn. At the end: a chance card.",
+   shock:"One shared shock card: each team takes a turn and picks its approach.",
+   q4:"Final quarter. Rent income distributed (+5). At the end: a chance card, then the final standings."},
+  beginRound:"Begin round →",income:"Rent income distributed: +{n} coins for each team.",
+  aanzet:"it's your turn!",theirTurn:"is up",waitTurn:"Waiting for your turn",
+  opdracht:"The assignment",chooseDeps:"Which departments are involved? Pick three or more.",confirm2:"Confirm",
+  chooseAB:"Choose your approach:",hostPickHint:"Choose for this team (or let the team pick on their own screen).",
+  nextTurn:"Next turn →",toChance:"To the chance round →",nextRound:"Next round →",toScores:"To the final standings →",
+  chanceH:"Chance round",chanceHint:"Each team now draws a chance card — luck or bad luck, with direct impact on the score.",drawChance:"🎲 Draw chance card",chanceDrawn:"Chance card drawn",waitChance:"Wait until all teams have drawn their chance card.",
+  quizResult:"You picked {c} correct departments{w}. {p}",quizWrong:" and {w} wrong",quizPts:"+{n} coins!",quizNo:"No coins this time.",correctWas:"The correct departments:",tension:"Tension:",
+  chose:"Chose",noEff:"no effect",resultTitle:"Result",yourResult:"Your result",
+  netLive:"● Live join active",netOff:"● Offline",pNetLive:"✓ Live connection ready — you can join.",pNetOff:"⚠ This page has no live connection yet. Open the hosted version.",
   joinH:"Join",joinSub:"Behind the Front Door — steer your corporation together.",roomcode:"Room code",yourname:"Your name",teamw:"Team",joinbtn:"Join →",
-  connecting:"Connecting…",waitroom:"Waiting for the facilitator in room",checkcode:"Check the room code.",stillsetup:"The facilitator is still setting up. You'll play with",discuss:"Discuss together and choose:",youchose:"You chose",waitnext:"wait for the next card.",done:"Done!",yourfinal:"Your final score:",seerank:"See the ranking on the facilitator's screen.",aw:"Aw supervision",netLive:"● Live join active",netOff:"● Offline — join not active",pNetLive:"✓ Live connection ready — players can join.",pNetOff:"⚠ This page has no live connection yet. Open the updated, hosted version (with the Firebase config in it).",standing:"Standings",drawChance:"Draw a chance card",
-  youin:"You're in! 🎉",jwRoom:"room",waitstart:"Waiting for the facilitator to start the game",jwBanner:"The live connection to the board is set up once the realtime layer (Firebase) is configured. Until then the facilitator drives the game via the shared screen.",
-  phases:["Setup","First impression","Behind the front door","Quarter 1","Quarter 2","Quarter 3","Budget shock","Quarter 4","Final standings"],
-  hints:{setup:"Set up the teams and start the game.",fase1:"Draw a scenario card each turn. Teams note in 1 minute: what do we do, and which departments are involved? No meter effect yet.",fase2:"Draw the cards to reveal what happens behind the front door. Award bonus coins with + coin: +1 for three or more correct departments, +1 if the tension was named (max 2 per scenario).",q1:"Draw the cards (three journeys + one crisis, in random order). Each team chooses A or B below its dashboard.",q2:"First distribute the rent income (+5). Then draw this quarter's cards.",q3:"Distribute the rent income (+5, or +3 after a cyberattack). Then draw the cards.",shock:"Draw the shared shock card. Each team chooses its option.",q4:"Final quarter. Distribute the income, draw the cards, then go to the final standings.",scores:"Reveal the final standings. Discuss with each team what trade-offs it made and what it let go."}
- }
+  youin:"You're in! 🎉",jwRoom:"room",waitstart:"Waiting for the facilitator to start",jwBanner:"The live connection is set up once the realtime layer is configured.",
+  yourTurn:"IT'S YOUR TURN!",done:"Done!",yourFinal:"Your final score:",seeBoard:"See the main board at the facilitator."}
 };
-const PHASE_IDS=["setup","fase1","fase2","q1","q2","q3","q4","shock","scores"];
-const PHASES=[{id:"setup",n:""},{id:"fase1",n:"1"},{id:"fase2",n:"2"},{id:"q1",n:"3"},{id:"q2",n:"3"},{id:"q3",n:"3"},{id:"shock",n:"4"},{id:"q4",n:"3"},{id:"scores",n:"5"}];
-const PHASE_ORDER_FOR_LABEL={setup:0,fase1:1,fase2:2,q1:3,q2:4,q3:5,shock:6,q4:7,scores:8};
-const QUARTERS={q1:["J1","J2","J3"],q2:["J4","J5","J6"],q3:["J7","J8","J9"],q4:["J10","J11","J12"]};
-const DRAW_PHASES=["fase1","fase2","q1","q2","q3","q4","shock"];
 
-/* ---------------- helpers ---------------- */
-const LS="bftd_state_v3";
-let state=null, hostLastCard=null;
+/* ============ state & helpers ============ */
+const LS="bftd_v5";
+let state=null,hostTurnKey=null,SOUND=true,_actx=null;
 function L(){return (state&&state.lang)||"nl";}
 function TT(k){return T[L()][k];}
-function met(){return MET[L()];}
-function phaseLabel(id){return T[L()].phases[PHASE_ORDER_FOR_LABEL[id]];}
-function hint(p){return T[L()].hints[p]||"";}
-function freshState(){return {lang:"nl",sound:true,phase:"setup",room:randCode(),setup:[{name:"Team 1",bonus:0},{name:"Team 2",bonus:0},{name:"Team 3",bonus:0}],teams:[],decks:{},drawn:{},usedCrises:[],choices:{},batches:{},showEffects:false,chance:{}};}
+function tpl(s,o){return String(s).replace(/\{(\w+)\}/g,(m,k)=>o[k]!=null?o[k]:"");}
+function met(l){return MET[l||L()];}
+function dep(i,l){return DEPTS[i][l||L()];}
+function curContent(){return CONTENT[L()];}
+function freshState(){return {lang:"nl",sound:true,showEffects:false,room:randCode(),phase:"setup",setup:[{name:"Team 1",bonus:0},{name:"Team 2",bonus:0},{name:"Team 3",bonus:0}],teams:[],order:[],round:0,turnIdx:0,stage:"roundintro",resolved:false,dealt:{},pool:{},incomeDone:{},chance:{},turnResult:null,choiceRec:null};}
 function randCode(){const a="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";let s="";for(let i=0;i<4;i++)s+=a[Math.floor(Math.random()*a.length)];return s;}
-function shuffle(arr){const a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 function save(){try{localStorage.setItem(LS,JSON.stringify(state));}catch(e){}}
 function load(){try{const r=localStorage.getItem(LS);if(r)return JSON.parse(r);}catch(e){}return null;}
-const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>Array.from(r.querySelectorAll(s));
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 function teamById(id){return state.teams.find(t=>t.id===id);}
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
 function logoSVG(){return document.getElementById("logoTpl").innerHTML;}
+function tcolor(id){return TEAM_COLORS[(id-1)%TEAM_COLORS.length];}
 function score(t){const base=t.sat+t.fin+t.comp+t.dur+Math.floor(t.coins/2);const flags=["sat","fin","comp","dur"].filter(k=>t[k]<5).length;return {total:base-flags*5,penalty:flags*5,flags};}
-function curContent(){return CONTENT[L()];}
-/* ---- board-game sounds (Web Audio, no files) ---- */
-let SOUND=true,_actx=null;
 function sfx(kind){if(!SOUND)return;try{_actx=_actx||new (window.AudioContext||window.webkitAudioContext)();const c=_actx,t=c.currentTime;
-  if(kind==="draw"){const o=c.createOscillator(),g=c.createGain();o.type="triangle";o.frequency.setValueAtTime(200,t);o.frequency.exponentialRampToValueAtTime(680,t+.18);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.11,t+.03);g.gain.exponentialRampToValueAtTime(.0001,t+.3);o.connect(g).connect(c.destination);o.start(t);o.stop(t+.32);}
-  else if(kind==="click"){const o=c.createOscillator(),g=c.createGain();o.type="square";o.frequency.setValueAtTime(520,t);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.07,t+.008);g.gain.exponentialRampToValueAtTime(.0001,t+.12);o.connect(g).connect(c.destination);o.start(t);o.stop(t+.13);}
-  else if(kind==="coin"){[880,1320].forEach((f,i)=>{const o=c.createOscillator(),g=c.createGain(),tt=t+i*.07;o.type="sine";o.frequency.setValueAtTime(f,tt);g.gain.setValueAtTime(.0001,tt);g.gain.exponentialRampToValueAtTime(.09,tt+.01);g.gain.exponentialRampToValueAtTime(.0001,tt+.2);o.connect(g).connect(c.destination);o.start(tt);o.stop(tt+.22);});}
+ if(kind==="draw"){const o=c.createOscillator(),g=c.createGain();o.type="triangle";o.frequency.setValueAtTime(200,t);o.frequency.exponentialRampToValueAtTime(680,t+.18);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.11,t+.03);g.gain.exponentialRampToValueAtTime(.0001,t+.3);o.connect(g).connect(c.destination);o.start(t);o.stop(t+.32);}
+ else if(kind==="click"){const o=c.createOscillator(),g=c.createGain();o.type="square";o.frequency.setValueAtTime(520,t);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.07,t+.008);g.gain.exponentialRampToValueAtTime(.0001,t+.12);o.connect(g).connect(c.destination);o.start(t);o.stop(t+.13);}
+ else if(kind==="coin"){[880,1320].forEach((f,i)=>{const o=c.createOscillator(),g=c.createGain(),tt=t+i*.07;o.type="sine";o.frequency.setValueAtTime(f,tt);g.gain.setValueAtTime(.0001,tt);g.gain.exponentialRampToValueAtTime(.09,tt+.01);g.gain.exponentialRampToValueAtTime(.0001,tt+.2);o.connect(g).connect(c.destination);o.start(tt);o.stop(tt+.22);});}
 }catch(e){}}
 
-/* ---------------- Deck ---------------- */
-function pickCrisis(){const avail=CRIS_NL.map(c=>c.id).filter(id=>!state.usedCrises.includes(id));const pool=avail.length?avail:CRIS_NL.map(c=>c.id);const id=pool[Math.floor(Math.random()*pool.length)];state.usedCrises.push(id);return id;}
-function ensureDeck(phase){
-  if(state.decks[phase])return;
-  if(phase==="fase1")state.decks.fase1=shuffle(SCEN_NL.map(s=>({t:"scenario",id:s.id})));
-  else if(phase==="fase2"){const base=state.decks.fase1||SCEN_NL.map(s=>({t:"scenario",id:s.id}));state.decks.fase2=base.map(e=>({t:"reveal",id:e.id}));}
-  else if(phase==="shock")state.decks.shock=[{t:"shock",id:"S"}];
-  else if(QUARTERS[phase]){const jr=shuffle(QUARTERS[phase].map(id=>({t:"journey",id})));jr.push({t:"crisis",id:pickCrisis()});state.decks[phase]=jr;}
-  if(state.drawn[phase]==null)state.drawn[phase]=0;
+/* ============ deck / turn engine ============ */
+function popPool(name){if(!state.pool[name]||!state.pool[name].length)state.pool[name]=shuffle(POOL_SRC[name].slice());return state.pool[name].shift();}
+function dealCard(round,ti){
+  const key=round+"-"+ti;if(state.dealt[key])return state.dealt[key];
+  const type=ROUNDS[round].type;let card;
+  if(type==="scenario"){const id=popPool("scenario");const sc=CONTENT.nl.scenario[id];const correct=sc.dep.slice();const distract=shuffle(DEPTS.map((d,i)=>i).filter(i=>!correct.includes(i))).slice(0,Math.max(0,8-correct.length));card={type,id,opts:shuffle(correct.concat(distract)),correct};}
+  else if(type==="shock")card={type,id:"S"};
+  else card={type,id:popPool("action")};
+  state.dealt[key]=card;return card;
 }
-function currentDeck(){ensureDeck(state.phase);return state.decks[state.phase]||[];}
-function drawnCount(){return state.drawn[state.phase]||0;}
-function buildCard(entry,phase){
-  if(!entry)return null;
-  const kind=entry.t, d=curContent()[kind==="reveal"?"scenario":kind][entry.id];
-  const key=phase+"-"+entry.id, cat="assets/"+(CAT[entry.id]||"buurt")+".jpg";
-  if(kind==="scenario")return {key,kind,cat,data:d};
-  if(kind==="reveal")return {key,kind:"reveal",cat,data:d};
-  return {key,kind,cat,data:d,options:d.o};
+function cardData(card){const c=curContent();if(card.type==="scenario")return c.scenario[card.id];if(card.type==="shock")return c.shock.S;return card.id[0]==="J"?c.journey[card.id]:c.crisis[card.id];}
+function curCard(){return state.dealt[state.round+"-"+state.turnIdx];}
+function curTeam(){return state.order.length?teamById(state.order[state.turnIdx]):null;}
+function startGame(){
+  state.teams=state.setup.map((s,i)=>({id:i+1,name:s.name||("Team "+(i+1)),sat:10,fin:10,comp:10,dur:10,coins:12+(parseInt(s.bonus)||0)}));
+  state.order=state.teams.map(t=>t.id);state.phase="playing";state.dealt={};state.pool={};state.incomeDone={};
+  enterRound(0);
 }
-function activeCard(){const deck=currentDeck(),n=drawnCount();if(n<=0||!deck.length)return null;return buildCard(deck[Math.min(n,deck.length)-1],state.phase);}
-function doDraw(){ensureDeck(state.phase);const deck=state.decks[state.phase]||[];const n=state.drawn[state.phase]||0;if(n>=deck.length)return false;state.drawn[state.phase]=n+1;render();return true;}
-function drawChance(phase,teamId){
-  if(!QUARTERS[phase])return false;
-  state.chance[phase]=state.chance[phase]||{};
-  if(state.chance[phase][teamId]!=null)return false;
-  const t=teamById(teamId);if(!t)return false;
-  const id=CHANCE_IDS[Math.floor(Math.random()*CHANCE_IDS.length)];const card=CHANCE_NL.find(c=>c.id===id);
+function enterRound(r){
+  state.round=r;state.stage="roundintro";state.turnIdx=0;state.resolved=false;state.turnResult=null;state.choiceRec=null;state.chance={};
+  const inc=ROUNDS[r].income||0;if(inc>0&&!state.incomeDone[r]){state.order.forEach(id=>{teamById(id).coins+=inc;});state.incomeDone[r]=true;}
+  render();
+}
+function beginRound(){state.stage="turn";state.turnIdx=0;state.resolved=false;state.turnResult=null;state.choiceRec=null;dealCard(state.round,0);sfx("draw");render();}
+function resolveChoice(teamId,opt){
+  if(state.resolved)return;const card=curCard();if(!card||card.type==="scenario")return;const d=cardData(card),o=d.o[opt],t=teamById(teamId);if(!o)return;
+  t.coins=Math.max(0,t.coins+o.coins);Object.keys(o.fx||{}).forEach(k=>{t[k]=clamp(t[k]+o.fx[k],0,20);});
+  state.choiceRec={opt};state.turnResult={kind:"choice",coins:o.coins,fx:o.fx,label:o.l};state.resolved=true;sfx("click");render();
+}
+function resolveQuiz(teamId,sel){
+  if(state.resolved)return;const card=curCard();if(!card||card.type!=="scenario")return;const t=teamById(teamId);
+  const correct=card.correct,cs=sel.filter(i=>correct.includes(i)).length,ws=sel.filter(i=>!correct.includes(i)).length;
+  let munt=0;if(cs>=3)munt+=1;if(cs>=3&&ws===0)munt+=1;t.coins+=munt;
+  state.turnResult={kind:"quiz",munt,cs,ws,correct};state.resolved=true;sfx(munt>0?"coin":"click");render();
+}
+function nextTurn(){
+  state.turnResult=null;state.choiceRec=null;
+  if(state.turnIdx<state.order.length-1){state.turnIdx++;state.resolved=false;dealCard(state.round,state.turnIdx);sfx("draw");render();}
+  else{if(ROUNDS[state.round].chance){state.stage="chance";render();}else nextRound();}
+}
+function drawChance(teamId){
+  if(state.stage!=="chance"||state.chance[teamId]!=null)return;const t=teamById(teamId);if(!t)return;
+  const card=CHANCE_NL[Math.floor(Math.random()*CHANCE_NL.length)];
   t.coins=Math.max(0,t.coins+card.coins);Object.keys(card.fx||{}).forEach(k=>{t[k]=clamp(t[k]+card.fx[k],0,20);});
-  state.chance[phase][teamId]=id;sfx(card.good?"coin":"click");render();return true;
+  state.chance[teamId]=card.id;sfx(card.good?"coin":"click");render();
 }
-function chanceCardFor(teamId){const id=(state.chance[state.phase]||{})[teamId];if(id==null)return null;return curContent().chance[id];}
-function chanceFxText(card){const Mn=met();const a=[];if(card.coins<0)a.push("🪙 −"+Math.abs(card.coins));if(card.coins>0)a.push("🪙 +"+card.coins);Object.keys(card.fx||{}).forEach(k=>a.push(Mn[k]+" "+(card.fx[k]>0?"+":"")+card.fx[k]));return a.join(" · ");}
+function allChanceDone(){return state.order.every(id=>state.chance[id]!=null);}
+function nextRound(){if(state.round>=ROUNDS.length-1){state.phase="scores";render();}else enterRound(state.round+1);}
 
-/* ---------------- Render ---------------- */
+/* ============ render: host ============ */
 function applyChrome(){
-  $("#brand").innerHTML=logoSVG()+'<div><h1>Behind the Front Door</h1><div class="sub">'+TT("sub_f")+'</div></div>';
+  $("#brand").innerHTML=logoSVG()+'<div><h1>Behind the Front Door</h1><div class="sub">'+TT("sub")+'</div></div>';
   $("#roomLbl").textContent=TT("room");$("#roomCode").textContent=state.room;
-  $("#langToggle").textContent=(L()==="nl"?"EN":"NL");
-  $("#copyJoin").textContent=TT("copy");$("#resetGame").textContent=TT("newgame");
-  $("#setupH").textContent=TT("setupH");$("#setupP").textContent=TT("setupP");
-  $("#addTeam").textContent=TT("addteam");$("#startGame").textContent=TT("startgame");
-  $("#scoresH").textContent=TT("finalH");$("#scoresP").textContent=TT("finalP");
-  $("#footNL").textContent=TT("foot");
-  const _live=fbReady();const _ns=$("#netStatus");if(_ns){_ns.className="netchip "+(_live?"live":"off");_ns.textContent=TT(_live?"netLive":"netOff");}
-  const _st=$("#soundToggle");if(_st)_st.textContent=SOUND?"🔊":"🔇";
-  const _rt=$("#raceTitle");if(_rt)_rt.textContent=TT("standing");
-  const _fx=$("#fxToggle");if(_fx)_fx.textContent=state.showEffects?"🙈":"👁";
-  document.documentElement.lang=L();
+  $("#langToggle").textContent=(L()==="nl"?"EN":"NL");$("#resetGame").textContent=TT("newgame");$("#copyJoin").textContent=TT("copy");
+  $("#setupH").textContent=TT("setupH");$("#setupP").textContent=TT("setupP");$("#addTeam").textContent=TT("addteam");$("#startGame").textContent=TT("startgame");
+  $("#scoresH").textContent=TT("finalH");$("#scoresP").textContent=TT("finalP");$("#footNL").textContent=TT("foot");$("#standH").textContent=TT("stand");
+  const live=fbReady();const ns=$("#netStatus");ns.className="netchip "+(live?"live":"off");ns.textContent=live?TT("netLive"):TT("netOff");
+  $("#soundToggle").textContent=SOUND?"🔊":"🔇";$("#fxToggle").textContent=state.showEffects?"🙈":"👁";document.documentElement.lang=L();
 }
-function renderPhaseNav(){const nav=$("#phaseNav");nav.innerHTML="";PHASES.forEach(p=>{const b=document.createElement("button");b.className="phase"+(state.phase===p.id?" active":"");b.dataset.phase=p.id;b.innerHTML=(p.n?'<span class="n">'+p.n+'</span>':'')+esc(phaseLabel(p.id));nav.appendChild(b);});$("#phaseHint").textContent=hint(state.phase);}
 function show(v){["setup","play","scores"].forEach(x=>$("#view-"+x).classList.add("hide"));$("#view-"+v).classList.remove("hide");}
 function render(){
   applyChrome();
-  renderPhaseNav();
-  if(state.phase==="setup"){show("setup");renderSetup();}
-  else if(state.phase==="scores"){show("scores");renderScores();}
-  else {show("play");renderRace();renderTeams();renderCards();}
-  save();
-  if(typeof NET!=="undefined"&&NET.publishIfHost)NET.publishIfHost();
+  if(state.phase==="setup"){renderRoundBar(true);show("setup");renderSetup();}
+  else if(state.phase==="scores"){renderRoundBar(false);show("scores");renderScores();}
+  else{renderRoundBar(false);show("play");renderStand();renderMini();renderStage();}
+  save();if(typeof NET!=="undefined"&&NET.publishIfHost)NET.publishIfHost();
 }
-function renderSetup(){const host=$("#setupRows");host.innerHTML="";state.setup.forEach((s,i)=>{const row=document.createElement("div");row.className="setup-row";row.innerHTML='<div><label class="fld">'+TT("tname")+'</label><input type="text" data-setup="name" data-i="'+i+'" value="'+esc(s.name)+'" style="width:100%"></div><div><label class="fld">'+TT("qbonus")+'</label><input type="number" min="0" max="4" data-setup="bonus" data-i="'+i+'" value="'+s.bonus+'" style="width:100%"></div><div><button class="btn soft sm" data-delteam="'+i+'" '+(state.setup.length<=1?"disabled":"")+'>'+TT("remove")+'</button></div>';host.appendChild(row);});}
-function renderRace(){
-  const host=$("#raceBoard");if(!host)return;
-  const ranked=state.teams.map(t=>({t,s:score(t).total})).sort((a,b)=>b.s-a.s);
-  if(!ranked.length){host.innerHTML='<div class="hint" style="margin:0">—</div>';return;}
-  const scores=ranked.map(r=>r.s);const lo=Math.min(20,...scores),hi=Math.max(80,...scores);
-  host.innerHTML=ranked.map((r,i)=>{
-    const col=TEAM_COLORS[(r.t.id-1)%TEAM_COLORS.length];
-    const pos=hi>lo?clamp((r.s-lo)/(hi-lo)*100,4,94):50;
-    return '<div class="lane"><div class="rankn">'+(i===0?"🏆":(i+1))+'</div><div class="lname" style="color:'+col+'">'+esc(r.t.name)+'</div>'+
-      '<div class="track"><span class="finish">🏁</span><span class="pawn" style="left:'+pos+'%;background:'+col+'">'+r.t.id+'</span></div>'+
-      '<div class="lscore">'+r.s+'</div></div>';
-  }).join("");
+function renderRoundBar(setup){
+  const bar=$("#roundBar");
+  if(setup||state.phase==="scores"){bar.innerHTML="";$("#roundHint").textContent="";return;}
+  const rid=ROUNDS[state.round].id;
+  bar.innerHTML='<span class="rpill"><span class="n">'+(state.round+1)+'/'+ROUNDS.length+'</span>'+esc(TT("rounds")[rid])+'</span>';
+  $("#roundHint").textContent=TT("roundhint")[rid];
 }
-function chanceBlock(t){
-  if(!QUARTERS[state.phase])return "";
-  const cc=chanceCardFor(t.id);
-  if(cc)return '<div class="chancecard '+(cc.good?"good":"bad")+'"><span class="emoji">'+(cc.good?"🍀":"⚡")+'</span><div class="ctt">🎲 '+esc(cc.t)+'</div><div class="cxx">'+esc(cc.x)+'</div><div class="cff">'+chanceFxText(cc)+'</div></div>';
-  return '<button class="btn warn sm chancebtn" data-chance="'+t.id+'">🎲 '+TT("drawChance")+'</button>';
+function renderSetup(){const h=$("#setupRows");h.innerHTML="";state.setup.forEach((s,i)=>{const r=document.createElement("div");r.className="setup-row";r.innerHTML='<div><label class="fld">'+TT("tname")+'</label><input type="text" data-setup="name" data-i="'+i+'" value="'+esc(s.name)+'" style="width:100%"></div><div><label class="fld">'+TT("qbonus")+'</label><input type="number" min="0" max="4" data-setup="bonus" data-i="'+i+'" value="'+s.bonus+'" style="width:100%"></div><div><button class="btn soft sm" data-delteam="'+i+'" '+(state.setup.length<=1?"disabled":"")+'>'+TT("remove")+'</button></div>';h.appendChild(r);});}
+function renderStand(){
+  const host=$("#standBoard");const ranked=state.teams.map(t=>({t,s:score(t).total})).sort((a,b)=>b.s-a.s);
+  const sc=ranked.map(r=>r.s),lo=Math.min(20,...sc),hi=Math.max(80,...sc);const upId=(curTeam()&&state.stage==="turn")?curTeam().id:null;
+  host.innerHTML=ranked.map((r,i)=>{const col=tcolor(r.t.id);const pos=hi>lo?clamp((r.s-lo)/(hi-lo)*100,4,94):50;
+    return '<div class="lane'+(r.t.id===upId?" up":"")+'"><div class="rankn">'+(i===0?"🏆":(i+1))+'</div><div class="lname" style="color:'+col+'">'+esc(r.t.name)+'</div><div class="track"><span class="finish">🏁</span><span class="pawn" style="left:'+pos+'%;background:'+col+'">'+r.t.id+'</span></div><div class="lscore">'+r.s+'</div></div>';}).join("");
 }
-function renderTeams(){
-  $("#teamsTitle").textContent=phaseLabel(state.phase);
-  renderIncomeBar();
-  const wrap=$("#teamsWrap");wrap.innerHTML="";const card=activeCard(),Mn=met();
-  state.teams.forEach(t=>{
-    const sc=score(t),flagged=sc.flags>0;
-    const el=document.createElement("div");el.className="team"+(flagged?" flag":"");
-    let meters="";["sat","fin","comp","dur"].forEach(k=>{const v=t[k],red=v<5;meters+='<div class="meter"><div class="mlab"><span>'+Mn[k]+'</span><span class="v">'+v+'</span></div><div class="bar'+(red?" red":"")+'"><span style="width:'+(v/20*100)+'%"></span></div><div class="step"><button data-m="'+k+'" data-t="'+t.id+'" data-d="-1">−</button><button data-m="'+k+'" data-t="'+t.id+'" data-d="1">+</button></div></div>';});
-    let opts="";
-    if(card&&card.options){const ch=(state.choices[card.key]||{})[t.id];
-      if(ch!=null)opts='<div class="chosen">'+TT("choice")+' <b>'+esc(card.options[ch].l.split("·")[0].trim())+'</b> <button class="btn soft sm" data-undo="'+t.id+'" style="margin-inline-start:6px">'+TT("change")+'</button><span class="oe" style="display:block;margin-top:3px">'+optTagText(card.options[ch])+'</span></div>';
-      else opts='<div class="optrow">'+card.options.map((o,oi)=>'<button class="btn sm '+(oi===0?'':'soft')+'" data-choose="'+oi+'" data-t="'+t.id+'">'+esc(o.l.split("·")[0].trim())+'</button>').join("")+'</div>';
-    }
-    el.innerHTML='<div class="thead"><input class="tname" data-rename="'+t.id+'" value="'+esc(t.name)+'"><span class="coins">🪙 '+t.coins+'</span></div><div class="cstep"><button class="btn soft sm" data-coin="'+t.id+'" data-d="-1">'+TT("mcoin")+'</button><button class="btn soft sm" data-coin="'+t.id+'" data-d="1">'+TT("pcoin")+'</button></div>'+meters+'<div class="score"><span class="rd">'+TT("score")+' '+(flagged?'<span class="flagtag">Aw −'+sc.penalty+'</span>':'')+'</span><b>'+sc.total+'</b></div>'+opts+chanceBlock(t);
-    wrap.appendChild(el);
-  });
+function meterRow(k,v,Mn){return '<div class="mrow"><span class="ml">'+Mn[k]+'</span><span class="bar'+(v<5?" red":"")+'"><span style="width:'+(v/20*100)+'%"></span></span><span class="mv">'+v+'</span></div>';}
+function renderMini(){
+  const wrap=$("#teamMini");wrap.innerHTML="";const Mn=met();const upId=(curTeam()&&state.stage==="turn")?curTeam().id:null;
+  state.teams.forEach(t=>{const scv=score(t),col=tcolor(t.id);const ch=state.chance[t.id]?curContent().chance[state.chance[t.id]]:null;
+    let el='<div class="tmini'+(t.id===upId?" up":"")+'"><div class="th"><span class="tn"><span class="dot" style="background:'+col+'"></span>'+esc(t.name)+'</span><span class="coins">🪙 '+t.coins+'</span></div>'+
+      ["sat","fin","comp","dur"].map(k=>meterRow(k,t[k],Mn)).join("")+
+      '<div class="st"><span style="color:var(--muted)">'+TT("stand")+(scv.flags?' <span class="miniflag">Aw −'+scv.penalty+'</span>':'')+'</span><b>'+scv.total+'</b></div>'+
+      (ch?'<div class="minichance '+(ch.good?"good":"bad")+'">'+(ch.good?"🍀 ":"⚡ ")+esc(ch.t)+' — '+chFx(ch)+'</div>':'')+'</div>';
+    wrap.insertAdjacentHTML("beforeend",el);});
 }
-function renderIncomeBar(){const bar=$("#incomeBar");bar.innerHTML="";const q=state.phase;if(["q2","q3","q4"].includes(q)){const done=state.batches["inc-"+q+"-5"]||state.batches["inc-"+q+"-3"];bar.innerHTML='<button class="btn sm" data-income="5" '+(done?"disabled":"")+'>'+TT("inc5")+'</button><button class="btn soft sm" data-income="3" '+(done?"disabled":"")+'>'+TT("inc3")+'</button>'+(done?'<span class="rd" style="align-self:center;color:var(--muted)">'+TT("distributed")+'</span>':'');}}
-function fxTags(o){const Mn=met();let s="";if(o.coins<0)s+='<span class="tag pay">🪙 −'+Math.abs(o.coins)+'</span>';if(o.coins>0)s+='<span class="tag gain">🪙 +'+o.coins+'</span>';Object.keys(o.fx||{}).forEach(k=>{const v=o.fx[k];s+='<span class="tag '+(v>0?"up":"down")+'">'+Mn[k]+' '+(v>0?"+":"")+v+'</span>';});if(o.coins===0&&!Object.keys(o.fx||{}).length)s+='<span class="tag">'+TT("nocost")+'</span>';return s;}
-function kindLabel(c){const d=c.data;return c.kind==="scenario"?TT("kScen")+" "+d.id:c.kind==="reveal"?TT("kRev")+" "+d.id:c.kind==="crisis"?TT("kCris"):c.kind==="shock"?TT("kShock"):TT("kJour");}
-function cardInner(c,deal){
-  const d=c.data,cls="gc "+c.kind+(deal?" deal":"");
-  let head='<div class="'+cls+'"><div class="illo" style="background-image:url(\''+c.cat+'\')"><span class="kind">'+esc(kindLabel(c))+'</span></div><div class="body">';
-  if(c.kind==="scenario")return head+'<p class="ct">'+esc(d.t)+'</p><p class="cx">'+esc(d.x)+'</p><p class="meta"><b>'+TT("taskL")+'</b> '+TT("taskT")+'</p></div></div>';
-  if(c.kind==="reveal")return head+'<p class="ct">'+esc(d.t)+'</p><p class="meta"><b>'+TT("depts")+'</b> '+esc(d.afd)+'</p><p class="meta"><b>'+TT("tension")+'</b> '+esc(d.sp)+'</p><div class="banner">'+TT("bonusB")+'</div></div></div>';
-  let allbtn="";if(d.allTxt){const bk="all-"+c.key;allbtn='<div class="banner"><b>'+esc(d.allTxt)+'</b>'+(d.all!=null?'<div style="margin-top:10px"><button class="btn warn sm" data-allcost="'+d.all+'" data-batch="'+bk+'" '+(state.batches[bk]?"disabled":"")+'>'+TT("minusAll1")+d.all+TT("minusAll2")+(state.batches[bk]?' ✓':'')+'</button></div>':'')+'</div>';}
-  const opts=d.o.map(o=>'<div class="opt"><div class="ol">'+esc(o.l)+'</div>'+(o.e?'<div class="oe">'+esc(o.e)+'</div>':'')+(state.showEffects?'<div>'+fxTags(o)+'</div>':'')+(o.note&&state.showEffects?'<div class="oe" style="margin-top:6px">📣 '+esc(o.note)+'</div>':'')+'</div>').join("");
-  return head+'<p class="ct">'+esc(d.t)+'</p><p class="cx">'+esc(d.x)+'</p>'+allbtn+opts+'<p class="meta" style="margin-top:12px">'+TT("chooseAB")+'</p></div></div>';
+function tagFx(o){let s="";if(o.coins<0)s+='<span class="tag pay">🪙 −'+Math.abs(o.coins)+'</span>';if(o.coins>0)s+='<span class="tag gain">🪙 +'+o.coins+'</span>';Object.keys(o.fx||{}).forEach(k=>{const v=o.fx[k];s+='<span class="tag '+(v>0?"up":"down")+'">'+met()[k]+' '+(v>0?"+":"")+v+'</span>';});if(o.coins===0&&!Object.keys(o.fx||{}).length)s+='<span class="tag">'+TT("noEff")+'</span>';return s;}
+function chFx(card){const Mn=met();const a=[];if(card.coins<0)a.push("🪙 −"+Math.abs(card.coins));if(card.coins>0)a.push("🪙 +"+card.coins);Object.keys(card.fx||{}).forEach(k=>a.push(Mn[k]+" "+(card.fx[k]>0?"+":"")+card.fx[k]));return a.length?a.join(" · "):TT("noEff");}
+function cardHead(card){const d=cardData(card);const cat="assets/"+(CAT[card.id]||"buurt")+".jpg";const kl=card.type==="scenario"?TT("rounds").intro:card.type==="shock"?TT("rounds").shock:(card.id[0]==="J"?"Journey":"Crisis");
+  return '<div class="illo" style="background-image:url(\''+cat+'\')"><span class="kind">'+esc(kl)+'</span></div><div class="body"><p class="ct">'+esc(d.t)+'</p><p class="cx">'+esc(d.x)+'</p>';}
+function turnControls(card,role){
+  const d=cardData(card),pre=role==="host"?"data-hact":"data-pact",dep_="data-dep";
+  if(card.type==="scenario"){
+    const opts=card.opts.map(i=>'<label class="qopt"><input type="checkbox" '+dep_+'="'+i+'"> '+esc(dep(i))+'</label>').join("");
+    return '<p class="meta"><b>'+TT("chooseDeps")+'</b></p><div class="quiz">'+opts+'</div><button class="btn warn big" '+pre+'="quiz">'+TT("confirm2")+'</button>';
+  }
+  return '<p class="meta"><b>'+TT("chooseAB")+'</b></p><div class="pickbtns">'+d.o.map((o,i)=>'<button class="btn '+(i===0?"":"soft")+'" '+pre+'="choice" data-opt="'+i+'">'+esc(o.l)+(state.showEffects?' <span style="font-weight:400;opacity:.8">· '+tagFx(o)+'</span>':'')+'</button>').join("")+'</div>';
 }
-function leftText(rem){return TT("left1")+rem+" "+(rem===1?TT("card1"):TT("cardN2"))+TT("leftDeck");}
-function renderCards(){
-  const deck=currentDeck(),n=drawnCount(),host=$("#cardHost");
-  if(!DRAW_PHASES.includes(state.phase)){host.innerHTML="";$("#cardCount").textContent="";$("#phaseTip").textContent=hint(state.phase);return;}
-  const remaining=deck.length-n;
-  $("#cardCount").textContent=n>0?(TT("cardN")+" "+n+" / "+deck.length):(deck.length+" "+TT("cards"));
-  const card=activeCard();let html="";
-  if(card){const deal=(card.key!==hostLastCard);hostLastCard=card.key;html=cardInner(card,deal);html+='<div class="drawwrap">'+(remaining>0?'<button class="btn warn" data-draw="1">'+TT("drawNext")+' ('+remaining+')</button>':'<span class="rd" style="color:var(--muted)">'+TT("allRound")+'</span>')+'</div>';}
-  else {hostLastCard=null;html='<div class="deck" id="deckEl"><div class="deckstack"><div class="cardback"></div><div class="cardback"></div><div class="cardback"></div></div></div><div class="drawwrap"><div class="lead">'+(remaining>0?leftText(remaining):"")+'</div>'+(remaining>0?'<button class="btn warn big" data-draw="1">'+TT("drawOne")+'</button>':'<span class="rd" style="color:var(--muted)">'+TT("allDrawn")+'</span>')+'</div>';}
-  host.innerHTML=html;$("#phaseTip").textContent=hint(state.phase);
+function resultBox(card){
+  const d=cardData(card),tr=state.turnResult;if(!tr)return "";
+  if(tr.kind==="quiz"){const cls=tr.munt>0?"good":"neu";const wtxt=tr.ws>0?tpl(TT("quizWrong"),{w:tr.ws}):"";const ptxt=tr.munt>0?tpl(TT("quizPts"),{n:tr.munt}):TT("quizNo");
+    return '<div class="result '+cls+'"><div class="rh">'+TT("resultTitle")+'</div>'+tpl(TT("quizResult"),{c:tr.cs,w:wtxt,p:ptxt})+'<div class="meta" style="margin-top:8px"><b>'+TT("correctWas")+'</b> '+tr.correct.map(i=>esc(dep(i))).join(" · ")+'</div><div class="meta"><b>'+TT("tension")+'</b> '+esc(d.sp)+'</div></div>';}
+  const good=(tr.coins>0)||Object.values(tr.fx||{}).some(v=>v>0);const bad=(tr.coins<0)||Object.values(tr.fx||{}).some(v=>v<0);
+  return '<div class="result '+(good&&!bad?"good":bad&&!good?"bad":"neu")+'"><div class="rh">'+TT("chose")+': '+esc(tr.label.split("·")[0].trim())+'</div><div class="delta">'+tagFx({coins:tr.coins,fx:tr.fx})+'</div></div>';
 }
-function renderScores(){const wrap=$("#scoreWrap");wrap.innerHTML="";const Mn=met();const ranked=state.teams.map(t=>({t,s:score(t)})).sort((a,b)=>b.s.total-a.s.total);ranked.forEach((r,i)=>{const el=document.createElement("div");el.className="rank"+(i===0?" first":"");el.innerHTML='<div class="pos">'+(i===0?"🏆":(i+1))+'</div><div><div class="rn">'+esc(r.t.name)+'</div><div class="rd">'+Mn.sat+' '+r.t.sat+' · '+Mn.fin+' '+r.t.fin+' · '+Mn.comp+' '+r.t.comp+' · '+Mn.dur+' '+r.t.dur+' · 🪙/2 '+Math.floor(r.t.coins/2)+(r.s.penalty?' · Aw −'+r.s.penalty:'')+'</div></div><div class="rs">'+r.s.total+'</div>';wrap.appendChild(el);});}
+function renderStage(){
+  const stage=$("#stage"),rid=ROUNDS[state.round].id;let h="";
+  if(state.stage==="roundintro"){
+    const inc=ROUNDS[state.round].income||0;
+    h='<div style="text-align:center;padding:26px 10px"><div class="deckmini" style="margin:0 auto 16px;width:80px;height:110px;font-size:44px">↗</div>'+
+      '<div style="font-size:13px;font-weight:800;letter-spacing:1px;color:var(--muted);text-transform:uppercase">'+(state.round+1)+' / '+ROUNDS.length+'</div>'+
+      '<div style="font-size:30px;font-weight:900;margin:4px 0 8px">'+esc(TT("rounds")[rid])+'</div>'+
+      '<p class="hint" style="max-width:440px;margin:0 auto 14px">'+esc(TT("roundhint")[rid])+'</p>'+
+      (inc>0?'<div class="banner" style="display:inline-block;text-align:start">'+tpl(TT("income"),{n:inc})+'</div><div style="height:10px"></div>':'')+
+      '<button class="btn warn big" id="beginRoundBtn">'+TT("beginRound")+'</button></div>';
+  } else if(state.stage==="turn"){
+    const team=curTeam(),card=curCard(),col=tcolor(team.id);const key=state.round+"-"+state.turnIdx;
+    const announce=(key!==hostTurnKey);hostTurnKey=key;
+    h+='<div class="announce'+(announce?"":"")+'" style="background:linear-gradient(135deg,'+col+','+col+'cc)"'+(announce?'':' ')+'>'+esc(team.name)+' '+TT("aanzet")+'<div class="sub">'+TT("opdracht")+'</div></div>';
+    h+='<div class="gc '+card.type+(announce?" deal":"")+'">'+cardHead(card);
+    if(!state.resolved){h+=turnControls(card,"host");h+='<p class="meta" style="margin-top:10px;font-size:12px">'+esc(TT("hostPickHint"))+'</p>';}
+    else{h+=resultBox(card);}
+    h+='</div>';
+    const last=state.turnIdx>=state.order.length-1;
+    if(state.resolved)h+='<div class="ctrls"><button class="btn warn" id="nextTurnBtn">'+(last?(ROUNDS[state.round].chance?TT("toChance"):TT("nextRound")):TT("nextTurn"))+'</button></div>';
+  } else if(state.stage==="chance"){
+    hostTurnKey=null;
+    h='<div style="text-align:center;padding:10px 6px"><div style="font-size:26px;font-weight:900;margin-bottom:4px">🎲 '+TT("chanceH")+'</div><p class="hint" style="max-width:460px;margin:0 auto 14px">'+esc(TT("chanceHint"))+'</p>';
+    h+='<div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center">'+state.teams.map(t=>{const col=tcolor(t.id);const ch=state.chance[t.id]?curContent().chance[state.chance[t.id]]:null;
+      if(ch)return '<div class="minichance '+(ch.good?"good":"bad")+'" style="width:200px;text-align:start"><b>'+esc(t.name)+'</b><br>'+(ch.good?"🍀 ":"⚡ ")+esc(ch.t)+'<br>'+chFx(ch)+'</div>';
+      return '<div style="width:200px;text-align:center"><div class="deckmini" style="margin:0 auto 8px">🎲</div><div style="font-weight:800;margin-bottom:6px;color:'+col+'">'+esc(t.name)+'</div><button class="btn warn sm" data-hchance="'+t.id+'">'+TT("drawChance")+'</button></div>';}).join("")+'</div>';
+    h+='<div class="ctrls" style="justify-content:center;margin-top:18px"><button class="btn warn" id="nextRoundBtn" '+(allChanceDone()?"":"disabled")+'>'+(state.round>=ROUNDS.length-1?TT("toScores"):TT("nextRound"))+'</button></div>';
+    if(!allChanceDone())h+='<p class="waitline">'+esc(TT("waitChance"))+'</p>';
+    h+='</div>';
+  }
+  stage.innerHTML=h;
+}
+function renderScores(){const w=$("#scoreWrap");const Mn=met();const ranked=state.teams.map(t=>({t,s:score(t)})).sort((a,b)=>b.s.total-a.s.total);
+  w.innerHTML=ranked.map((r,i)=>'<div class="rank'+(i===0?" first":"")+'"><div class="pos">'+(i===0?"🏆":(i+1))+'</div><div><div class="rn">'+esc(r.t.name)+'</div><div class="rd">'+Mn.sat+' '+r.t.sat+' · '+Mn.fin+' '+r.t.fin+' · '+Mn.comp+' '+r.t.comp+' · '+Mn.dur+' '+r.t.dur+' · 🪙/2 '+Math.floor(r.t.coins/2)+(r.s.penalty?' · Aw −'+r.s.penalty:'')+'</div></div><div class="rs">'+r.s.total+'</div></div>').join("");
+}
 
-/* ---------------- Actions ---------------- */
-function applyChoice(teamId,optIdx){const card=activeCard();if(!card||!card.options)return;const key=card.key;state.choices[key]=state.choices[key]||{};if(state.choices[key][teamId]!=null)return;const t=teamById(teamId);const snap={sat:t.sat,fin:t.fin,comp:t.comp,dur:t.dur,coins:t.coins};const o=card.options[optIdx];t.coins+=o.coins;Object.keys(o.fx||{}).forEach(k=>{t[k]=clamp(t[k]+o.fx[k],0,20);});if(t.coins<0)t.coins=0;state.choices[key][teamId]={opt:optIdx,snap};sfx("click");render();}
-function undoChoice(teamId){const card=activeCard();if(!card)return;const key=card.key,rec=(state.choices[key]||{})[teamId];if(!rec)return;const t=teamById(teamId);Object.assign(t,rec.snap);delete state.choices[key][teamId];if(typeof NET!=="undefined"&&NET.clearInput)NET.clearInput(key,teamId);render();}
-function applyIncome(amount){const q=state.phase;if(state.batches["inc-"+q+"-5"]||state.batches["inc-"+q+"-3"])return;state.teams.forEach(t=>{t.coins+=amount;});state.batches["inc-"+q+"-"+amount]=true;sfx("coin");render();}
-function applyAllCost(amount,bk){if(state.batches[bk])return;state.teams.forEach(t=>{t.coins=Math.max(0,t.coins-amount);});state.batches[bk]=true;render();}
-function startGame(){state.teams=state.setup.map((s,i)=>({id:i+1,name:s.name||("Team "+(i+1)),sat:10,fin:10,comp:10,dur:10,coins:12+(parseInt(s.bonus)||0)}));state.phase="fase1";state.decks={};state.drawn={};state.usedCrises=[];state.choices={};state.batches={};state.chance={};render();}
-function hostDraw(){sfx("draw");const dk=document.getElementById("deckEl");if(dk){dk.classList.add("shuffling");setTimeout(doDraw,430);}else doDraw();}
-function toggleLang(){state.lang=(L()==="nl"?"en":"nl");render();}
-
-/* ---------------- Facilitator events ---------------- */
+/* ============ events (host) ============ */
 document.addEventListener("click",e=>{
-  const el=e.target.closest("[data-phase],[data-choose],[data-undo],[data-m],[data-coin],[data-income],[data-allcost],[data-delteam],[data-draw],[data-chance],#addTeam,#startGame,#resetGame,#copyJoin,#langToggle,#soundToggle,#fxToggle");
+  const el=e.target.closest("[data-setup],[data-delteam],[data-hact],[data-hchance],#addTeam,#startGame,#beginRoundBtn,#nextTurnBtn,#nextRoundBtn,#resetGame,#againBtn,#copyJoin,#langToggle,#soundToggle,#fxToggle");
   if(!el)return;
-  if(el.id==="soundToggle"){SOUND=!SOUND;if(state)state.sound=SOUND;save();$("#soundToggle").textContent=SOUND?"🔊":"🔇";if(SOUND)sfx("click");return;}
+  if(el.id==="copyJoin"){copyJoin(el);return;}
+  if(el.id==="soundToggle"){SOUND=!SOUND;if(state)state.sound=SOUND;save();$("#soundToggle").textContent=SOUND?"🔊":"🔇";return;}
   if(el.id==="fxToggle"){state.showEffects=!state.showEffects;render();return;}
-  if(el.dataset.chance!=null){drawChance(state.phase,parseInt(el.dataset.chance));return;}
-  if(el.id==="langToggle"){toggleLang();return;}
-  if(el.dataset.phase){state.phase=el.dataset.phase;render();return;}
-  if(el.dataset.draw){hostDraw();return;}
-  if(el.dataset.choose!=null){applyChoice(parseInt(el.dataset.t),parseInt(el.dataset.choose));return;}
-  if(el.dataset.undo!=null){undoChoice(parseInt(el.dataset.undo));return;}
-  if(el.dataset.m){const t=teamById(parseInt(el.dataset.t));t[el.dataset.m]=clamp(t[el.dataset.m]+parseInt(el.dataset.d),0,20);render();return;}
-  if(el.dataset.coin){const t=teamById(parseInt(el.dataset.coin));t.coins=Math.max(0,t.coins+parseInt(el.dataset.d));render();return;}
-  if(el.dataset.income){applyIncome(parseInt(el.dataset.income));return;}
-  if(el.dataset.allcost){applyAllCost(parseInt(el.dataset.allcost),el.dataset.batch);return;}
+  if(el.id==="langToggle"){state.lang=(L()==="nl"?"en":"nl");render();return;}
   if(el.dataset.delteam!=null){state.setup.splice(parseInt(el.dataset.delteam),1);renderSetup();return;}
   if(el.id==="addTeam"){if(state.setup.length<6){state.setup.push({name:"Team "+(state.setup.length+1),bonus:0});renderSetup();}return;}
   if(el.id==="startGame"){startGame();return;}
-  if(el.id==="resetGame"){if(confirm(TT("confirm"))){const rm=state.room,lg=state.lang;state=freshState();state.room=rm;state.lang=lg;render();}return;}
-  if(el.id==="copyJoin"){copyJoin(el);return;}
+  if(el.id==="beginRoundBtn"){beginRound();return;}
+  if(el.id==="nextTurnBtn"){nextTurn();return;}
+  if(el.id==="nextRoundBtn"){nextRound();return;}
+  if(el.dataset.hchance!=null){drawChance(parseInt(el.dataset.hchance));return;}
+  if(el.dataset.hact==="choice"){resolveChoice(curTeam().id,parseInt(el.dataset.opt));return;}
+  if(el.dataset.hact==="quiz"){const sel=$$('#stage [data-dep]:checked').map(x=>parseInt(x.dataset.dep));resolveQuiz(curTeam().id,sel);return;}
+  if(el.id==="resetGame"||el.id==="againBtn"){if(confirm(TT("confirm"))){const rm=state.room,lg=state.lang;state=freshState();state.room=rm;state.lang=lg;SOUND=state.sound!==false;render();}return;}
 });
-document.addEventListener("input",e=>{const el=e.target;if(el.dataset.setup){state.setup[parseInt(el.dataset.i)][el.dataset.setup]=el.dataset.setup==="bonus"?clamp(parseInt(el.value)||0,0,4):el.value;}if(el.dataset.rename){teamById(parseInt(el.dataset.rename)).name=el.value;save();if(typeof NET!=="undefined")NET.publishIfHost();}});
+document.addEventListener("input",e=>{const el=e.target;if(el.dataset&&el.dataset.setup){state.setup[parseInt(el.dataset.i)][el.dataset.setup]=el.dataset.setup==="bonus"?clamp(parseInt(el.value)||0,0,4):el.value;}});
+
 function copyJoin(btn){const base=location.href.split("?")[0].split("#")[0];const link=base+"?role=player&room="+state.room+"&lang="+L();const done=()=>{const o=btn.textContent;btn.textContent=TT("copied");setTimeout(()=>btn.textContent=o,1400);};if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(link).then(done,()=>prompt("Join-link:",link));else prompt("Join-link:",link);}
 
-/* ---------------- Realtime (Firebase) ---------------- */
+/* ============ realtime ============ */
 let PLAYER=null;
 const FB=(window.FIREBASE_CONFIG&&window.FIREBASE_CONFIG.databaseURL)?window.FIREBASE_CONFIG:null;
 function fbReady(){return !!(FB&&window.firebase&&firebase.database);}
-function optTagText(o){const Mn=met();const a=[];if(o.coins<0)a.push("🪙 −"+Math.abs(o.coins));if(o.coins>0)a.push("🪙 +"+o.coins);Object.keys(o.fx||{}).forEach(k=>a.push(Mn[k]+" "+(o.fx[k]>0?"+":"")+o.fx[k]));if(!a.length)a.push(TT("nocost"));return a.join(" · ");}
 function pubSnapshot(){
-  const card=activeCard();let cp=null;
-  if(card){const d=card.data;
-    if(card.kind==="scenario")cp={key:card.key,kind:"scenario",cat:card.cat,title:TT("kScen")+" "+d.id+" · "+d.t,text:d.x,task:TT("taskT")};
-    else if(card.kind==="reveal")cp={key:card.key,kind:"reveal",cat:card.cat,title:TT("kRev")+" "+d.id,text:TT("depts")+" "+d.afd,text2:TT("tension")+" "+d.sp};
-    else cp={key:card.key,kind:card.kind,cat:card.cat,title:kindLabel(card)+" · "+d.t,text:d.x,allTxt:d.allTxt||null,options:card.options.map(o=>({l:o.l,tags:optTagText(o)}))};
+  const team=curTeam(),card=(state.phase==="playing"&&state.stage==="turn")?curCard():null;
+  let cp=null;
+  if(card){const d=cardData(card);
+    if(card.type==="scenario")cp={type:"scenario",cat:"assets/"+(CAT[card.id]||"buurt")+".jpg",title:d.t,text:d.x,tension:d.sp,opts:card.opts.map(i=>({i,label:dep(i)})),correct:card.correct};
+    else cp={type:card.type,cat:"assets/"+(CAT[card.id]||"buurt")+".jpg",title:d.t,text:d.x,options:d.o.map(o=>({l:o.l,tags:tagFx(o)}))};
   }
-  const key=cp?cp.key:"";const deck=currentDeck();const q=!!QUARTERS[state.phase];
-  return {lang:L(),phase:state.phase,phaseLabel:phaseLabel(state.phase),hint:hint(state.phase),card:cp,showEffects:!!state.showEffects,
-    remaining:DRAW_PHASES.includes(state.phase)?(deck.length-drawnCount()):0,canDraw:DRAW_PHASES.includes(state.phase),canChance:q,
-    teams:state.teams.map(t=>{const sc=score(t);const ch=(state.choices[key]||{})[t.id];
-      const ccid=q&&state.chance[state.phase]?state.chance[state.phase][t.id]:null;const cc=ccid?curContent().chance[ccid]:null;
-      return {id:t.id,name:t.name,sat:t.sat,fin:t.fin,comp:t.comp,dur:t.dur,coins:t.coins,score:sc.total,flags:sc.flags,choice:(ch!=null?ch.opt:null),chance:cc?{t:cc.t,x:cc.x,fx:chanceFxText(cc),good:cc.good}:null};})};
+  return {lang:L(),phase:state.phase,stage:state.stage,showEffects:!!state.showEffects,
+    roundLabel:state.phase==="playing"?TT("rounds")[ROUNDS[state.round].id]:"",curTeamId:team?team.id:null,curTeamName:team?team.name:"",resolved:!!state.resolved,
+    card:cp,turnResult:state.resolved?state.turnResult:null,
+    teams:state.teams.map(t=>{const sc=score(t);const ch=state.chance[t.id]?curContent().chance[state.chance[t.id]]:null;return {id:t.id,name:t.name,color:tcolor(t.id),sat:t.sat,fin:t.fin,comp:t.comp,dur:t.dur,coins:t.coins,score:sc.total,flags:sc.flags,chance:ch?{t:ch.t,fx:chFx(ch),good:ch.good}:null};})};
 }
-const NET={db:null,role:null,room:null,lastDraw:0,lastChance:{},
+const NET={db:null,role:null,room:null,seen:{},
   initHost(){if(!fbReady())return;try{firebase.initializeApp(FB);}catch(e){}this.db=firebase.database();this.role="host";this.room=state.room;
-    this.db.ref("rooms/"+this.room+"/input").on("value",s=>this.processInput(s.val()||{}));
-    this.db.ref("rooms/"+this.room+"/drawReq").on("value",s=>{const v=s.val()||0;if(v>this.lastDraw){this.lastDraw=v;if(DRAW_PHASES.includes(state.phase))doDraw();}});
-    this.db.ref("rooms/"+this.room+"/chanceReq").on("value",s=>{const v=s.val()||{};Object.keys(v).forEach(tid=>{if(v[tid]>(this.lastChance[tid]||0)){this.lastChance[tid]=v[tid];if(QUARTERS[state.phase])drawChance(state.phase,parseInt(tid));}});});
-    this.publish();},
-  processInput(v){const card=activeCard();if(!card||!card.options)return;const fc=v[card.key];if(!fc)return;let ch=false;Object.keys(fc).forEach(tid=>{const teamId=parseInt(tid),optIdx=fc[tid],t=teamById(teamId);if(!t)return;state.choices[card.key]=state.choices[card.key]||{};if(state.choices[card.key][teamId]==null){const snap={sat:t.sat,fin:t.fin,comp:t.comp,dur:t.dur,coins:t.coins};const o=card.options[optIdx];if(!o)return;t.coins+=o.coins;Object.keys(o.fx||{}).forEach(k=>{t[k]=clamp(t[k]+o.fx[k],0,20);});if(t.coins<0)t.coins=0;state.choices[card.key][teamId]={opt:optIdx,snap};ch=true;}});if(ch){sfx("click");render();}},
+    this.db.ref("rooms/"+this.room+"/act").on("value",s=>this.processActs(s.val()||{}));this.publish();},
+  processActs(v){let changed=false;Object.keys(v).forEach(kk=>{const a=v[kk];if(!a||!a.ts)return;if(this.seen[kk]===a.ts)return;this.seen[kk]=a.ts;
+    if(a.type==="choice"&&state.stage==="turn"&&curTeam()&&curTeam().id===a.teamId&&!state.resolved){resolveChoice(a.teamId,a.opt);changed=true;}
+    else if(a.type==="quiz"&&state.stage==="turn"&&curTeam()&&curTeam().id===a.teamId&&!state.resolved){resolveQuiz(a.teamId,a.sel||[]);changed=true;}
+    else if(a.type==="chance"&&state.stage==="chance"&&state.chance[a.teamId]==null){drawChance(a.teamId);changed=true;}});
+  },
   publishIfHost(){if(this.role==="host"&&this.db)this.publish();},
   publish(){if(this.db)this.db.ref("rooms/"+this.room+"/pub").set(pubSnapshot());},
-  clearInput(key,teamId){if(this.db&&this.role==="host")this.db.ref("rooms/"+this.room+"/input/"+key+"/"+teamId).remove();},
-  initPlayer(room,onPub){if(!fbReady())return false;try{firebase.initializeApp(FB);}catch(e){}this.db=firebase.database();this.role="player";this.room=room;this.db.ref("rooms/"+room+"/pub").on("value",s=>onPub(s.val()));return true;},
+  initPlayer(room,cb){if(!fbReady())return false;try{firebase.initializeApp(FB);}catch(e){}this.db=firebase.database();this.role="player";this.room=room;this.db.ref("rooms/"+room+"/pub").on("value",s=>cb(s.val()));return true;},
   presence(room,pid,info){if(this.db)this.db.ref("rooms/"+room+"/players/"+pid).set(info);},
-  sendInput(room,key,teamId,optIdx){if(this.db)this.db.ref("rooms/"+room+"/input/"+key+"/"+teamId).set(optIdx);},
-  sendDraw(room){if(this.db)this.db.ref("rooms/"+room+"/drawReq").set(Date.now());},
-  sendChance(room,teamId){if(this.db)this.db.ref("rooms/"+room+"/chanceReq/"+teamId).set(Date.now());}
+  send(room,teamId,obj){if(this.db)this.db.ref("rooms/"+room+"/act/"+teamId+"_"+obj.type).set(Object.assign({teamId,ts:Date.now()},obj));}
 };
 
-/* ---------------- Player ---------------- */
-function pt(l,k){return T[l]?T[l][k]:T.nl[k];}
-function playerMeter(k,v,Mn){return '<div class="meter"><div class="mlab"><span>'+Mn[k]+'</span><span class="v">'+v+'</span></div><div class="bar'+(v<5?" red":"")+'"><span style="width:'+(v/20*100)+'%"></span></div></div>';}
-function showPlayerBoard(){const p=document.getElementById("player");p.classList.remove("player-shell");p.innerHTML='<header class="top"><div class="top-in"><div class="brandline">'+logoSVG()+'<div><h1>Behind the Front Door</h1><div class="sub">'+pt(PLAYER.lang,"sub_p")+esc(PLAYER.room)+'</div></div></div></div></header><div class="wrap"><div id="pBoard" style="padding-top:18px"></div><footer>'+pt(PLAYER.lang,"footS")+'</footer></div>';renderPlayer(null);}
+/* ============ render: player ============ */
+function pt(l,k){return (T[l]||T.nl)[k];}
+function pmeter(k,v,Mn){return '<div class="mrow"><span class="ml">'+Mn[k]+'</span><span class="bar'+(v<5?" red":"")+'"><span style="width:'+(v/20*100)+'%"></span></span><span class="mv">'+v+'</span></div>';}
+function showPlayerBoard(){const p=document.getElementById("player");p.classList.remove("player-shell");p.innerHTML='<header class="top"><div class="top-in"><div class="brandline">'+logoSVG()+'<div><h1>Behind the Front Door</h1><div class="sub">'+esc(PLAYER.name)+' · '+esc(PLAYER.teamLabel)+'</div></div></div></div></header><div class="wrap"><div id="pBoard" style="padding-top:18px"></div><footer>'+pt(PLAYER.lang,"footS")+'</footer></div>';renderPlayer(null);}
 function renderPlayer(pub){
-  const host=document.getElementById("pBoard");if(!host)return;
-  const l=(pub&&pub.lang)||PLAYER.lang;PLAYER.lang=l;const Mn=MET[l];
-  if(!pub){host.innerHTML='<div class="panel"><h2>'+pt(l,"connecting")+'</h2><p class="hint" style="margin:0">'+pt(l,"waitroom")+' <b>'+esc(PLAYER.room)+'</b>. '+pt(l,"checkcode")+'</p></div>';return;}
+  const host=document.getElementById("pBoard");if(!host)return;const l=(pub&&pub.lang)||PLAYER.lang;PLAYER.lang=l;const Mn=MET[l];
+  if(!pub){host.innerHTML='<div class="panel"><h2>'+pt(l,"jwRoom")+' '+esc(PLAYER.room)+'</h2><p class="hint" style="margin:0">'+pt(l,"waitstart")+'<span class="dot"></span><span class="dot"></span><span class="dot"></span></p></div>';return;}
   const my=(pub.teams||[]).find(t=>t.id===PLAYER.teamId);
-  let head='<div class="panel"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><div><b>'+esc(PLAYER.name)+'</b> · '+esc(my?my.name:PLAYER.teamLabel)+'</div><div class="rd" style="color:var(--muted);font-size:13px">'+esc(pub.phaseLabel||"")+'</div></div></div>';
-  if(!my){host.innerHTML=head+'<div class="panel" style="margin-top:14px"><p class="hint" style="margin:0">'+pt(l,"stillsetup")+' '+esc(PLAYER.teamLabel)+'.</p></div>';return;}
-  let dash='<div class="panel" style="margin-top:14px"><div class="thead" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><b>'+esc(my.name)+'</b><span class="coins">🪙 '+my.coins+'</span></div>'+["sat","fin","comp","dur"].map(k=>playerMeter(k,my[k],Mn)).join("")+'<div class="score"><span class="rd">'+pt(l,"score")+(my.flags?' · <span style="color:var(--warn);font-weight:800">'+pt(l,"aw")+'</span>':'')+'</span><b>'+my.score+'</b></div></div>';
-  let cx='';const c=pub.card;
-  if(c){
-    const deal=(c.key!==PLAYER.lastKey);PLAYER.lastKey=c.key;
-    cx='<div class="panel" style="margin-top:14px"><div class="gc '+c.kind+(deal?" deal":"")+'"><div class="illo" style="background-image:url(\''+esc(c.cat)+'\')"><span class="kind">'+esc(c.title)+'</span></div><div class="body">';
-    if(c.text)cx+='<p class="cx">'+esc(c.text)+'</p>';
-    if(c.text2)cx+='<p class="meta"><b>'+esc(c.text2)+'</b></p>';
-    if(c.task)cx+='<p class="meta"><b>'+pt(l,"taskL")+'</b> '+esc(c.task)+'</p>';
-    if(c.allTxt)cx+='<div class="banner"><b>'+esc(c.allTxt)+'</b></div>';
-    if(c.options){
-      if(my.choice==null)cx+='<p class="meta" style="margin:12px 0 6px"><b>'+pt(l,"discuss")+'</b></p><div class="optrow" style="flex-direction:column;gap:8px">'+c.options.map((o,i)=>'<button class="btn '+(i===0?'':'soft')+'" data-psend="'+i+'" style="text-align:start;padding:12px 14px">'+esc(o.l)+(pub.showEffects&&o.tags?'<br><span class="oe" style="font-weight:400;opacity:.85">'+esc(o.tags)+'</span>':'')+'</button>').join("")+'</div>';
-      else cx+='<div class="banner">'+pt(l,"youchose")+' <b>'+esc(c.options[my.choice].l.split("·")[0].trim())+'</b> ✓'+(c.options[my.choice].tags?' <span class="oe">('+esc(c.options[my.choice].tags)+')</span>':'')+'</div>';
-    }
-    cx+='</div></div>';
-    if(pub.remaining>0&&(!c.options||my.choice!=null))cx+='<div class="drawwrap" style="margin-top:12px"><button class="btn warn" data-pdraw="1">'+pt(l,"drawNext")+' ('+pub.remaining+')</button></div>';
-    cx+='</div>';
-  } else if(pub.phase==="scores"){cx='<div class="panel" style="margin-top:14px"><h2>'+pt(l,"done")+'</h2><p>'+pt(l,"yourfinal")+' <b style="font-size:20px">'+my.score+'</b>. '+pt(l,"seerank")+'</p></div>';}
-  else if(pub.canDraw&&pub.remaining>0){PLAYER.lastKey=null;const rem=pub.remaining;const lt=pt(l,"left1")+rem+" "+(rem===1?pt(l,"card1"):pt(l,"cardN2"))+pt(l,"leftDeck");cx='<div class="panel" style="margin-top:14px"><div class="deck"><div class="deckstack"><div class="cardback"></div><div class="cardback"></div><div class="cardback"></div></div></div><div class="drawwrap"><div class="lead">'+lt+'</div><button class="btn warn big" data-pdraw="1">'+pt(l,"drawOne")+'</button></div></div>';}
-  else {PLAYER.lastKey=null;cx='<div class="panel" style="margin-top:14px"><p class="hint" style="margin:0">'+esc(pub.hint||"")+'</p></div>';}
-  let chanceHtml="";
-  if(pub.canChance){
-    if(my.chance)chanceHtml='<div class="panel" style="margin-top:14px"><div class="chancecard '+(my.chance.good?"good":"bad")+'"><span class="emoji">'+(my.chance.good?"🍀":"⚡")+'</span><div class="ctt">🎲 '+esc(my.chance.t)+'</div><div class="cxx">'+esc(my.chance.x)+'</div><div class="cff">'+esc(my.chance.fx)+'</div></div></div>';
-    else chanceHtml='<div class="panel" style="margin-top:14px;text-align:center"><button class="btn warn big" data-pchance="1">🎲 '+pt(l,"drawChance")+'</button></div>';
-  }
-  host.innerHTML=head+dash+chanceHtml+cx;
+  const myTurn=pub.stage==="turn"&&pub.curTeamId===PLAYER.teamId&&!pub.resolved&&pub.card;
+  const myChance=pub.stage==="chance"&&my&&!my.chance;
+  let top="";
+  if(pub.phase==="scores"){top='<div class="panel" style="text-align:center"><h2>'+pt(l,"done")+'</h2>'+(my?'<p>'+pt(l,"yourFinal")+' <b style="font-size:20px">'+my.score+'</b></p>':'')+'<p class="hint" style="margin:0">'+pt(l,"seeBoard")+'</p></div>';}
+  else if(myTurn){top='<div class="yourturn" style="background:linear-gradient(135deg,'+(my?my.color:"#1F5AFF")+',#0002)">'+pt(l,"yourTurn")+'</div>';}
+  else if(pub.stage==="turn"&&pub.curTeamName){top='<div class="panel" style="text-align:center"><b style="color:'+((pub.teams.find(t=>t.id===pub.curTeamId)||{}).color||"#1F5AFF")+'">'+esc(pub.curTeamName)+'</b> '+pt(l,"theirTurn")+' — '+pt(l,"waitTurn")+'<span class="dot"></span><span class="dot"></span><span class="dot"></span></div>';}
+  else if(pub.stage==="chance"&&!myChance){top='<div class="panel" style="text-align:center">🎲 '+pt(l,"chanceH")+'</div>';}
+  else {top='<div class="panel" style="text-align:center">'+esc(pub.roundLabel||"")+'</div>';}
+  let mid="";
+  if(myTurn){const c=pub.card;mid='<div class="panel" style="margin-top:14px"><div class="gc '+c.type+' deal"><div class="illo" style="background-image:url(\''+esc(c.cat)+'\')"></div><div class="body"><p class="ct">'+esc(c.title)+'</p><p class="cx">'+esc(c.text)+'</p>';
+    if(c.type==="scenario"){mid+='<p class="meta"><b>'+pt(l,"chooseDeps")+'</b></p><div class="quiz">'+c.opts.map(o=>'<label class="qopt"><input type="checkbox" data-dep="'+o.i+'"> '+esc(o.label)+'</label>').join("")+'</div><button class="btn warn big" data-pact="quiz" style="width:100%">'+pt(l,"confirm2")+'</button>';}
+    else{mid+='<p class="meta"><b>'+pt(l,"chooseAB")+'</b></p><div class="pickbtns">'+c.options.map((o,i)=>'<button class="btn '+(i===0?"":"soft")+'" data-pact="choice" data-opt="'+i+'">'+esc(o.l)+(pub.showEffects?' <span style="font-weight:400;opacity:.8">· '+o.tags+'</span>':'')+'</button>').join("")+'</div>';}
+    mid+='</div></div></div>';}
+  else if(myChance){mid='<div class="panel" style="margin-top:14px;text-align:center"><div class="deckmini" style="margin:0 auto 12px">🎲</div><button class="btn warn big" data-pchance="1">'+pt(l,"drawChance")+'</button></div>';}
+  let dash="";
+  if(my){const ch=my.chance;dash='<div class="panel" style="margin-top:14px"><div class="th" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><b>'+esc(my.name)+'</b><span class="coins">🪙 '+my.coins+'</span></div>'+["sat","fin","comp","dur"].map(k=>pmeter(k,my[k],Mn)).join("")+'<div class="st" style="display:flex;justify-content:space-between;margin-top:6px;padding-top:6px;border-top:1px dashed var(--line)"><span style="color:var(--muted)">'+pt(l,"stand")+'</span><b>'+my.score+'</b></div>'+(ch?'<div class="minichance '+(ch.good?"good":"bad")+'" style="margin-top:8px">'+(ch.good?"🍀 ":"⚡ ")+esc(ch.t)+' — '+esc(ch.fx)+'</div>':'')+'</div>';}
+  host.innerHTML=top+mid+dash;
 }
-function localizeJoin(l){
-  $("#jfH").textContent=pt(l,"joinH");$("#jfSub").textContent=pt(l,"joinSub");
-  $("#jfRoomL").textContent=pt(l,"roomcode");$("#jfNameL").textContent=pt(l,"yourname");$("#jfTeamL").textContent=pt(l,"teamw");
-  $("#pName").placeholder=pt(l,"yourname");$("#joinBtn").textContent=pt(l,"joinbtn");
-  $("#jwH").textContent=pt(l,"youin");$("#jwRoomL").textContent=pt(l,"jwRoom");$("#jwWait").innerHTML=pt(l,"waitstart")+'<span class="dot"></span><span class="dot"></span><span class="dot"></span>';$("#jwBanner").textContent=pt(l,"jwBanner");
-  document.documentElement.lang=l;
-}
+function localizeJoin(l){$("#jfH").textContent=pt(l,"joinH");$("#jfSub").textContent=pt(l,"joinSub");$("#jfRoomL").textContent=pt(l,"roomcode");$("#jfNameL").textContent=pt(l,"yourname");$("#jfTeamL").textContent=pt(l,"teamw");$("#pName").placeholder=pt(l,"yourname");$("#joinBtn").textContent=pt(l,"joinbtn");$("#jwH").textContent=pt(l,"youin");$("#jwRoomL").textContent=pt(l,"jwRoom");$("#jwWait").innerHTML=pt(l,"waitstart")+'<span class="dot"></span><span class="dot"></span><span class="dot"></span>';$("#jwBanner").textContent=pt(l,"jwBanner");document.documentElement.lang=l;}
 function initPlayer(room,plang){
-  document.getElementById("pLogo").innerHTML=logoSVG();
-  $("#facilitator").classList.add("hide");$("#player").classList.remove("hide");
-  if(room)$("#pRoom").value=room;
-  localizeJoin(plang);
-  const _live=fbReady();const _pn=$("#pNet");if(_pn){_pn.className="pnet "+(_live?"live":"off");_pn.textContent=pt(plang,_live?"pNetLive":"pNetOff");}
-  document.addEventListener("click",e=>{
-    const b=e.target.closest("[data-psend],[data-pdraw],[data-pchance]");if(!b||!PLAYER)return;
-    if(b.dataset.pchance){sfx("draw");NET.sendChance(PLAYER.room,PLAYER.teamId);b.disabled=true;return;}
-    if(b.dataset.pdraw){sfx("draw");NET.sendDraw(PLAYER.room);const dk=document.querySelector(".deck");if(dk)dk.classList.add("shuffling");b.disabled=true;return;}
-    if(b.dataset.psend!=null&&PLAYER.lastKey){sfx("click");NET.sendInput(PLAYER.room,PLAYER.lastKey,PLAYER.teamId,parseInt(b.dataset.psend));$$(".optrow [data-psend]").forEach(x=>x.disabled=true);}
+  document.getElementById("pLogo").innerHTML=logoSVG();$("#facilitator").classList.add("hide");$("#player").classList.remove("hide");if(room)$("#pRoom").value=room;localizeJoin(plang);
+  const live=fbReady();const pn=$("#pNet");pn.className="pnet "+(live?"live":"off");pn.textContent=live?pt(plang,"pNetLive"):pt(plang,"pNetOff");
+  document.addEventListener("click",e=>{const b=e.target.closest("[data-pact],[data-pchance]");if(!b||!PLAYER)return;
+    if(b.dataset.pchance){sfx("draw");NET.send(PLAYER.room,PLAYER.teamId,{type:"chance"});b.disabled=true;return;}
+    if(b.dataset.pact==="choice"){sfx("click");NET.send(PLAYER.room,PLAYER.teamId,{type:"choice",opt:parseInt(b.dataset.opt)});$$('#pBoard [data-pact]').forEach(x=>x.disabled=true);return;}
+    if(b.dataset.pact==="quiz"){sfx("click");const sel=$$('#pBoard [data-dep]:checked').map(x=>parseInt(x.dataset.dep));NET.send(PLAYER.room,PLAYER.teamId,{type:"quiz",sel});$$('#pBoard [data-pact]').forEach(x=>x.disabled=true);return;}
   });
-  $("#joinBtn").addEventListener("click",()=>{
-    const name=$("#pName").value.trim()||(plang==="en"?"Player":"Speler");const code=($("#pRoom").value.trim().toUpperCase())||"----";const teamId=parseInt($("#pTeam").value);const teamLabel=$("#pTeam").selectedOptions[0].textContent;
-    PLAYER={pid:randCode()+randCode(),name,teamId,teamLabel,room:code,lastKey:null,lang:plang};
-    if(NET.initPlayer(code,renderPlayer)){NET.presence(code,PLAYER.pid,{name:name,team:teamId});showPlayerBoard();}
-    else {$("#joinWho").textContent=name+" · "+teamLabel;$("#joinRoomEcho").textContent=code;$("#joinForm").style.display="none";$("#joinWaiting").style.display="block";}
+  $("#joinBtn").addEventListener("click",()=>{const name=$("#pName").value.trim()||(plang==="en"?"Player":"Speler");const code=($("#pRoom").value.trim().toUpperCase())||"----";const teamId=parseInt($("#pTeam").value);const teamLabel=$("#pTeam").selectedOptions[0].textContent;
+    PLAYER={pid:randCode()+randCode(),name,teamId,teamLabel,room:code,lang:plang};
+    if(NET.initPlayer(code,renderPlayer)){NET.presence(code,PLAYER.pid,{name,team:teamId});showPlayerBoard();}
+    else{$("#joinWho").textContent=name+" · "+teamLabel;$("#joinRoomEcho").textContent=code;$("#joinForm").style.display="none";$("#joinWaiting").style.display="block";}
   });
 }
 
-/* ---------------- Boot ---------------- */
+/* ============ boot ============ */
 (function boot(){
-  const params=new URLSearchParams(location.search);
-  if(params.get("role")==="player"){const pl=params.get("lang")==="en"?"en":"nl";initPlayer((params.get("room")||"").toUpperCase(),pl);return;}
-  state=load()||freshState();if(!state.room)state.room=randCode();if(!state.lang)state.lang="nl";SOUND=state.sound!==false;
+  const p=new URLSearchParams(location.search);
+  if(p.get("role")==="player"){initPlayer((p.get("room")||"").toUpperCase(),p.get("lang")==="en"?"en":"nl");return;}
+  state=load()||freshState();if(!state.room)state.room=randCode();if(!state.lang)state.lang="nl";if(!state.dealt)state.dealt={};if(!state.pool)state.pool={};if(!state.chance)state.chance={};if(!state.incomeDone)state.incomeDone={};if(!state.order)state.order=[];SOUND=state.sound!==false;
   render();NET.initHost();
 })();
 </script>
