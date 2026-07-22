@@ -11,8 +11,7 @@
   @media (prefers-color-scheme:dark){:root{--ink:#EDF1F7;--muted:#9AA7BD;--line:#26324A;--bg:#0D1626;--card:#131E31;--soft:#16233D;--softwarm:#2A2010;--shadow:0 10px 30px rgba(0,0,0,.45);--shadow-sm:0 4px 14px rgba(0,0,0,.35);}}
   *{box-sizing:border-box}html,body{margin:0}
   body{font-family:Arial,Helvetica,"Segoe UI",sans-serif;color:var(--ink);min-height:100vh;line-height:1.5;-webkit-font-smoothing:antialiased;
-    background:radial-gradient(900px 520px at 12% -12%,#FFF4DF 0%,transparent 55%),radial-gradient(1100px 700px at 100% 0%,#F4E8CF 0%,transparent 52%),radial-gradient(1500px 950px at 50% 125%,#E4D3AE 0%,transparent 55%),linear-gradient(162deg,#F4EAD7,#EADCC0);background-attachment:fixed}
-  @media (prefers-color-scheme:dark){body{background:radial-gradient(1200px 700px at 50% -10%,#17253f 0%,transparent 55%),linear-gradient(162deg,#101b31,#0b1322);background-attachment:fixed}}
+    background:radial-gradient(1000px 620px at 14% -12%,#2a3d72 0%,transparent 55%),radial-gradient(1100px 720px at 100% 6%,#1d2f58 0%,transparent 52%),radial-gradient(1500px 950px at 50% 122%,#152238 0%,transparent 55%),linear-gradient(162deg,#18233f,#0d1524);background-attachment:fixed}
   .wrap{max-width:1200px;margin:0 auto;padding:0 18px 70px}
   button{font-family:inherit}.logo{height:30px;width:auto;display:block}
   header.top{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--card) 88%,transparent);backdrop-filter:saturate(1.4) blur(8px);border-bottom:1px solid var(--line)}
@@ -30,6 +29,7 @@
   .roundbar .rpill{background:var(--navy);color:#fff;border-radius:999px;padding:7px 15px;font-weight:800;font-size:14px}
   .roundbar .rpill .n{color:var(--orange);margin-inline-end:6px}
   .hint{color:var(--muted);font-size:13.5px;margin:2px 2px 16px}
+  #roundHint{color:#c6d1e6}
   .grid{display:grid;grid-template-columns:.82fr 1.18fr;gap:20px;align-items:start}
   @media (max-width:940px){.grid{grid-template-columns:1fr}}
   .panel{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:18px}
@@ -73,7 +73,7 @@
   .gc{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--card);box-shadow:0 18px 38px rgba(21,35,48,.18),0 3px 0 rgba(21,35,48,.05);transform-origin:center}
   .gc.deal{animation:deal .7s cubic-bezier(.2,.9,.3,1.1) both}
   @keyframes deal{0%{opacity:0;transform:translateY(30px) rotateY(70deg) scale(.92)}55%{opacity:1;transform:translateY(0) rotateY(-5deg) scale(1.01)}100%{transform:none}}
-  .gc .illo{height:170px;background-size:cover;background-position:center;position:relative}
+  .gc .illo{height:230px;background:#FBF3E4 center/contain no-repeat;position:relative}
   .gc .illo .kind{position:absolute;left:0;bottom:0;padding:6px 14px;font-size:11px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;color:#fff;border-top-right-radius:12px}
   .gc.scenario .illo .kind,.gc.journey .illo .kind{background:var(--blue)}.gc.crisis .illo .kind{background:var(--warn)}.gc.shock .illo .kind{background:var(--orange)}
   .gc .body{padding:16px}.gc .ct{font-size:20px;font-weight:800;margin:0 0 8px;letter-spacing:-.2px}.gc .cx{font-size:15px;margin:0 0 10px}
@@ -97,6 +97,12 @@
   .waitline{color:var(--muted);font-size:14px;text-align:center;padding:14px}
   /* deck back for chance */
   .deckmini{width:64px;height:88px;border-radius:11px;background:radial-gradient(60px 60px at 30% 20%,rgba(255,144,0,.25),transparent 60%),linear-gradient(150deg,#1b3fb0,var(--blue) 40%,var(--navy));box-shadow:var(--shadow);border:2px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;color:var(--orange);font-size:34px;font-weight:900}
+  .drawdeck{display:flex;flex-direction:column;align-items:center;gap:14px;padding:22px 0}
+  .deckbig{position:relative;width:150px;height:200px}
+  .deckbig .cb{position:absolute;inset:0;border-radius:14px;background:radial-gradient(90px 90px at 30% 20%,rgba(255,144,0,.28),transparent 60%),linear-gradient(150deg,#1b3fb0,var(--blue) 40%,var(--navy));box-shadow:var(--shadow);border:2px solid rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center;color:var(--orange);font-size:70px;font-weight:900}
+  .deckbig .cb:nth-child(1){transform:translate(9px,9px) rotate(4deg)}.deckbig .cb:nth-child(2){transform:translate(4px,4px) rotate(2deg)}
+  .deckbig.shuf{animation:shuffle .42s ease}
+  @keyframes shuffle{0%{transform:none}25%{transform:translateX(-10px) rotate(-3deg)}50%{transform:translateX(10px) rotate(3deg)}75%{transform:translateX(-4px) rotate(-1deg)}100%{transform:none}}
   select,input[type=text],input[type=number]{font-family:inherit;font-size:14px;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:9px;padding:8px 10px}
   label.fld{display:block;font-size:12.5px;color:var(--muted);font-weight:700;margin:0 0 4px}
   .setup-row{display:grid;grid-template-columns:1.4fr .6fr auto;gap:10px;align-items:end;margin-bottom:10px}
@@ -104,7 +110,7 @@
   .rank{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--line);border-radius:13px;margin-bottom:10px;background:var(--card);box-shadow:var(--shadow-sm)}
   .rank .pos{font-size:22px;font-weight:900;color:var(--blue);width:34px;text-align:center}.rank.first{border-color:var(--orange);background:var(--softwarm)}
   .rank .rn{font-weight:800;font-size:16px}.rank .rs{margin-inline-start:auto;font-size:22px;font-weight:900}.rank .rd{font-size:12px;color:var(--muted)}
-  footer{color:var(--muted);font-size:12.5px;text-align:center;margin-top:34px;padding-top:16px;border-top:1px solid var(--line)}
+  footer{color:#93a3c0;font-size:12.5px;text-align:center;margin-top:34px;padding-top:16px;border-top:1px solid rgba(255,255,255,.14)}
   .hide{display:none!important}
   /* player */
   .player-shell{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
@@ -214,65 +220,65 @@ const MET={nl:{sat:"Tevredenheid",fin:"Financieel",comp:"Compliance",dur:"Duurza
 const DEPTS=[{nl:"Onderhoud",en:"Maintenance"},{nl:"Klantcontact (KCC)",en:"Customer contact"},{nl:"Financiën",en:"Finance"},{nl:"Inkoop",en:"Procurement"},{nl:"Data & rapportage",en:"Data & reporting"},{nl:"Verhuur & toewijzing",en:"Letting & allocation"},{nl:"Compliance",en:"Compliance"},{nl:"ICT & systemen",en:"IT & systems"},{nl:"Datamanagement",en:"Data management"},{nl:"Sociaal beheer",en:"Social management"},{nl:"Juridische zaken",en:"Legal affairs"},{nl:"Wijkbeheer",en:"Neighbourhood mgmt"},{nl:"Vastgoed & projecten",en:"Real estate & projects"},{nl:"Assetmanagement",en:"Asset management"},{nl:"Bewonerscommunicatie",en:"Resident communication"},{nl:"Strategie",en:"Strategy"}];
 const CAT={A:"onderhoud",B:"toewijzing",C:"sociaal",D:"duurzaam",E:"onderhoud",J1:"onderhoud",J2:"digitaal",J3:"sociaal",J4:"toewijzing",J5:"financien",J6:"sociaal",J7:"financien",J8:"toewijzing",J9:"duurzaam",J10:"digitaal",J11:"sociaal",J12:"toewijzing",C1:"duurzaam",C2:"digitaal",C3:"duurzaam",C4:"onderhoud",C5:"financien",C6:"financien",S:"onderhoud"};
 const SCEN_NL=[
- {id:"A",t:"De schimmelmelding",x:"Een huurder meldt schimmel in de slaapkamer. Er woont een baby van vier maanden. Dit duurt al drie weken.",dep:[0,1,2,3,4],sp:"Klanttevredenheid versus kostenbeheersing. Bij een baby komen reputatie en zorgplicht erbij."},
- {id:"B",t:"De zzp'er",x:"Een zelfstandige met wisselend inkomen reageert op een sociale huurwoning. Staat al zeven jaar ingeschreven.",dep:[5,6,7,8],sp:"Snelheid versus compliance, en wettelijke kaders versus de menselijke maat."},
- {id:"C",t:"De stille achterstand",x:"Een huurder heeft twee maanden achterstand en reageert nergens op. Buren zagen hem al weken niet.",dep:[2,9,1,10,11],sp:"Financiële continuïteit versus maatschappelijke verantwoordelijkheid."},
- {id:"D",t:"De weigeraar",x:"Jullie willen 24 woningen isoleren en zonnepanelen plaatsen. Zes huurders weigeren — bang voor huurverhoging.",dep:[12,13,14,2,15],sp:"Betaalbaarheid versus klimaatdoelen."},
- {id:"E",t:"De verbouwde woning",x:"Een vertrekkende huurder blijkt zonder toestemming een muur doorgebroken en de badkamer verbouwd te hebben.",dep:[0,5,2,10],sp:"Leegstandsverlies versus kwaliteit."}
+ {id:"A",t:"De schimmelmelding",x:"Een huurder meldt via het portaal schimmel in de slaapkamer. In het gezin woont een baby van vier maanden. Er zit een foto bij, met de boodschap: dit duurt nu al drie weken. De huurder is ongerust en voelt zich niet gehoord.",o:[{l:"A · Direct herstellen, gezin ontzien",e:"Snel en grondig, ook al is het duur.",coins:-3,fx:{sat:2,comp:1}},{l:"B · Regulier inplannen",e:"Via de vaste aannemer, geen voorrang.",coins:-1,fx:{sat:1}},{l:"C · Laten ventileren, zelf oplossen",e:"Kosten drukken, bal bij de huurder.",coins:0,fx:{sat:-2,comp:-1}}],sp:"Klanttevredenheid versus kostenbeheersing. Bij een baby komen reputatie en zorgplicht erbij — één bericht op sociale media en het is een mediakwestie."},
+ {id:"B",t:"De zzp'er",x:"Een zelfstandige met sterk wisselend inkomen reageert op een sociale huurwoning. Vorig jaar verdiende hij te veel voor de inkomensgrens, dit jaar zit hij er ruim onder. Hij staat al zeven jaar ingeschreven en hoopt eindelijk aan de beurt te zijn.",o:[{l:"A · Toewijzen op actueel inkomen",e:"Menselijke maat, met een stevig dossier.",coins:-1,fx:{sat:2,comp:-1}},{l:"B · Extra toetsen, dan beslissen",e:"Zorgvuldig, kost tijd.",coins:-1,fx:{comp:2,sat:-1}},{l:"C · Afwijzen op de regels",e:"Veilig, maar teleurstellend.",coins:0,fx:{comp:1,sat:-2}}],sp:"Snelheid versus compliance, en wettelijke kaders versus de menselijke maat. Zeven jaar wachten voelt onrechtvaardig, maar de accountant toetst op de regels, niet op het gevoel."},
+ {id:"C",t:"De stille achterstand",x:"Een huurder heeft twee maanden huurachterstand en reageert niet op brieven, mails of telefoontjes. De buren zeggen dat ze hem al weken niet hebben gezien. Er hangt iets onrustigs om de woning.",o:[{l:"A · Huisbezoek en hulp aanhaken",e:"Vroegsignalering met de gemeente.",coins:-1,fx:{sat:2,comp:1}},{l:"B · Incassotraject starten",e:"Zakelijk, volgens de termijnen.",coins:0,fx:{fin:1,sat:-2}},{l:"C · Aanmanen en afwachten",e:"Goedkoop, maar risico.",coins:0,fx:{sat:-1,comp:-2}}],sp:"Financiële continuïteit versus maatschappelijke verantwoordelijkheid. Ontruimen is het duurste én het slechtste scenario, voor iedereen."},
+ {id:"D",t:"De weigeraar",x:"Jullie willen een portiekflat van 24 woningen isoleren en van zonnepanelen voorzien. Voor het project is instemming van 70 procent van de bewoners nodig. Zes huurders weigeren: ze vrezen huurverhoging en gedoe, en vertrouwen de plannen niet.",o:[{l:"A · Doorzetten met compensatie",e:"Bewoners tegemoetkomen, duur.",coins:-3,fx:{dur:2,sat:1}},{l:"B · Faseren en opnieuw in gesprek",e:"Rustiger, later resultaat.",coins:-1,fx:{dur:1,fin:-1}},{l:"C · Project schrappen",e:"Geld sparen, labels blijven laag.",coins:0,fx:{dur:-2,sat:1}}],sp:"Betaalbaarheid versus klimaatdoelen. De labels moeten naar A, maar de huurder van nu betaalt de rekening en voelt vooral het gedoe."},
+ {id:"E",t:"De verbouwde woning",x:"Een vertrekkende huurder zegt de huur op. Bij de voorinspectie blijkt dat hij zonder toestemming een muur heeft doorgebroken en de badkamer heeft verbouwd. Het ziet er strak uit, maar niets is gedocumenteerd of gemeld.",o:[{l:"A · Overnemen, snel opnieuw verhuren",e:"Leegstand beperken, pragmatisch.",coins:1,fx:{fin:1,comp:-1}},{l:"B · Herstel in oude staat eisen",e:"Netjes, maar weken leegstand.",coins:-2,fx:{comp:1,fin:-1}},{l:"C · Coulant afhandelen",e:"Goede sfeer, minder streng.",coins:0,fx:{sat:1,comp:-1}}],sp:"Leegstandsverlies versus kwaliteit. Elke week discussie kost huurinkomsten, terwijl er tien jaar wachtlijst voor de deur staat."}
 ];
 const SCEN_EN=[
- {id:"A",t:"The mould report",x:"A tenant reports mould in the bedroom. A four-month-old baby lives there. It has been going on for three weeks.",dep:[0,1,2,3,4],sp:"Customer satisfaction versus cost control. With a baby, reputation and duty of care come on top."},
- {id:"B",t:"The freelancer",x:"A self-employed person with fluctuating income applies for a social rental home. Registered for seven years.",dep:[5,6,7,8],sp:"Speed versus compliance, and legal frameworks versus the human dimension."},
- {id:"C",t:"The silent arrears",x:"A tenant is two months in arrears and responds to nothing. Neighbours haven't seen him for weeks.",dep:[2,9,1,10,11],sp:"Financial continuity versus social responsibility."},
- {id:"D",t:"The refuser",x:"You want to insulate 24 homes and add solar panels. Six tenants refuse — afraid of a rent increase.",dep:[12,13,14,2,15],sp:"Affordability versus climate goals."},
- {id:"E",t:"The renovated home",x:"A departing tenant turns out to have knocked through a wall and rebuilt the bathroom without permission.",dep:[0,5,2,10],sp:"Vacancy loss versus quality."}
+ {id:"A",t:"The mould report",x:"A tenant reports mould in the bedroom via the portal. A four-month-old baby lives with the family. A photo is attached, with the message: this has been going on for three weeks now. The tenant is worried and feels unheard.",o:[{l:"A · Repair now, spare the family",e:"Fast and thorough, even if pricey.",coins:-3,fx:{sat:2,comp:1}},{l:"B · Schedule a regular repair",e:"Via the usual contractor, no priority.",coins:-1,fx:{sat:1}},{l:"C · Let them ventilate, DIY",e:"Cut costs, ball with the tenant.",coins:0,fx:{sat:-2,comp:-1}}],sp:"Customer satisfaction versus cost control. With a baby, reputation and duty of care come on top — one social-media post and it's a media issue."},
+ {id:"B",t:"The freelancer",x:"A self-employed person with strongly fluctuating income applies for a social rental home. Last year he earned too much for the income limit; this year he is well below it. He has been registered for seven years and hopes it is finally his turn.",o:[{l:"A · Allocate on current income",e:"The human measure, with a solid file.",coins:-1,fx:{sat:2,comp:-1}},{l:"B · Check further, then decide",e:"Careful, costs time.",coins:-1,fx:{comp:2,sat:-1}},{l:"C · Reject on the rules",e:"Safe, but disappointing.",coins:0,fx:{comp:1,sat:-2}}],sp:"Speed versus compliance, and legal frameworks versus the human dimension. Seven years of waiting feels unfair, but the accountant tests against the rules, not the feeling."},
+ {id:"C",t:"The silent arrears",x:"A tenant is two months in arrears and responds to nothing — no letters, emails or calls. The neighbours say they haven't seen him for weeks. Something uneasy hangs around the home.",o:[{l:"A · Home visit, bring in help",e:"Early signalling with the municipality.",coins:-1,fx:{sat:2,comp:1}},{l:"B · Start the collections process",e:"Businesslike, by the deadlines.",coins:0,fx:{fin:1,sat:-2}},{l:"C · Send a reminder and wait",e:"Cheap, but risky.",coins:0,fx:{sat:-1,comp:-2}}],sp:"Financial continuity versus social responsibility. Eviction is the most expensive and the worst outcome, for everyone."},
+ {id:"D",t:"The refuser",x:"You want to insulate a block of 24 homes and add solar panels. The project needs consent from 70 percent of residents. Six tenants refuse: they fear a rent increase and hassle, and don't trust the plans.",o:[{l:"A · Push on with compensation",e:"Meet residents halfway, costly.",coins:-3,fx:{dur:2,sat:1}},{l:"B · Phase it and talk again",e:"Calmer, results later.",coins:-1,fx:{dur:1,fin:-1}},{l:"C · Cancel the project",e:"Save money, labels stay low.",coins:0,fx:{dur:-2,sat:1}}],sp:"Affordability versus climate goals. The labels must reach A, but today's tenant pays the bill and mostly feels the hassle."},
+ {id:"E",t:"The renovated home",x:"A departing tenant gives notice. During the inspection it turns out he knocked through a wall and rebuilt the bathroom without permission. It looks slick, but nothing is documented or reported.",o:[{l:"A · Take it over, re-let fast",e:"Limit vacancy, pragmatic.",coins:1,fx:{fin:1,comp:-1}},{l:"B · Demand full restoration",e:"Correct, but weeks of vacancy.",coins:-2,fx:{comp:1,fin:-1}},{l:"C · Handle it leniently",e:"Good vibe, less strict.",coins:0,fx:{sat:1,comp:-1}}],sp:"Vacancy loss versus quality. Every week of discussion costs rent income, while there's a ten-year waiting list at the door."}
 ];
 const JOUR_NL=[
- {id:"J1",t:"Ketels in de kou",x:"Half januari vallen de cv-ketels van twaalf woningen definitief uit.",o:[{l:"A · Warmtepompen",e:"Duurder, maar toekomstvast.",coins:-4,fx:{sat:1,dur:2}},{l:"B · Nieuwe cv-ketels",e:"Snel en vertrouwd.",coins:-2,fx:{sat:1,dur:-1}}]},
- {id:"J2",t:"Het datalek",x:"Een medewerker mailt per ongeluk huurdersgegevens naar een extern adres.",o:[{l:"A · Melden bij de AP",e:"En huurders informeren.",coins:-1,fx:{comp:2,sat:-1}},{l:"B · Intern oplossen",e:"De ontvanger belooft te verwijderen.",coins:0,fx:{comp:-3,sat:-1}}]},
- {id:"J3",t:"De speeltuin",x:"De bewonerscommissie eist al twee jaar een opgeknapte binnentuin. Ze dreigen met de krant.",o:[{l:"A · Investeren",e:"Samen met bewoners ontwerpen.",coins:-2,fx:{sat:2}},{l:"B · Doorschuiven",e:"Het budget is krap.",coins:0,fx:{sat:-1}}]},
- {id:"J4",t:"De schrijnende afwijzing",x:"Een alleenstaande moeder zit 800 euro boven de inkomensgrens. Schrijnend en goed gedocumenteerd.",o:[{l:"A · Afwijzen",e:"Regels zijn regels.",coins:0,fx:{comp:1,sat:-1}},{l:"B · Toewijzen via vrije ruimte",e:"Volledig dossier.",coins:-1,fx:{sat:1}}]},
- {id:"J5",t:"Het onderhoudscontract",x:"Een aannemer biedt 15% korting bij een driejarig contract, maar wil deze week tekenen.",o:[{l:"A · Tekenen",e:"Korting te goed om te laten lopen.",coins:2,fx:{comp:-1}},{l:"B · Meervoudige uitvraag",e:"Bij drie partijen.",coins:0,fx:{comp:1}}]},
- {id:"J6",t:"De statushouders",x:"De gemeente vraagt extra statushouders te huisvesten. De wachtlijst is al lang.",o:[{l:"A · Volledig toezeggen",e:"Prestatieafspraken nakomen.",coins:0,fx:{comp:2,sat:-1}},{l:"B · Helft toezeggen",e:"Rest faseren.",coins:0,fx:{comp:1}}]},
- {id:"J7",t:"De huurverhoging",x:"De inflatie is hoog en jullie investeringsagenda ook. Stel de jaarlijkse huurverhoging vast.",o:[{l:"A · Maximaal verhogen",e:"",coins:2,fx:{sat:-2}},{l:"B · Gematigd verhogen",e:"Onder het maximum.",coins:1,fx:{}}]},
- {id:"J8",t:"De hennepgeur",x:"Sterke hennepgeur en afgeplakte ramen. Buren klagen over overlast en angst.",o:[{l:"A · Politie + ontbinding",e:"Direct schakelen.",coins:-1,fx:{comp:1,sat:1}},{l:"B · Eerst aankijken",e:"Bewijs verzamelen.",coins:0,fx:{comp:-2}}]},
- {id:"J9",t:"Zonnepanelen met subsidie",x:"Een regeling dekt de helft van zonnepanelen op 100 woningen. Deadline over drie weken.",o:[{l:"A · Doen",e:"Alle hens aan dek.",coins:-3,fx:{dur:2,sat:1}},{l:"B · Overslaan",e:"Volgend jaar weer.",coins:0,fx:{dur:-1}}]},
- {id:"J10",t:"Het legacy-systeem",x:"De leverancier verhoogt de licentiekosten met 40%. Migreren kost nu geld en aandacht.",o:[{l:"A · Betalen",e:"Geen tijd voor migratie.",coins:-2,fx:{}},{l:"B · Migreren",e:"Naar het geïntegreerde platform.",coins:-3,fx:{comp:1,fin:1}}]},
- {id:"J11",t:"De verwarde huurder",x:"Ernstige overlast in een portiek. Buren dreigen te vertrekken. Zorg is niet in beeld.",o:[{l:"A · Juridisch traject",e:"Richting ontbinding.",coins:-2,fx:{sat:1}},{l:"B · Zorgpartners aanhaken",e:"Met de gemeente.",coins:-1,fx:{comp:1}}]},
- {id:"J12",t:"De woningruil",x:"Twee huurders willen ruilen. Vergt dubbele toetsing en administratie.",o:[{l:"A · Meewerken",e:"Volledig toetsen.",coins:-1,fx:{sat:1,comp:1}},{l:"B · Afwijzen",e:"Mutatieteam zit vol.",coins:0,fx:{sat:-1}}]}
+ {id:"J1",t:"Ketels in de kou",x:"Half januari vallen de cv-ketels van twaalf woningen definitief uit. De bewoners zitten in de kou en bellen het klantcontactcentrum plat — er moet vandaag nog een besluit komen.",o:[{l:"A · Warmtepompen",e:"Toekomstvast, fors investeren.",coins:-4,fx:{dur:2,sat:1}},{l:"B · Nieuwe cv-ketels",e:"Snel en vertrouwd.",coins:-2,fx:{sat:1,dur:-1}},{l:"C · Tijdelijke kachels",e:"Goedkoop nu, gedoe later.",coins:-1,fx:{sat:-1,dur:-1}}]},
+ {id:"J2",t:"Het datalek",x:"Een medewerker mailt per ongeluk een lijst met huurdersgegevens — inclusief betalingsachterstanden — naar een extern adres. Binnen een uur is het bekend op kantoor en de klok begint te tikken.",o:[{l:"A · Melden bij de AP",e:"Transparant, kost imago even.",coins:-1,fx:{comp:2,sat:-1}},{l:"B · Intern onderzoeken",e:"Voorzichtig, tijd kopen.",coins:0,fx:{comp:-1}},{l:"C · Stilhouden",e:"Riskant; dit kan groot worden.",coins:0,fx:{comp:-3,sat:-1}}]},
+ {id:"J3",t:"De speeltuin",x:"De bewonerscommissie van een verloederd complex eist al twee jaar een opgeknapte binnentuin met speeltuin. Ze zijn het wachten zat en dreigen naar de lokale krant te stappen.",o:[{l:"A · Investeren, samen ontwerpen",e:"Bewoners betrekken.",coins:-2,fx:{sat:2}},{l:"B · Sober opknappen",e:"Iets doen, budget sparen.",coins:-1,fx:{sat:1}},{l:"C · Doorschuiven",e:"Niets nu, gemor later.",coins:0,fx:{sat:-1}}]},
+ {id:"J4",t:"De schrijnende afwijzing",x:"Een alleenstaande moeder reageert op een woning; haar inkomen ligt 800 euro boven de grens. Haar situatie is schrijnend en goed gedocumenteerd, maar de regels zijn glashelder.",o:[{l:"A · Toewijzen via vrije ruimte",e:"Menselijke maat, dossier op orde.",coins:-1,fx:{sat:2,comp:-1}},{l:"B · Afwijzen, warm doorverwijzen",e:"Regels volgen, netjes.",coins:0,fx:{comp:1,sat:-1}},{l:"C · Afwijzen zonder omhaal",e:"Snel, maar koud.",coins:0,fx:{comp:1,sat:-2}}]},
+ {id:"J5",t:"Het onderhoudscontract",x:"Een aannemer biedt 15% korting bij een driejarig onderhoudscontract, maar wil deze week tekenen. Er is geen tijd voor een zorgvuldige vergelijking met andere partijen.",o:[{l:"A · Tekenen voor de korting",e:"Direct voordeel, minder controle.",coins:2,fx:{comp:-1}},{l:"B · Meervoudige uitvraag",e:"Zorgvuldig, kost tijd.",coins:0,fx:{comp:1}},{l:"C · Kort onderhandelen",e:"Iets van beide.",coins:1,fx:{}}]},
+ {id:"J6",t:"De statushouders",x:"De gemeente vraagt jullie dit kwartaal extra statushouders te huisvesten. De wachtlijst voor reguliere woningzoekenden is al lang en de druk komt van twee kanten.",o:[{l:"A · Volledig toezeggen",e:"Afspraken nakomen.",coins:0,fx:{comp:2,sat:-1}},{l:"B · Helft toezeggen, faseren",e:"Balans zoeken.",coins:0,fx:{comp:1}},{l:"C · Uitstellen dit kwartaal",e:"Reguliere lijst eerst.",coins:0,fx:{comp:-1,sat:1}}]},
+ {id:"J7",t:"De huurverhoging",x:"Het is 1 juli: de inflatie is hoog en jullie investeringsagenda ook. De jaarlijkse huurverhoging moet worden vastgesteld, ergens tussen betaalbaarheid en begroting.",o:[{l:"A · Maximaal verhogen",e:"Begroting op orde, huurders morren.",coins:2,fx:{sat:-2}},{l:"B · Gematigd verhogen",e:"Redelijk midden.",coins:1,fx:{}},{l:"C · Bevriezen dit jaar",e:"Huurders blij, minder inkomsten.",coins:-1,fx:{sat:2}}]},
+ {id:"J8",t:"De hennepgeur",x:"De wijkbeheerder meldt een sterke hennepgeur en afgeplakte ramen bij een woning. De buren klagen over warmte-overlast en voelen zich onveilig.",o:[{l:"A · Politie + ontbinding",e:"Daadkrachtig, kost tijd en geld.",coins:-1,fx:{comp:1,sat:1}},{l:"B · Waarschuwen en monitoren",e:"Kans geven, risico blijft.",coins:0,fx:{comp:-1}},{l:"C · Zelf aankijken",e:"Wegkijken kan zich wreken.",coins:0,fx:{comp:-2,sat:-1}}]},
+ {id:"J9",t:"Zonnepanelen met subsidie",x:"Een subsidieregeling dekt de helft van een zonnepanelenproject op 100 woningen, maar de aanvraagdeadline is over drie weken. De organisatie zit al bomvol.",o:[{l:"A · Vol inzetten",e:"Alle hens aan dek.",coins:-3,fx:{dur:2,sat:1}},{l:"B · Kleine pilot",e:"Voorzichtig starten.",coins:-1,fx:{dur:1}},{l:"C · Overslaan",e:"Focus elders, kans gemist.",coins:0,fx:{dur:-1}}]},
+ {id:"J10",t:"Het legacy-systeem",x:"De leverancier van jullie verouderde reparatiesysteem verhoogt de licentiekosten met 40%. Migreren naar het geïntegreerde platform kan, maar kost nu geld en aandacht.",o:[{l:"A · Migreren",e:"Investeren in de toekomst.",coins:-3,fx:{comp:1,fin:1}},{l:"B · Betalen en doorschuiven",e:"Rust nu, kosten blijven.",coins:-2,fx:{}},{l:"C · Zelf lapmiddel bouwen",e:"Goedkoop, fragiel.",coins:0,fx:{comp:-1,fin:-1}}]},
+ {id:"J11",t:"De verwarde huurder",x:"Een huurder met verward gedrag veroorzaakt ernstige overlast in een portiek en de buren dreigen zelf te vertrekken. Zorg lijkt niet in beeld en de situatie loopt op.",o:[{l:"A · Zorgpartners + gemeente",e:"Duurzame oplossing, kost tijd.",coins:-1,fx:{comp:1,sat:1}},{l:"B · Juridisch traject",e:"Snel rust, hard voor de huurder.",coins:-2,fx:{sat:1}},{l:"C · Buren geruststellen, afwachten",e:"Uitstel, overlast blijft.",coins:0,fx:{sat:-1,comp:-1}}]},
+ {id:"J12",t:"De woningruil",x:"Twee huurders willen woningen ruilen: een oudere dame in een eengezinswoning en een jong gezin in een appartement. Het vergt dubbele toetsing en de nodige administratie.",o:[{l:"A · Meewerken, volledig toetsen",e:"Blije huurders, extra werk.",coins:-1,fx:{sat:1,comp:1}},{l:"B · Meewerken, licht toetsen",e:"Sneller, meer risico.",coins:0,fx:{sat:1,comp:-1}},{l:"C · Afwijzen",e:"Team ontlasten, teleurstelling.",coins:0,fx:{sat:-1}}]}
 ];
 const JOUR_EN=[
- {id:"J1",t:"Boilers in the cold",x:"In mid-January the boilers of twelve homes fail for good.",o:[{l:"A · Heat pumps",e:"Pricier, but future-proof.",coins:-4,fx:{sat:1,dur:2}},{l:"B · New gas boilers",e:"Fast and familiar.",coins:-2,fx:{sat:1,dur:-1}}]},
- {id:"J2",t:"The data breach",x:"An employee accidentally emails tenant data to an external address.",o:[{l:"A · Report to the DPA",e:"And inform tenants.",coins:-1,fx:{comp:2,sat:-1}},{l:"B · Handle internally",e:"Recipient promises to delete.",coins:0,fx:{comp:-3,sat:-1}}]},
- {id:"J3",t:"The playground",x:"The residents' committee has demanded a renovated courtyard for two years.",o:[{l:"A · Invest",e:"Design with residents.",coins:-2,fx:{sat:2}},{l:"B · Postpone",e:"The budget is tight.",coins:0,fx:{sat:-1}}]},
- {id:"J4",t:"The hard rejection",x:"A single mother is 800 euros over the income limit. Distressing and well documented.",o:[{l:"A · Reject",e:"Rules are rules.",coins:0,fx:{comp:1,sat:-1}},{l:"B · Allocate via free margin",e:"Full file.",coins:-1,fx:{sat:1}}]},
- {id:"J5",t:"The maintenance contract",x:"A contractor offers 15% off for a three-year deal, but wants to sign this week.",o:[{l:"A · Sign",e:"Too good to miss.",coins:2,fx:{comp:-1}},{l:"B · Get three quotes",e:"",coins:0,fx:{comp:1}}]},
- {id:"J6",t:"The status holders",x:"The municipality asks you to house extra status holders. The waiting list is long.",o:[{l:"A · Commit fully",e:"Meet the agreements.",coins:0,fx:{comp:2,sat:-1}},{l:"B · Commit half",e:"Phase the rest.",coins:0,fx:{comp:1}}]},
- {id:"J7",t:"The rent increase",x:"Inflation is high and so is your investment agenda. Set the annual rent increase.",o:[{l:"A · Maximum increase",e:"",coins:2,fx:{sat:-2}},{l:"B · Moderate increase",e:"Below the maximum.",coins:1,fx:{}}]},
- {id:"J8",t:"The cannabis smell",x:"Strong cannabis smell and blocked windows. Neighbours complain of nuisance and fear.",o:[{l:"A · Police + termination",e:"Act immediately.",coins:-1,fx:{comp:1,sat:1}},{l:"B · Watch first",e:"Gather evidence.",coins:0,fx:{comp:-2}}]},
- {id:"J9",t:"Solar panels with subsidy",x:"A scheme covers half of solar panels on 100 homes. Deadline in three weeks.",o:[{l:"A · Do it",e:"All hands on deck.",coins:-3,fx:{dur:2,sat:1}},{l:"B · Skip it",e:"Next year again.",coins:0,fx:{dur:-1}}]},
- {id:"J10",t:"The legacy system",x:"The vendor raises the licence fee by 40%. Migrating costs money and attention now.",o:[{l:"A · Pay",e:"No time to migrate.",coins:-2,fx:{}},{l:"B · Migrate",e:"To the integrated platform.",coins:-3,fx:{comp:1,fin:1}}]},
- {id:"J11",t:"The confused tenant",x:"Serious nuisance in a stairwell. Neighbours threaten to leave. Care is not in the picture.",o:[{l:"A · Legal route",e:"Toward termination.",coins:-2,fx:{sat:1}},{l:"B · Bring in care partners",e:"With the municipality.",coins:-1,fx:{comp:1}}]},
- {id:"J12",t:"The home swap",x:"Two tenants want to swap. It requires double checking and admin.",o:[{l:"A · Cooperate",e:"Check fully.",coins:-1,fx:{sat:1,comp:1}},{l:"B · Reject",e:"The team is overloaded.",coins:0,fx:{sat:-1}}]}
+ {id:"J1",t:"Boilers in the cold",x:"In mid-January the boilers of twelve homes fail for good. Residents are left in the cold and flood the customer-contact centre with calls — a decision is needed today.",o:[{l:"A · Heat pumps",e:"Future-proof, big investment.",coins:-4,fx:{dur:2,sat:1}},{l:"B · New gas boilers",e:"Fast and familiar.",coins:-2,fx:{sat:1,dur:-1}},{l:"C · Temporary heaters",e:"Cheap now, hassle later.",coins:-1,fx:{sat:-1,dur:-1}}]},
+ {id:"J2",t:"The data breach",x:"An employee accidentally emails a list of tenant data — including payment arrears — to an external address. Within an hour it's known at the office and the clock starts ticking.",o:[{l:"A · Report to the DPA",e:"Transparent, a small image hit.",coins:-1,fx:{comp:2,sat:-1}},{l:"B · Investigate internally",e:"Cautious, buy time.",coins:0,fx:{comp:-1}},{l:"C · Keep it quiet",e:"Risky; this could blow up.",coins:0,fx:{comp:-3,sat:-1}}]},
+ {id:"J3",t:"The playground",x:"The residents' committee of a run-down complex has demanded a renovated courtyard with a playground for two years. They're tired of waiting and threaten to go to the local paper.",o:[{l:"A · Invest, co-design",e:"Involve residents.",coins:-2,fx:{sat:2}},{l:"B · A modest refresh",e:"Do something, save budget.",coins:-1,fx:{sat:1}},{l:"C · Postpone",e:"Nothing now, grumbling later.",coins:0,fx:{sat:-1}}]},
+ {id:"J4",t:"The hard rejection",x:"A single mother applies for a home; her income is 800 euros over the limit. Her situation is distressing and well documented, but the rules are crystal clear.",o:[{l:"A · Allocate via free margin",e:"Human measure, file in order.",coins:-1,fx:{sat:2,comp:-1}},{l:"B · Reject, refer warmly",e:"Follow the rules, kindly.",coins:0,fx:{comp:1,sat:-1}},{l:"C · Reject flatly",e:"Fast, but cold.",coins:0,fx:{comp:1,sat:-2}}]},
+ {id:"J5",t:"The maintenance contract",x:"A contractor offers 15% off for a three-year maintenance contract, but wants to sign this week. There's no time for a careful comparison with other parties.",o:[{l:"A · Sign for the discount",e:"Immediate gain, less control.",coins:2,fx:{comp:-1}},{l:"B · Get three quotes",e:"Careful, costs time.",coins:0,fx:{comp:1}},{l:"C · Negotiate quickly",e:"A bit of both.",coins:1,fx:{}}]},
+ {id:"J6",t:"The status holders",x:"The municipality asks you to house extra status holders this quarter. The waiting list for regular applicants is already long and the pressure comes from both sides.",o:[{l:"A · Commit fully",e:"Meet the agreements.",coins:0,fx:{comp:2,sat:-1}},{l:"B · Commit half, phase",e:"Seek balance.",coins:0,fx:{comp:1}},{l:"C · Postpone this quarter",e:"Regular list first.",coins:0,fx:{comp:-1,sat:1}}]},
+ {id:"J7",t:"The rent increase",x:"It's 1 July: inflation is high and so is your investment agenda. The annual rent increase must be set, somewhere between affordability and the budget.",o:[{l:"A · Maximum increase",e:"Budget on track, tenants grumble.",coins:2,fx:{sat:-2}},{l:"B · Moderate increase",e:"A fair middle.",coins:1,fx:{}},{l:"C · Freeze this year",e:"Tenants happy, less income.",coins:-1,fx:{sat:2}}]},
+ {id:"J8",t:"The cannabis smell",x:"The neighbourhood manager reports a strong cannabis smell and blocked-out windows at a home. The neighbours complain of heat nuisance and feel unsafe.",o:[{l:"A · Police + termination",e:"Decisive, costs time and money.",coins:-1,fx:{comp:1,sat:1}},{l:"B · Warn and monitor",e:"Give a chance, risk remains.",coins:0,fx:{comp:-1}},{l:"C · Just watch",e:"Looking away can backfire.",coins:0,fx:{comp:-2,sat:-1}}]},
+ {id:"J9",t:"Solar panels with subsidy",x:"A subsidy scheme covers half of a solar-panel project on 100 homes, but the application deadline is in three weeks. The organisation is already swamped.",o:[{l:"A · Go all in",e:"All hands on deck.",coins:-3,fx:{dur:2,sat:1}},{l:"B · Small pilot",e:"Start cautiously.",coins:-1,fx:{dur:1}},{l:"C · Skip it",e:"Focus elsewhere, chance missed.",coins:0,fx:{dur:-1}}]},
+ {id:"J10",t:"The legacy system",x:"The vendor of your outdated repair system raises the licence fee by 40%. Migrating to the integrated platform is possible, but costs money and attention now.",o:[{l:"A · Migrate",e:"Invest in the future.",coins:-3,fx:{comp:1,fin:1}},{l:"B · Pay and postpone",e:"Calm now, costs remain.",coins:-2,fx:{}},{l:"C · Build a workaround",e:"Cheap, fragile.",coins:0,fx:{comp:-1,fin:-1}}]},
+ {id:"J11",t:"The confused tenant",x:"A tenant with confused behaviour causes serious nuisance in a stairwell and the neighbours threaten to leave. Care seems out of the picture and the situation is escalating.",o:[{l:"A · Care partners + municipality",e:"Lasting fix, costs time.",coins:-1,fx:{comp:1,sat:1}},{l:"B · Legal route",e:"Quick calm, hard on the tenant.",coins:-2,fx:{sat:1}},{l:"C · Reassure neighbours, wait",e:"Delay, nuisance remains.",coins:0,fx:{sat:-1,comp:-1}}]},
+ {id:"J12",t:"The home swap",x:"Two tenants want to swap homes: an older lady in a family house and a young family in an apartment. It requires double checking and a fair bit of admin.",o:[{l:"A · Cooperate, check fully",e:"Happy tenants, extra work.",coins:-1,fx:{sat:1,comp:1}},{l:"B · Cooperate, light checks",e:"Faster, more risk.",coins:0,fx:{sat:1,comp:-1}},{l:"C · Reject",e:"Relieve the team, disappoint.",coins:0,fx:{sat:-1}}]}
 ];
 const CRIS_NL=[
- {id:"C1",t:"Energieprijzen verdubbelen",x:"Huurders in slecht geïsoleerde woningen komen in de knel; de media staan erbovenop.",o:[{l:"A · Noodfonds openen",e:"Voor energiearmoede.",coins:-2,fx:{sat:1}},{l:"B · Geen noodfonds",e:"Verwijzen naar gemeente/rijk.",coins:0,fx:{sat:-2}}]},
- {id:"C2",t:"Cyberaanval",x:"Ransomware legt het incassosysteem twee weken plat.",o:[{l:"A · Forensisch + melden",e:"Bij de toezichthouders.",coins:-2,fx:{comp:1}},{l:"B · Stilhouden",e:"Zelf herstellen.",coins:0,fx:{comp:-2}}]},
- {id:"C3",t:"ESG-rapportage per direct",x:"Nieuwe EU-regels: duurzaamheidsrapportage per direct. Jullie data ligt verspreid.",o:[{l:"A · Dataproject",e:"Alles centraal.",coins:-2,fx:{comp:1,dur:1}},{l:"B · Minimaal rapporteren",e:"Op wat er ligt.",coins:0,fx:{comp:-2}}]},
- {id:"C4",t:"Aannemer failliet",x:"Midden in de renovatie van 60 woningen gaat de hoofdaannemer failliet.",o:[{l:"A · Doorbouwen",e:"Duurdere partij.",coins:-3,fx:{sat:1,dur:1}},{l:"B · Pauzeren",e:"Opnieuw aanbesteden.",coins:-1,fx:{sat:-2,dur:-1}}]},
- {id:"C5",t:"Mediastorm om toewijzing",x:"Een dagblad kopt dat jullie algoritme groepen benadeelt. De wethouder stelt vragen.",o:[{l:"A · Onafhankelijk onderzoek",e:"Uitkomsten openbaar.",coins:-1,fx:{comp:2}},{l:"B · Verweren",e:"Met een persbericht.",coins:0,fx:{sat:-2,comp:-1}}]},
- {id:"C6",t:"Verhuurderheffing 2.0",x:"Het rijk kondigt onverwacht een nieuwe heffing aan op sociale huurwoningen.",o:[{l:"A · Bezuinigen & uitleggen",e:"Schrap iets, leg het uit.",coins:-3,fx:{comp:1}},{l:"B · Investeringen schrappen",e:"Duurzaamheid inleveren.",coins:-1,fx:{dur:-2}}]}
+ {id:"C1",t:"Energieprijzen verdubbelen",x:"De energieprijzen exploderen. Huurders in slecht geïsoleerde woningen komen in de knel en de media staan er bovenop — de druk om iets te doen is groot.",o:[{l:"A · Noodfonds openen",e:"Huurders steunen, kost geld.",coins:-2,fx:{sat:2}},{l:"B · Isolatie versnellen",e:"Structureel, forse investering.",coins:-3,fx:{dur:2,sat:1}},{l:"C · Verwijzen naar regelingen",e:"Zelf niets, huurders in de kou.",coins:0,fx:{sat:-2}}]},
+ {id:"C2",t:"Cyberaanval",x:"Ransomware legt het incassosysteem twee weken plat. Huurders kunnen niet betalen en de administratie loopt vast; de vraag is: melden of stilhouden?",o:[{l:"A · Forensisch + melden",e:"Transparant en grondig.",coins:-2,fx:{comp:1}},{l:"B · Eigen ICT herstelt",e:"Sneller, minder volledig.",coins:-1,fx:{comp:-1}},{l:"C · Stilhouden",e:"Riskant.",coins:0,fx:{comp:-2}}]},
+ {id:"C3",t:"ESG-rapportage per direct",x:"Nieuwe Europese regelgeving verplicht per direct een duurzaamheidsrapportage. Jullie data over labels en verbruik ligt verspreid over vijf systemen en talloze Excel-bestanden.",o:[{l:"A · Dataproject opzetten",e:"Alles centraal, herbruikbaar.",coins:-2,fx:{comp:1,dur:1}},{l:"B · Extern laten rapporteren",e:"Snel klaar, kost geld.",coins:-2,fx:{comp:1}},{l:"C · Minimaal rapporteren",e:"Voldoen op papier, risico.",coins:0,fx:{comp:-2}}]},
+ {id:"C4",t:"Aannemer failliet",x:"Midden in de renovatie van 60 woningen gaat de hoofdaannemer failliet. De steigers staan er verlaten bij en de bewoners zitten tussen het stof.",o:[{l:"A · Duurdere partij, doorbouwen",e:"Bewoners ontzien, duur.",coins:-3,fx:{sat:1,dur:1}},{l:"B · Pauzeren, opnieuw aanbesteden",e:"Goedkoper, bewoners de dupe.",coins:-1,fx:{sat:-2,dur:-1}},{l:"C · Zelf tijdelijk afronden",e:"Improviseren, wisselvallig.",coins:-2,fx:{sat:-1}}]},
+ {id:"C5",t:"Mediastorm om toewijzing",x:"Een landelijk dagblad kopt dat jullie toewijzingsalgoritme bepaalde groepen benadeelt. De wethouder stelt vragen en huurdersorganisaties eisen opheldering.",o:[{l:"A · Onafhankelijk onderzoek",e:"Vertrouwen herstellen.",coins:-1,fx:{comp:2}},{l:"B · Eigen analyse delen",e:"Sneller, minder onafhankelijk.",coins:0,fx:{comp:-1}},{l:"C · Verweren met persbericht",e:"Stelling nemen, riskant.",coins:0,fx:{sat:-2,comp:-1}}]},
+ {id:"C6",t:"Verhuurderheffing 2.0",x:"Het rijk kondigt onverwacht een nieuwe heffing aan op sociale huurwoningen. Het gat in de begroting is fors — er zal iets moeten sneuvelen.",o:[{l:"A · Bezuinigen op de organisatie",e:"Pijn intern, koers behouden.",coins:-3,fx:{comp:1}},{l:"B · Investeringen temporiseren",e:"Duurzaamheid levert in.",coins:-1,fx:{dur:-2}},{l:"C · Huren verhogen",e:"Huurders betalen mee.",coins:0,fx:{sat:-2,fin:1}}]}
 ];
 const CRIS_EN=[
- {id:"C1",t:"Energy prices double",x:"Tenants in poorly insulated homes get into trouble; the media are all over it.",o:[{l:"A · Open a fund",e:"For energy poverty.",coins:-2,fx:{sat:1}},{l:"B · No fund",e:"Refer to the state.",coins:0,fx:{sat:-2}}]},
- {id:"C2",t:"Cyberattack",x:"Ransomware takes the collections system down for two weeks.",o:[{l:"A · Forensics + report",e:"To regulators.",coins:-2,fx:{comp:1}},{l:"B · Keep it quiet",e:"Fix it yourself.",coins:0,fx:{comp:-2}}]},
- {id:"C3",t:"ESG reporting now",x:"New EU rules: sustainability report immediately. Your data is scattered.",o:[{l:"A · Data project",e:"All central.",coins:-2,fx:{comp:1,dur:1}},{l:"B · Report minimally",e:"On what's there.",coins:0,fx:{comp:-2}}]},
- {id:"C4",t:"Contractor bankrupt",x:"Halfway through renovating 60 homes the main contractor goes bankrupt.",o:[{l:"A · Keep building",e:"Pricier party.",coins:-3,fx:{sat:1,dur:1}},{l:"B · Pause",e:"Re-tender.",coins:-1,fx:{sat:-2,dur:-1}}]},
- {id:"C5",t:"Media storm over allocation",x:"A paper headlines your algorithm disadvantages groups. The alderman asks questions.",o:[{l:"A · Independent research",e:"Publish results.",coins:-1,fx:{comp:2}},{l:"B · Defend",e:"With a press release.",coins:0,fx:{sat:-2,comp:-1}}]},
- {id:"C6",t:"Landlord levy 2.0",x:"The state unexpectedly announces a new levy on social rental homes.",o:[{l:"A · Cut & explain",e:"Trim something, explain it.",coins:-3,fx:{comp:1}},{l:"B · Cut investments",e:"Sacrifice sustainability.",coins:-1,fx:{dur:-2}}]}
+ {id:"C1",t:"Energy prices double",x:"Energy prices explode. Tenants in poorly insulated homes get into trouble and the media are all over it — the pressure to act is high.",o:[{l:"A · Open a fund",e:"Support tenants, costs money.",coins:-2,fx:{sat:2}},{l:"B · Speed up insulation",e:"Structural, big investment.",coins:-3,fx:{dur:2,sat:1}},{l:"C · Refer to state schemes",e:"Nothing yourself, tenants suffer.",coins:0,fx:{sat:-2}}]},
+ {id:"C2",t:"Cyberattack",x:"Ransomware takes the collections system down for two weeks. Tenants can't pay and the administration jams; the question is: report it or keep it quiet?",o:[{l:"A · Forensics + report",e:"Transparent and thorough.",coins:-2,fx:{comp:1}},{l:"B · Own IT fixes it",e:"Faster, less complete.",coins:-1,fx:{comp:-1}},{l:"C · Keep it quiet",e:"Risky.",coins:0,fx:{comp:-2}}]},
+ {id:"C3",t:"ESG reporting now",x:"New EU regulation requires a sustainability report immediately. Your data on labels and consumption is scattered across five systems and countless spreadsheets.",o:[{l:"A · Set up a data project",e:"All central, reusable.",coins:-2,fx:{comp:1,dur:1}},{l:"B · Outsource the report",e:"Quick, costs money.",coins:-2,fx:{comp:1}},{l:"C · Report minimally",e:"Comply on paper, risk.",coins:0,fx:{comp:-2}}]},
+ {id:"C4",t:"Contractor bankrupt",x:"Halfway through renovating 60 homes the main contractor goes bankrupt. The scaffolding stands abandoned and the residents are left amid the dust.",o:[{l:"A · Pricier party, keep building",e:"Spare residents, costly.",coins:-3,fx:{sat:1,dur:1}},{l:"B · Pause, re-tender",e:"Cheaper, residents suffer.",coins:-1,fx:{sat:-2,dur:-1}},{l:"C · Finish it yourself",e:"Improvise, patchy.",coins:-2,fx:{sat:-1}}]},
+ {id:"C5",t:"Media storm over allocation",x:"A national newspaper headlines that your allocation algorithm disadvantages certain groups. The alderman asks questions and tenant organisations demand answers.",o:[{l:"A · Independent research",e:"Restore trust.",coins:-1,fx:{comp:2}},{l:"B · Share your own analysis",e:"Faster, less independent.",coins:0,fx:{comp:-1}},{l:"C · Defend with a press release",e:"Take a stand, risky.",coins:0,fx:{sat:-2,comp:-1}}]},
+ {id:"C6",t:"Landlord levy 2.0",x:"The state unexpectedly announces a new levy on social rental homes. The gap in the budget is large — something will have to give.",o:[{l:"A · Cut in the organisation",e:"Internal pain, keep the course.",coins:-3,fx:{comp:1}},{l:"B · Slow down investments",e:"Sacrifice sustainability.",coins:-1,fx:{dur:-2}},{l:"C · Raise rents",e:"Tenants chip in.",coins:0,fx:{sat:-2,fin:1}}]}
 ];
-const SHOCK_NL={id:"S",t:"Constructieve gebreken",x:"De galerijen van een jaren-60-flat blijken onveilig. Dertig woningen hebben per direct herstel nodig.",o:[{l:"A · Direct herstellen",e:"Uit eigen middelen.",coins:-4,fx:{}},{l:"B · Geborgde lening (WSW)",e:"Kost nu 2 munten.",coins:-2,fx:{comp:1}},{l:"C · Gefaseerd",e:"Galerijen deels afsluiten.",coins:-2,fx:{sat:-2,comp:-2}}]};
-const SHOCK_EN={id:"S",t:"Structural defects",x:"The galleries of a 1960s block turn out unsafe. Thirty homes need immediate repair.",o:[{l:"A · Repair now",e:"From own funds.",coins:-4,fx:{}},{l:"B · Guaranteed loan (WSW)",e:"Costs 2 coins now.",coins:-2,fx:{comp:1}},{l:"C · Phased",e:"Partly close galleries.",coins:-2,fx:{sat:-2,comp:-2}}]};
+const SHOCK_NL={id:"S",t:"Constructieve gebreken",x:"Bij een periodieke inspectie blijken de galerijen van een jaren-60-flat constructief onveilig. Dertig woningen hebben per direct herstel nodig. Uitstel is geen optie zonder de veiligheid van bewoners op het spel te zetten.",o:[{l:"A · Direct herstellen",e:"Uit eigen middelen.",coins:-4,fx:{}},{l:"B · Geborgde lening (WSW)",e:"Kost nu 2 munten.",coins:-2,fx:{comp:1}},{l:"C · Gefaseerd",e:"Galerijen deels afsluiten.",coins:-2,fx:{sat:-2,comp:-2}}]};
+const SHOCK_EN={id:"S",t:"Structural defects",x:"A periodic inspection reveals the galleries of a 1960s block are structurally unsafe. Thirty homes need immediate repair. Delay is not an option without risking residents' safety.",o:[{l:"A · Repair now",e:"From own funds.",coins:-4,fx:{}},{l:"B · Guaranteed loan (WSW)",e:"Costs 2 coins now.",coins:-2,fx:{comp:1}},{l:"C · Phased",e:"Partly close galleries.",coins:-2,fx:{sat:-2,comp:-2}}]};
 const CHANCE_NL=[
  {id:"K1",good:true,t:"Snelle verhuur",x:"Een woning is razendsnel opnieuw verhuurd.",coins:2,fx:{}},
  {id:"K2",good:true,t:"Subsidie eerder binnen",x:"Een subsidie wordt eerder uitgekeerd.",coins:1,fx:{dur:1}},
@@ -324,13 +330,13 @@ const T={
   finalH:"Eindstand",finalP:"Score = som van de vier meters + helft van de resterende munten. Elke meter onder de 5 kost 5 strafpunten (Aw-toezicht).",
   foot:"Zig Grow · Talent Development — Behind the Front Door · hoofdspelbord.",footS:"Zig Grow · Talent Development",
   rounds:{intro:"Eerste indruk",q1:"Kwartaal 1",q2:"Kwartaal 2",q3:"Kwartaal 3",shock:"Budget shock",q4:"Kwartaal 4"},
-  roundhint:{intro:"Elk team krijgt om de beurt een situatie en kiest welke afdelingen erbij horen. Goede antwoorden leveren automatisch munten op.",
+  roundhint:{intro:"Elk team krijgt om de beurt een situatie en kiest zelf een aanpak. Er is geen goed of fout — elke keuze heeft voor- en nadelen.",
    q1:"Elk team is om de beurt aan zet, trekt een eigen kaart en kiest A of B. Aan het eind trekt elk team een kanskaart.",
    q2:"Huurinkomsten uitgedeeld (+5). Elk team is om de beurt aan zet. Aan het eind: kanskaart.",
    q3:"Huurinkomsten uitgedeeld (+5). Elk team is om de beurt aan zet. Aan het eind: kanskaart.",
    shock:"Eén gezamenlijke schokkaart: elk team is om de beurt aan zet en kiest zijn aanpak.",
    q4:"Laatste kwartaal. Huurinkomsten uitgedeeld (+5). Aan het eind: kanskaart, dan de eindstand."},
-  beginRound:"Begin ronde →",income:"Huurinkomsten uitgedeeld: +{n} munten voor elk team.",
+  beginRound:"Begin ronde →",drawCard:"Trek kaart",drawHint:"Klik om jullie kaart te trekken.",income:"Huurinkomsten uitgedeeld: +{n} munten voor elk team.",
   aanzet:"aan zet!",theirTurn:"is aan zet",waitTurn:"Wachten tot je aan de beurt bent",
   opdracht:"De opdracht",chooseDeps:"Welke afdelingen zijn hierbij betrokken? Kies er drie of meer.",confirm2:"Bevestig",
   chooseAB:"Kies jullie aanpak:",hostPickHint:"Kies namens dit team (of laat het team op hun eigen scherm kiezen).",
@@ -348,13 +354,13 @@ const T={
   finalH:"Final standings",finalP:"Score = sum of the four meters + half of the remaining coins. Each meter below 5 costs 5 penalty points (Aw supervision).",
   foot:"Zig Grow · Talent Development — Behind the Front Door · main board.",footS:"Zig Grow · Talent Development",
   rounds:{intro:"First impression",q1:"Quarter 1",q2:"Quarter 2",q3:"Quarter 3",shock:"Budget shock",q4:"Quarter 4"},
-  roundhint:{intro:"Each team takes a turn with a situation and picks which departments are involved. Correct answers earn coins automatically.",
+  roundhint:{intro:"Each team takes a turn with a situation and picks its own approach. There's no right or wrong — every choice has pros and cons.",
    q1:"Each team takes a turn, draws its own card and picks A or B. At the end each team draws a chance card.",
    q2:"Rent income distributed (+5). Each team takes a turn. At the end: a chance card.",
    q3:"Rent income distributed (+5). Each team takes a turn. At the end: a chance card.",
    shock:"One shared shock card: each team takes a turn and picks its approach.",
    q4:"Final quarter. Rent income distributed (+5). At the end: a chance card, then the final standings."},
-  beginRound:"Begin round →",income:"Rent income distributed: +{n} coins for each team.",
+  beginRound:"Begin round →",drawCard:"Draw card",drawHint:"Click to draw your card.",income:"Rent income distributed: +{n} coins for each team.",
   aanzet:"it's your turn!",theirTurn:"is up",waitTurn:"Waiting for your turn",
   opdracht:"The assignment",chooseDeps:"Which departments are involved? Pick three or more.",confirm2:"Confirm",
   chooseAB:"Choose your approach:",hostPickHint:"Choose for this team (or let the team pick on their own screen).",
@@ -377,7 +383,7 @@ function tpl(s,o){return String(s).replace(/\{(\w+)\}/g,(m,k)=>o[k]!=null?o[k]:"
 function met(l){return MET[l||L()];}
 function dep(i,l){return DEPTS[i][l||L()];}
 function curContent(){return CONTENT[L()];}
-function freshState(){return {lang:"nl",sound:true,showEffects:false,room:randCode(),phase:"setup",setup:[{name:"Team 1",bonus:0},{name:"Team 2",bonus:0},{name:"Team 3",bonus:0}],teams:[],order:[],round:0,turnIdx:0,stage:"roundintro",resolved:false,dealt:{},pool:{},incomeDone:{},chance:{},turnResult:null,choiceRec:null};}
+function freshState(){return {lang:"nl",sound:true,showEffects:false,room:randCode(),phase:"setup",setup:[{name:"Team 1",bonus:0},{name:"Team 2",bonus:0},{name:"Team 3",bonus:0}],teams:[],order:[],round:0,turnIdx:0,stage:"roundintro",resolved:false,shown:false,dealt:{},pool:{},incomeDone:{},chance:{},turnResult:null,choiceRec:null};}
 function randCode(){const a="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";let s="";for(let i=0;i<4;i++)s+=a[Math.floor(Math.random()*a.length)];return s;}
 function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 function save(){try{localStorage.setItem(LS,JSON.stringify(state));}catch(e){}}
@@ -400,7 +406,7 @@ function popPool(name){if(!state.pool[name]||!state.pool[name].length)state.pool
 function dealCard(round,ti){
   const key=round+"-"+ti;if(state.dealt[key])return state.dealt[key];
   const type=ROUNDS[round].type;let card;
-  if(type==="scenario"){const id=popPool("scenario");const sc=CONTENT.nl.scenario[id];const correct=sc.dep.slice();const distract=shuffle(DEPTS.map((d,i)=>i).filter(i=>!correct.includes(i))).slice(0,Math.max(0,8-correct.length));card={type,id,opts:shuffle(correct.concat(distract)),correct};}
+  if(type==="scenario"){card={type,id:popPool("scenario")};}
   else if(type==="shock")card={type,id:"S"};
   else card={type,id:popPool("action")};
   state.dealt[key]=card;return card;
@@ -418,9 +424,10 @@ function enterRound(r){
   const inc=ROUNDS[r].income||0;if(inc>0&&!state.incomeDone[r]){state.order.forEach(id=>{teamById(id).coins+=inc;});state.incomeDone[r]=true;}
   render();
 }
-function beginRound(){state.stage="turn";state.turnIdx=0;state.resolved=false;state.turnResult=null;state.choiceRec=null;dealCard(state.round,0);sfx("draw");render();}
+function beginRound(){state.stage="turn";state.turnIdx=0;state.resolved=false;state.shown=false;state.turnResult=null;state.choiceRec=null;render();}
+function drawTurnCard(){if(state.stage!=="turn"||state.shown)return;dealCard(state.round,state.turnIdx);state.shown=true;sfx("draw");render();}
 function resolveChoice(teamId,opt){
-  if(state.resolved)return;const card=curCard();if(!card||card.type==="scenario")return;const d=cardData(card),o=d.o[opt],t=teamById(teamId);if(!o)return;
+  if(state.resolved)return;const card=curCard();if(!card)return;const d=cardData(card);if(!d.o)return;const o=d.o[opt],t=teamById(teamId);if(!o)return;
   t.coins=Math.max(0,t.coins+o.coins);Object.keys(o.fx||{}).forEach(k=>{t[k]=clamp(t[k]+o.fx[k],0,20);});
   state.choiceRec={opt};state.turnResult={kind:"choice",coins:o.coins,fx:o.fx,label:o.l};state.resolved=true;sfx("click");render();
 }
@@ -432,7 +439,7 @@ function resolveQuiz(teamId,sel){
 }
 function nextTurn(){
   state.turnResult=null;state.choiceRec=null;
-  if(state.turnIdx<state.order.length-1){state.turnIdx++;state.resolved=false;dealCard(state.round,state.turnIdx);sfx("draw");render();}
+  if(state.turnIdx<state.order.length-1){state.turnIdx++;state.resolved=false;state.shown=false;render();}
   else{if(ROUNDS[state.round].chance){state.stage="chance";render();}else nextRound();}
 }
 function drawChance(teamId){
@@ -491,19 +498,14 @@ function chFx(card){const Mn=met();const a=[];if(card.coins<0)a.push("🪙 −"+
 function cardHead(card){const d=cardData(card);const cat="assets/"+(CAT[card.id]||"buurt")+".jpg";const kl=card.type==="scenario"?TT("rounds").intro:card.type==="shock"?TT("rounds").shock:(card.id[0]==="J"?"Journey":"Crisis");
   return '<div class="illo" style="background-image:url(\''+cat+'\')"><span class="kind">'+esc(kl)+'</span></div><div class="body"><p class="ct">'+esc(d.t)+'</p><p class="cx">'+esc(d.x)+'</p>';}
 function turnControls(card,role){
-  const d=cardData(card),pre=role==="host"?"data-hact":"data-pact",dep_="data-dep";
-  if(card.type==="scenario"){
-    const opts=card.opts.map(i=>'<label class="qopt"><input type="checkbox" '+dep_+'="'+i+'"> '+esc(dep(i))+'</label>').join("");
-    return '<p class="meta"><b>'+TT("chooseDeps")+'</b></p><div class="quiz">'+opts+'</div><button class="btn warn big" '+pre+'="quiz">'+TT("confirm2")+'</button>';
-  }
+  const d=cardData(card),pre=role==="host"?"data-hact":"data-pact";
   return '<p class="meta"><b>'+TT("chooseAB")+'</b></p><div class="pickbtns">'+d.o.map((o,i)=>'<button class="btn '+(i===0?"":"soft")+'" '+pre+'="choice" data-opt="'+i+'">'+esc(o.l)+(state.showEffects?' <span style="font-weight:400;opacity:.8">· '+tagFx(o)+'</span>':'')+'</button>').join("")+'</div>';
 }
 function resultBox(card){
   const d=cardData(card),tr=state.turnResult;if(!tr)return "";
-  if(tr.kind==="quiz"){const cls=tr.munt>0?"good":"neu";const wtxt=tr.ws>0?tpl(TT("quizWrong"),{w:tr.ws}):"";const ptxt=tr.munt>0?tpl(TT("quizPts"),{n:tr.munt}):TT("quizNo");
-    return '<div class="result '+cls+'"><div class="rh">'+TT("resultTitle")+'</div>'+tpl(TT("quizResult"),{c:tr.cs,w:wtxt,p:ptxt})+'<div class="meta" style="margin-top:8px"><b>'+TT("correctWas")+'</b> '+tr.correct.map(i=>esc(dep(i))).join(" · ")+'</div><div class="meta"><b>'+TT("tension")+'</b> '+esc(d.sp)+'</div></div>';}
   const good=(tr.coins>0)||Object.values(tr.fx||{}).some(v=>v>0);const bad=(tr.coins<0)||Object.values(tr.fx||{}).some(v=>v<0);
-  return '<div class="result '+(good&&!bad?"good":bad&&!good?"bad":"neu")+'"><div class="rh">'+TT("chose")+': '+esc(tr.label.split("·")[0].trim())+'</div><div class="delta">'+tagFx({coins:tr.coins,fx:tr.fx})+'</div></div>';
+  const extra=(card.type==="scenario"&&d.sp)?'<div class="meta" style="margin-top:8px"><b>'+TT("tension")+'</b> '+esc(d.sp)+'</div>':'';
+  return '<div class="result '+(good&&!bad?"good":bad&&!good?"bad":"neu")+'"><div class="rh">'+TT("chose")+': '+esc(tr.label.split("·")[0].trim())+'</div><div class="delta">'+tagFx({coins:tr.coins,fx:tr.fx})+'</div>'+extra+'</div>';
 }
 function renderStage(){
   const stage=$("#stage"),rid=ROUNDS[state.round].id;let h="";
@@ -516,15 +518,20 @@ function renderStage(){
       (inc>0?'<div class="banner" style="display:inline-block;text-align:start">'+tpl(TT("income"),{n:inc})+'</div><div style="height:10px"></div>':'')+
       '<button class="btn warn big" id="beginRoundBtn">'+TT("beginRound")+'</button></div>';
   } else if(state.stage==="turn"){
-    const team=curTeam(),card=curCard(),col=tcolor(team.id);const key=state.round+"-"+state.turnIdx;
-    const announce=(key!==hostTurnKey);hostTurnKey=key;
-    h+='<div class="announce'+(announce?"":"")+'" style="background:linear-gradient(135deg,'+col+','+col+'cc)"'+(announce?'':' ')+'>'+esc(team.name)+' '+TT("aanzet")+'<div class="sub">'+TT("opdracht")+'</div></div>';
-    h+='<div class="gc '+card.type+(announce?" deal":"")+'">'+cardHead(card);
-    if(!state.resolved){h+=turnControls(card,"host");h+='<p class="meta" style="margin-top:10px;font-size:12px">'+esc(TT("hostPickHint"))+'</p>';}
-    else{h+=resultBox(card);}
-    h+='</div>';
-    const last=state.turnIdx>=state.order.length-1;
-    if(state.resolved)h+='<div class="ctrls"><button class="btn warn" id="nextTurnBtn">'+(last?(ROUNDS[state.round].chance?TT("toChance"):TT("nextRound")):TT("nextTurn"))+'</button></div>';
+    const team=curTeam(),col=tcolor(team.id);
+    h+='<div class="announce" style="background:linear-gradient(135deg,'+col+','+col+'cc)">'+esc(team.name)+' '+TT("aanzet")+'<div class="sub">'+TT("opdracht")+'</div></div>';
+    if(!state.shown){
+      hostTurnKey=null;
+      h+='<div class="drawdeck"><div class="deckbig" id="deckBig"><div class="cb">↗</div><div class="cb">↗</div><div class="cb">↗</div></div><button class="btn warn big" id="drawCardBtn">🃏 '+TT("drawCard")+'</button><p class="hint" style="margin:0">'+esc(TT("drawHint"))+'</p></div>';
+    } else {
+      const card=curCard(),key=state.round+"-"+state.turnIdx;const reveal=(key!==hostTurnKey);hostTurnKey=key;
+      h+='<div class="gc '+card.type+(reveal?" deal":"")+'">'+cardHead(card);
+      if(!state.resolved){h+=turnControls(card,"host");h+='<p class="meta" style="margin-top:10px;font-size:12px">'+esc(TT("hostPickHint"))+'</p>';}
+      else{h+=resultBox(card);}
+      h+='</div>';
+      const last=state.turnIdx>=state.order.length-1;
+      if(state.resolved)h+='<div class="ctrls"><button class="btn warn" id="nextTurnBtn">'+(last?(ROUNDS[state.round].chance?TT("toChance"):TT("nextRound")):TT("nextTurn"))+'</button></div>';
+    }
   } else if(state.stage==="chance"){
     hostTurnKey=null;
     h='<div style="text-align:center;padding:10px 6px"><div style="font-size:26px;font-weight:900;margin-bottom:4px">🎲 '+TT("chanceH")+'</div><p class="hint" style="max-width:460px;margin:0 auto 14px">'+esc(TT("chanceHint"))+'</p>';
@@ -543,9 +550,10 @@ function renderScores(){const w=$("#scoreWrap");const Mn=met();const ranked=stat
 
 /* ============ events (host) ============ */
 document.addEventListener("click",e=>{
-  const el=e.target.closest("[data-setup],[data-delteam],[data-hact],[data-hchance],#addTeam,#startGame,#beginRoundBtn,#nextTurnBtn,#nextRoundBtn,#resetGame,#againBtn,#copyJoin,#langToggle,#soundToggle,#fxToggle");
+  const el=e.target.closest("[data-setup],[data-delteam],[data-hact],[data-hchance],#addTeam,#startGame,#beginRoundBtn,#drawCardBtn,#nextTurnBtn,#nextRoundBtn,#resetGame,#againBtn,#copyJoin,#langToggle,#soundToggle,#fxToggle");
   if(!el)return;
   if(el.id==="copyJoin"){copyJoin(el);return;}
+  if(el.id==="drawCardBtn"){const d=$("#deckBig");if(d){d.classList.add("shuf");setTimeout(drawTurnCard,420);}else drawTurnCard();return;}
   if(el.id==="soundToggle"){SOUND=!SOUND;if(state)state.sound=SOUND;save();$("#soundToggle").textContent=SOUND?"🔊":"🔇";return;}
   if(el.id==="fxToggle"){state.showEffects=!state.showEffects;render();return;}
   if(el.id==="langToggle"){state.lang=(L()==="nl"?"en":"nl");render();return;}
@@ -557,7 +565,6 @@ document.addEventListener("click",e=>{
   if(el.id==="nextRoundBtn"){nextRound();return;}
   if(el.dataset.hchance!=null){drawChance(parseInt(el.dataset.hchance));return;}
   if(el.dataset.hact==="choice"){resolveChoice(curTeam().id,parseInt(el.dataset.opt));return;}
-  if(el.dataset.hact==="quiz"){const sel=$$('#stage [data-dep]:checked').map(x=>parseInt(x.dataset.dep));resolveQuiz(curTeam().id,sel);return;}
   if(el.id==="resetGame"||el.id==="againBtn"){if(confirm(TT("confirm"))){const rm=state.room,lg=state.lang;state=freshState();state.room=rm;state.lang=lg;SOUND=state.sound!==false;render();}return;}
 });
 document.addEventListener("input",e=>{const el=e.target;if(el.dataset&&el.dataset.setup){state.setup[parseInt(el.dataset.i)][el.dataset.setup]=el.dataset.setup==="bonus"?clamp(parseInt(el.value)||0,0,4):el.value;}});
@@ -569,13 +576,12 @@ let PLAYER=null;
 const FB=(window.FIREBASE_CONFIG&&window.FIREBASE_CONFIG.databaseURL)?window.FIREBASE_CONFIG:null;
 function fbReady(){return !!(FB&&window.firebase&&firebase.database);}
 function pubSnapshot(){
-  const team=curTeam(),card=(state.phase==="playing"&&state.stage==="turn")?curCard():null;
+  const team=curTeam(),card=(state.phase==="playing"&&state.stage==="turn"&&state.shown)?curCard():null;
   let cp=null;
   if(card){const d=cardData(card);
-    if(card.type==="scenario")cp={type:"scenario",cat:"assets/"+(CAT[card.id]||"buurt")+".jpg",title:d.t,text:d.x,tension:d.sp,opts:card.opts.map(i=>({i,label:dep(i)})),correct:card.correct};
-    else cp={type:card.type,cat:"assets/"+(CAT[card.id]||"buurt")+".jpg",title:d.t,text:d.x,options:d.o.map(o=>({l:o.l,tags:tagFx(o)}))};
+    cp={type:card.type,cat:"assets/"+(CAT[card.id]||"buurt")+".jpg",title:d.t,text:d.x,options:d.o.map(o=>({l:o.l,tags:tagFx(o)}))};
   }
-  return {lang:L(),phase:state.phase,stage:state.stage,showEffects:!!state.showEffects,
+  return {lang:L(),phase:state.phase,stage:state.stage,shown:!!state.shown,showEffects:!!state.showEffects,
     roundLabel:state.phase==="playing"?TT("rounds")[ROUNDS[state.round].id]:"",curTeamId:team?team.id:null,curTeamName:team?team.name:"",resolved:!!state.resolved,
     card:cp,turnResult:state.resolved?state.turnResult:null,
     teams:state.teams.map(t=>{const sc=score(t);const ch=state.chance[t.id]?curContent().chance[state.chance[t.id]]:null;return {id:t.id,name:t.name,color:tcolor(t.id),sat:t.sat,fin:t.fin,comp:t.comp,dur:t.dur,coins:t.coins,score:sc.total,flags:sc.flags,chance:ch?{t:ch.t,fx:chFx(ch),good:ch.good}:null};})};
@@ -584,8 +590,8 @@ const NET={db:null,role:null,room:null,seen:{},
   initHost(){if(!fbReady())return;try{firebase.initializeApp(FB);}catch(e){}this.db=firebase.database();this.role="host";this.room=state.room;
     this.db.ref("rooms/"+this.room+"/act").on("value",s=>this.processActs(s.val()||{}));this.publish();},
   processActs(v){let changed=false;Object.keys(v).forEach(kk=>{const a=v[kk];if(!a||!a.ts)return;if(this.seen[kk]===a.ts)return;this.seen[kk]=a.ts;
-    if(a.type==="choice"&&state.stage==="turn"&&curTeam()&&curTeam().id===a.teamId&&!state.resolved){resolveChoice(a.teamId,a.opt);changed=true;}
-    else if(a.type==="quiz"&&state.stage==="turn"&&curTeam()&&curTeam().id===a.teamId&&!state.resolved){resolveQuiz(a.teamId,a.sel||[]);changed=true;}
+    if(a.type==="draw"&&state.stage==="turn"&&curTeam()&&curTeam().id===a.teamId&&!state.shown){drawTurnCard();}
+    else if(a.type==="choice"&&state.stage==="turn"&&curTeam()&&curTeam().id===a.teamId&&!state.resolved){resolveChoice(a.teamId,a.opt);changed=true;}
     else if(a.type==="chance"&&state.stage==="chance"&&state.chance[a.teamId]==null){drawChance(a.teamId);changed=true;}});
   },
   publishIfHost(){if(this.role==="host"&&this.db)this.publish();},
@@ -603,7 +609,7 @@ function renderPlayer(pub){
   const host=document.getElementById("pBoard");if(!host)return;const l=(pub&&pub.lang)||PLAYER.lang;PLAYER.lang=l;const Mn=MET[l];
   if(!pub){host.innerHTML='<div class="panel"><h2>'+pt(l,"jwRoom")+' '+esc(PLAYER.room)+'</h2><p class="hint" style="margin:0">'+pt(l,"waitstart")+'<span class="dot"></span><span class="dot"></span><span class="dot"></span></p></div>';return;}
   const my=(pub.teams||[]).find(t=>t.id===PLAYER.teamId);
-  const myTurn=pub.stage==="turn"&&pub.curTeamId===PLAYER.teamId&&!pub.resolved&&pub.card;
+  const myTurn=pub.stage==="turn"&&pub.curTeamId===PLAYER.teamId&&!pub.resolved;
   const myChance=pub.stage==="chance"&&my&&!my.chance;
   let top="";
   if(pub.phase==="scores"){top='<div class="panel" style="text-align:center"><h2>'+pt(l,"done")+'</h2>'+(my?'<p>'+pt(l,"yourFinal")+' <b style="font-size:20px">'+my.score+'</b></p>':'')+'<p class="hint" style="margin:0">'+pt(l,"seeBoard")+'</p></div>';}
@@ -612,9 +618,9 @@ function renderPlayer(pub){
   else if(pub.stage==="chance"&&!myChance){top='<div class="panel" style="text-align:center">🎲 '+pt(l,"chanceH")+'</div>';}
   else {top='<div class="panel" style="text-align:center">'+esc(pub.roundLabel||"")+'</div>';}
   let mid="";
-  if(myTurn){const c=pub.card;mid='<div class="panel" style="margin-top:14px"><div class="gc '+c.type+' deal"><div class="illo" style="background-image:url(\''+esc(c.cat)+'\')"></div><div class="body"><p class="ct">'+esc(c.title)+'</p><p class="cx">'+esc(c.text)+'</p>';
-    if(c.type==="scenario"){mid+='<p class="meta"><b>'+pt(l,"chooseDeps")+'</b></p><div class="quiz">'+c.opts.map(o=>'<label class="qopt"><input type="checkbox" data-dep="'+o.i+'"> '+esc(o.label)+'</label>').join("")+'</div><button class="btn warn big" data-pact="quiz" style="width:100%">'+pt(l,"confirm2")+'</button>';}
-    else{mid+='<p class="meta"><b>'+pt(l,"chooseAB")+'</b></p><div class="pickbtns">'+c.options.map((o,i)=>'<button class="btn '+(i===0?"":"soft")+'" data-pact="choice" data-opt="'+i+'">'+esc(o.l)+(pub.showEffects?' <span style="font-weight:400;opacity:.8">· '+o.tags+'</span>':'')+'</button>').join("")+'</div>';}
+  if(myTurn&&!pub.shown){mid='<div class="panel" style="margin-top:14px;text-align:center"><div class="deckbig" style="margin:0 auto 14px"><div class="cb">↗</div><div class="cb">↗</div><div class="cb">↗</div></div><button class="btn warn big" data-pdraw="1">🃏 '+pt(l,"drawCard")+'</button></div>';}
+  else if(myTurn&&pub.card){const c=pub.card;mid='<div class="panel" style="margin-top:14px"><div class="gc '+c.type+' deal"><div class="illo" style="background-image:url(\''+esc(c.cat)+'\')"></div><div class="body"><p class="ct">'+esc(c.title)+'</p><p class="cx">'+esc(c.text)+'</p>';
+    mid+='<p class="meta"><b>'+pt(l,"chooseAB")+'</b></p><div class="pickbtns">'+c.options.map((o,i)=>'<button class="btn '+(i===0?"":"soft")+'" data-pact="choice" data-opt="'+i+'">'+esc(o.l)+(pub.showEffects?' <span style="font-weight:400;opacity:.8">· '+o.tags+'</span>':'')+'</button>').join("")+'</div>';
     mid+='</div></div></div>';}
   else if(myChance){mid='<div class="panel" style="margin-top:14px;text-align:center"><div class="deckmini" style="margin:0 auto 12px">🎲</div><button class="btn warn big" data-pchance="1">'+pt(l,"drawChance")+'</button></div>';}
   let dash="";
@@ -625,10 +631,10 @@ function localizeJoin(l){$("#jfH").textContent=pt(l,"joinH");$("#jfSub").textCon
 function initPlayer(room,plang){
   document.getElementById("pLogo").innerHTML=logoSVG();$("#facilitator").classList.add("hide");$("#player").classList.remove("hide");if(room)$("#pRoom").value=room;localizeJoin(plang);
   const live=fbReady();const pn=$("#pNet");pn.className="pnet "+(live?"live":"off");pn.textContent=live?pt(plang,"pNetLive"):pt(plang,"pNetOff");
-  document.addEventListener("click",e=>{const b=e.target.closest("[data-pact],[data-pchance]");if(!b||!PLAYER)return;
+  document.addEventListener("click",e=>{const b=e.target.closest("[data-pact],[data-pchance],[data-pdraw]");if(!b||!PLAYER)return;
+    if(b.dataset.pdraw){sfx("draw");NET.send(PLAYER.room,PLAYER.teamId,{type:"draw"});b.disabled=true;return;}
     if(b.dataset.pchance){sfx("draw");NET.send(PLAYER.room,PLAYER.teamId,{type:"chance"});b.disabled=true;return;}
     if(b.dataset.pact==="choice"){sfx("click");NET.send(PLAYER.room,PLAYER.teamId,{type:"choice",opt:parseInt(b.dataset.opt)});$$('#pBoard [data-pact]').forEach(x=>x.disabled=true);return;}
-    if(b.dataset.pact==="quiz"){sfx("click");const sel=$$('#pBoard [data-dep]:checked').map(x=>parseInt(x.dataset.dep));NET.send(PLAYER.room,PLAYER.teamId,{type:"quiz",sel});$$('#pBoard [data-pact]').forEach(x=>x.disabled=true);return;}
   });
   $("#joinBtn").addEventListener("click",()=>{const name=$("#pName").value.trim()||(plang==="en"?"Player":"Speler");const code=($("#pRoom").value.trim().toUpperCase())||"----";const teamId=parseInt($("#pTeam").value);const teamLabel=$("#pTeam").selectedOptions[0].textContent;
     PLAYER={pid:randCode()+randCode(),name,teamId,teamLabel,room:code,lang:plang};
@@ -641,7 +647,7 @@ function initPlayer(room,plang){
 (function boot(){
   const p=new URLSearchParams(location.search);
   if(p.get("role")==="player"){initPlayer((p.get("room")||"").toUpperCase(),p.get("lang")==="en"?"en":"nl");return;}
-  state=load()||freshState();if(!state.room)state.room=randCode();if(!state.lang)state.lang="nl";if(!state.dealt)state.dealt={};if(!state.pool)state.pool={};if(!state.chance)state.chance={};if(!state.incomeDone)state.incomeDone={};if(!state.order)state.order=[];SOUND=state.sound!==false;
+  state=load()||freshState();if(!state.room)state.room=randCode();if(!state.lang)state.lang="nl";if(!state.dealt)state.dealt={};if(!state.pool)state.pool={};if(!state.chance)state.chance={};if(!state.incomeDone)state.incomeDone={};if(!state.order)state.order=[];if(state.shown==null)state.shown=false;SOUND=state.sound!==false;
   render();NET.initHost();
 })();
 </script>
