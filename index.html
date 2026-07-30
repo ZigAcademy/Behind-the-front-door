@@ -9,9 +9,11 @@
   :root{--blue:#1F5AFF;--orange:#FF9000;--navy:#152330;--ink:#152330;--muted:#5B6472;--line:#E4E3DC;--bg:#FBF7EE;
     --card:#FFFFFF;--warn:#E4572E;--soft:#EAF0FF;--softwarm:#FFF1E0;--shadow:0 10px 30px rgba(21,35,48,.10);--shadow-sm:0 4px 14px rgba(21,35,48,.07);}
   @media (prefers-color-scheme:dark){:root{--ink:#EDF1F7;--muted:#9AA7BD;--line:#26324A;--bg:#0D1626;--card:#131E31;--soft:#16233D;--softwarm:#2A2010;--shadow:0 10px 30px rgba(0,0,0,.45);--shadow-sm:0 4px 14px rgba(0,0,0,.35);}}
+  @font-face{font-family:'Safiro';src:url('assets/Safiro-SemiBold.otf') format('opentype');font-weight:600 900;font-display:swap}
+  .brandline h1,.rpill,.announce,.yourturn,.gc .ct,.rank .rn,#setupH,#scoresH,#standH,.result .rh{font-family:'Safiro','Arial',sans-serif}
   *{box-sizing:border-box}html,body{margin:0}
   body{font-family:Arial,Helvetica,"Segoe UI",sans-serif;color:var(--ink);min-height:100vh;line-height:1.5;-webkit-font-smoothing:antialiased;
-    background:radial-gradient(1000px 620px at 14% -12%,#2a3d72 0%,transparent 55%),radial-gradient(1100px 720px at 100% 6%,#1d2f58 0%,transparent 52%),radial-gradient(1500px 950px at 50% 122%,#152238 0%,transparent 55%),linear-gradient(162deg,#18233f,#0d1524);background-attachment:fixed}
+    background:linear-gradient(rgba(13,21,36,.34),rgba(11,19,34,.55)) fixed, url('assets/bg-board.jpg') center center/cover fixed, #0d1524}
   .wrap{max-width:1200px;margin:0 auto;padding:0 18px 70px}
   button{font-family:inherit}.logo{height:30px;width:auto;display:block}
   header.top{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--card) 88%,transparent);backdrop-filter:saturate(1.4) blur(8px);border-bottom:1px solid var(--line)}
@@ -54,7 +56,7 @@
   .tmini .dot{width:12px;height:12px;border-radius:50%;border:1.5px solid #fff;box-shadow:0 1px 2px rgba(0,0,0,.25)}
   .coins{font-weight:800;font-size:12.5px;color:#7a4100;border:1px solid #e7b768;border-radius:20px;padding:2px 9px;white-space:nowrap;background:linear-gradient(180deg,#ffe392,#f3b73f);box-shadow:inset 0 1px 0 rgba(255,255,255,.65)}
   .mrow{display:flex;gap:5px;align-items:center;font-size:11px;margin:3px 0}
-  .mrow .ml{flex:0 0 78px;color:var(--muted)}
+  .mrow .ml{flex:0 0 96px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .bar{position:relative;flex:1;height:9px;border-radius:6px;border:1px solid #d7cfbd;background:repeating-linear-gradient(90deg,#ece5d6 0,#ece5d6 calc(5% - 1px),#d1c9b6 calc(5% - 1px),#d1c9b6 5%);overflow:hidden}
   @media (prefers-color-scheme:dark){.bar{border-color:#2c3852;background:repeating-linear-gradient(90deg,#1b2740 0,#1b2740 calc(5% - 1px),#2c3852 calc(5% - 1px),#2c3852 5%)}}
   .bar>span{display:block;height:100%;border-radius:6px;background:linear-gradient(90deg,var(--blue),#4d7bff);transition:width .4s cubic-bezier(.4,1.3,.5,1)}
@@ -70,10 +72,10 @@
   .announce{text-align:center;padding:20px 14px;border-radius:16px;color:#fff;font-weight:900;font-size:26px;letter-spacing:.3px;margin-bottom:14px;box-shadow:var(--shadow);animation:announce .75s cubic-bezier(.2,.9,.3,1.2) both}
   .announce .sub{font-size:14px;font-weight:700;opacity:.92;margin-top:3px}
   @keyframes announce{0%{opacity:0;transform:scale(.6) translateY(18px)}45%{opacity:1;transform:scale(1.05)}72%{transform:scale(.98)}100%{transform:scale(1)}}
-  .gc{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--card);box-shadow:0 18px 38px rgba(21,35,48,.18),0 3px 0 rgba(21,35,48,.05);transform-origin:center}
+  .gc{border:1px solid var(--line);border-radius:18px;background:var(--card);box-shadow:0 20px 42px rgba(0,0,0,.28),0 3px 0 rgba(0,0,0,.10);transform-origin:center;max-width:440px;margin:0 auto}
   .gc.deal{animation:deal .7s cubic-bezier(.2,.9,.3,1.1) both}
   @keyframes deal{0%{opacity:0;transform:translateY(30px) rotateY(70deg) scale(.92)}55%{opacity:1;transform:translateY(0) rotateY(-5deg) scale(1.01)}100%{transform:none}}
-  .gc .illo{height:230px;background:#FBF3E4 center/contain no-repeat;position:relative}
+  .gc .illo{width:min(330px,86%);aspect-ratio:1/1;margin:16px auto 2px;border-radius:14px;background-size:cover;background-position:center;box-shadow:0 8px 20px rgba(0,0,0,.22);position:relative;overflow:hidden}
   .gc .illo .kind{position:absolute;left:0;bottom:0;padding:6px 14px;font-size:11px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;color:#fff;border-top-right-radius:12px}
   .gc.scenario .illo .kind,.gc.journey .illo .kind{background:var(--blue)}.gc.crisis .illo .kind{background:var(--warn)}.gc.shock .illo .kind{background:var(--orange)}
   .gc .body{padding:16px}.gc .ct{font-size:20px;font-weight:800;margin:0 0 8px;letter-spacing:-.2px}.gc .cx{font-size:15px;margin:0 0 10px}
@@ -82,7 +84,8 @@
   .tag{display:inline-block;font-size:11px;font-weight:800;border-radius:6px;padding:2px 7px;margin:3px 4px 0 0}
   .tag.pay{background:var(--softwarm);color:#8a4b00}.tag.gain{background:#e5f7ee;color:#137a44}.tag.up{background:#e5f0ff;color:#0a44c9}.tag.down{background:#fdece9;color:#b3391b}
   .pickbtns{display:flex;flex-direction:column;gap:9px;margin-top:12px}
-  .pickbtns .btn{text-align:start;padding:13px 15px;font-size:15px}
+  .pickbtns .btn{text-align:start;padding:12px 15px;font-size:15px;line-height:1.35}
+  .pickbtns .oesub{display:block;font-weight:400;opacity:.85;font-size:12.5px;margin-top:2px}
   .quiz{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
   @media (max-width:540px){.quiz{grid-template-columns:1fr}}
   .qopt{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:10px;padding:9px 11px;cursor:pointer;font-size:13.5px;font-weight:700;background:var(--card)}
@@ -106,16 +109,30 @@
   select,input[type=text],input[type=number]{font-family:inherit;font-size:14px;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:9px;padding:8px 10px}
   label.fld{display:block;font-size:12.5px;color:var(--muted);font-weight:700;margin:0 0 4px}
   .setup-row{display:grid;grid-template-columns:1.4fr .6fr auto;gap:10px;align-items:end;margin-bottom:10px}
-  .cover{height:220px;border-radius:14px;background:#FBF3E4 center/contain no-repeat;margin-bottom:14px;box-shadow:var(--shadow-sm)}
+  .cover{aspect-ratio:2.4/1;width:100%;max-width:640px;margin:0 auto 14px;border-radius:16px;background:#fbfaf6 center/cover no-repeat;box-shadow:var(--shadow),0 0 0 1px rgba(255,255,255,.5) inset}
+  .legend{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 4px}
+  .legend .lg{display:flex;align-items:center;gap:6px;background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:6px 11px;font-size:12.5px;font-weight:700;white-space:nowrap}
+  .steplist{list-style:none;margin:8px 0 2px;padding:0}
+  .steplist li{font-size:13.5px;margin:6px 0;display:flex;gap:8px;align-items:flex-start}
+  .tips{list-style:none;margin:0 0 18px;padding:0;text-align:start}
+  .tips li{font-size:13px;color:var(--muted);margin:6px 0;display:flex;gap:7px;align-items:flex-start}
   .rank{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--line);border-radius:13px;margin-bottom:10px;background:var(--card);box-shadow:var(--shadow-sm)}
   .rank .pos{font-size:22px;font-weight:900;color:var(--blue);width:34px;text-align:center}.rank.first{border-color:var(--orange);background:var(--softwarm)}
   .rank .rn{font-weight:800;font-size:16px}.rank .rs{margin-inline-start:auto;font-size:22px;font-weight:900}.rank .rd{font-size:12px;color:var(--muted)}
+  .debrief{margin-top:28px;padding-top:18px;border-top:2px solid var(--line)}
+  .dbteam{margin:12px 0;border:1px solid var(--line);border-radius:13px;overflow:hidden;background:var(--card)}
+  .dbh{font-weight:900;font-size:15px;padding:9px 12px;background:var(--softwarm)}
+  .dbrow{padding:8px 12px;border-top:1px solid var(--line)}
+  .dbttl{font-weight:700;font-size:13.5px}.dbttl .dbr{display:inline-block;font-size:11px;font-weight:800;color:#fff;background:var(--blue);border-radius:6px;padding:1px 6px;margin-inline-end:5px}
+  .dbopt{font-size:13px;margin-top:2px}.dbeff{color:var(--muted);font-size:12px}
+  .dbsp{font-size:12px;color:var(--muted);margin-top:3px;font-style:italic}
+  .reflect ul{color:var(--ink)}.reflect h4{font-size:14px}
   footer{color:#93a3c0;font-size:12.5px;text-align:center;margin-top:34px;padding-top:16px;border-top:1px solid rgba(255,255,255,.14)}
   .hide{display:none!important}
   /* player */
   .player-shell{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
   .join-card{background:var(--card);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);padding:30px;max-width:430px;width:100%;text-align:center}
-  .join-card .logo{height:34px;margin:0 auto 8px}.join-card .jc-cover{height:150px;border-radius:14px;background:#FBF3E4 center/contain no-repeat;margin:6px 0 18px}
+  .join-card .logo{height:34px;margin:0 auto 8px}.join-card .jc-cover{aspect-ratio:2.4/1;border-radius:14px;background:#fbfaf6 center/cover no-repeat;margin:6px 0 18px}
   .join-card h1{font-size:22px;margin:0 0 4px}.join-card p.s{color:var(--muted);font-size:14px;margin:0 0 18px}
   .join-card .fldwrap{text-align:start;margin-bottom:14px}.join-card input,.join-card select{width:100%}
   .pnet{font-size:13px;font-weight:700;border-radius:10px;padding:10px 12px;margin:0 0 16px;text-align:start;line-height:1.4}.pnet.live{background:#e5f7ee;color:#137a44}.pnet.off{background:#fff1e0;color:#b3391b}
@@ -131,6 +148,7 @@
     <div class="brandline" id="brand"></div><div class="spacer"></div>
     <div class="join-chip"><span id="roomLbl">Kamer</span>&nbsp;<b id="roomCode">----</b></div>
     <span id="netStatus" class="netchip off"></span>
+    <button class="btn ghost sm" id="helpToggle">❔ Uitleg</button>
     <button class="btn ghost sm" id="soundToggle" title="Geluid">🔊</button>
     <button class="btn ghost sm" id="fxToggle" title="Effecten">👁</button>
     <button class="btn ghost sm" id="langToggle">EN</button>
@@ -140,9 +158,11 @@
   <div class="wrap">
     <div class="roundbar" id="roundBar"></div>
     <div class="hint" id="roundHint"></div>
+    <div class="panel hide" id="helpPanel" style="margin-bottom:14px"></div>
 
     <section id="view-setup" class="panel hide">
-      <div class="cover" style="background-image:url('assets/buurt.jpg')"></div>
+      <div class="cover" style="background-image:url('assets/gameboard.jpg')"></div>
+      <div id="setupLegend"></div>
       <h2 id="setupH">Teams instellen</h2>
       <p class="hint" id="setupP" style="margin-top:0"></p>
       <div id="setupRows"></div>
@@ -176,10 +196,11 @@
 <div id="player" class="player-shell hide">
   <div class="join-card">
     <div id="pLogo"></div>
-    <div class="jc-cover" style="background-image:url('assets/buurt.jpg')"></div>
+    <div class="jc-cover" style="background-image:url('assets/gameboard.jpg')"></div>
     <div id="pNet" class="pnet"></div>
     <div id="joinForm">
       <h1 id="jfH">Doe mee</h1><p class="s" id="jfSub"></p>
+      <ul class="tips" id="joinTips"></ul>
       <div class="fldwrap"><label class="fld" id="jfRoomL" for="pRoom">Kamercode</label><input type="text" id="pRoom" maxlength="6" placeholder="AB3K" autocomplete="off"></div>
       <div class="fldwrap"><label class="fld" id="jfNameL" for="pName">Jouw naam</label><input type="text" id="pName" autocomplete="off"></div>
       <div class="fldwrap"><label class="fld" id="jfTeamL" for="pTeam">Team</label><select id="pTeam"><option value="1">Team 1</option><option value="2">Team 2</option><option value="3">Team 3</option><option value="4">Team 4</option><option value="5">Team 5</option><option value="6">Team 6</option></select></div>
@@ -216,7 +237,7 @@ window.FIREBASE_CONFIG = {
 <script>
 "use strict";
 /* ============ data ============ */
-const MET={nl:{sat:"Tevredenheid",fin:"Financieel",comp:"Compliance",dur:"Duurzaamheid"},en:{sat:"Satisfaction",fin:"Financial",comp:"Compliance",dur:"Sustainability"}};
+const MET={nl:{sat:"😊 Tevredenheid",fin:"💶 Financieel",comp:"📋 Compliance",dur:"🌱 Duurzaamheid"},en:{sat:"😊 Satisfaction",fin:"💶 Financial",comp:"📋 Compliance",dur:"🌱 Sustainability"}};
 const DEPTS=[{nl:"Onderhoud",en:"Maintenance"},{nl:"Klantcontact (KCC)",en:"Customer contact"},{nl:"Financiën",en:"Finance"},{nl:"Inkoop",en:"Procurement"},{nl:"Data & rapportage",en:"Data & reporting"},{nl:"Verhuur & toewijzing",en:"Letting & allocation"},{nl:"Compliance",en:"Compliance"},{nl:"ICT & systemen",en:"IT & systems"},{nl:"Datamanagement",en:"Data management"},{nl:"Sociaal beheer",en:"Social management"},{nl:"Juridische zaken",en:"Legal affairs"},{nl:"Wijkbeheer",en:"Neighbourhood mgmt"},{nl:"Vastgoed & projecten",en:"Real estate & projects"},{nl:"Assetmanagement",en:"Asset management"},{nl:"Bewonerscommunicatie",en:"Resident communication"},{nl:"Strategie",en:"Strategy"}];
 const CAT={A:"onderhoud",B:"toewijzing",C:"sociaal",D:"duurzaam",E:"onderhoud",J1:"onderhoud",J2:"digitaal",J3:"sociaal",J4:"toewijzing",J5:"financien",J6:"sociaal",J7:"financien",J8:"toewijzing",J9:"duurzaam",J10:"digitaal",J11:"sociaal",J12:"toewijzing",C1:"duurzaam",C2:"digitaal",C3:"duurzaam",C4:"onderhoud",C5:"financien",C6:"financien",S:"onderhoud"};
 const SCEN_NL=[
@@ -311,8 +332,30 @@ const CHANCE_EN=[
  {id:"K13",good:false,t:"Delayed renovation",x:"A renovation runs into delays.",coins:0,fx:{dur:-1,sat:-1}},
  {id:"K14",good:false,t:"Extra tax bill",x:"An unexpected levy arrives.",coins:-2,fx:{}}
 ];
+/* ---- Shared sector events (raken alle teams tegelijk) ---- */
+const SECTOR_NL=[
+ {id:"SE1",t:"Rentestijging",x:"De marktrente stijgt; lenen wordt sectorbreed duurder.",coins:-1,fx:{}},
+ {id:"SE2",t:"Extra rijkssubsidie",x:"Een landelijke subsidieronde geeft alle corporaties lucht.",coins:1,fx:{}},
+ {id:"SE3",t:"Landelijke woonprotesten",x:"Woonprotesten zetten de hele sector onder druk.",coins:0,fx:{sat:-1}},
+ {id:"SE4",t:"Zachte winter",x:"Een zachte winter drukt de energielasten voor iedereen.",coins:0,fx:{sat:1}},
+ {id:"SE5",t:"Strenger Aw-toezicht",x:"De Autoriteit scherpt sectorbreed het toezicht aan.",coins:0,fx:{comp:-1}},
+ {id:"SE6",t:"Meevallende bouwkosten",x:"Bouwkosten dalen onverwacht in de hele sector.",coins:1,fx:{}},
+ {id:"SE7",t:"Nieuwe klimaatnorm",x:"Een aangescherpte norm dwingt iedereen te verduurzamen.",coins:0,fx:{dur:-1}},
+ {id:"SE8",t:"Personeelskrapte",x:"Krapte op de arbeidsmarkt vertraagt alle corporaties.",coins:0,fx:{comp:-1}}
+];
+const SECTOR_EN=[
+ {id:"SE1",t:"Interest rate rise",x:"Market interest rises; borrowing gets more expensive sector-wide.",coins:-1,fx:{}},
+ {id:"SE2",t:"Extra state subsidy",x:"A national subsidy round gives all corporations breathing room.",coins:1,fx:{}},
+ {id:"SE3",t:"National housing protests",x:"Housing protests put the whole sector under pressure.",coins:0,fx:{sat:-1}},
+ {id:"SE4",t:"Mild winter",x:"A mild winter lowers energy costs for everyone.",coins:0,fx:{sat:1}},
+ {id:"SE5",t:"Stricter Aw supervision",x:"The Authority tightens supervision across the sector.",coins:0,fx:{comp:-1}},
+ {id:"SE6",t:"Lower construction costs",x:"Construction costs fall unexpectedly across the sector.",coins:1,fx:{}},
+ {id:"SE7",t:"New climate standard",x:"A tightened standard forces everyone to go greener.",coins:0,fx:{dur:-1}},
+ {id:"SE8",t:"Labour shortage",x:"A tight labour market slows all corporations.",coins:0,fx:{comp:-1}}
+];
 function idx(a){return Object.fromEntries(a.map(o=>[o.id,o]));}
-const CONTENT={nl:{scenario:idx(SCEN_NL),journey:idx(JOUR_NL),crisis:idx(CRIS_NL),shock:{S:SHOCK_NL},chance:idx(CHANCE_NL)},en:{scenario:idx(SCEN_EN),journey:idx(JOUR_EN),crisis:idx(CRIS_EN),shock:{S:SHOCK_EN},chance:idx(CHANCE_EN)}};
+const CONTENT={nl:{scenario:idx(SCEN_NL),journey:idx(JOUR_NL),crisis:idx(CRIS_NL),shock:{S:SHOCK_NL},chance:idx(CHANCE_NL),sector:idx(SECTOR_NL)},en:{scenario:idx(SCEN_EN),journey:idx(JOUR_EN),crisis:idx(CRIS_EN),shock:{S:SHOCK_EN},chance:idx(CHANCE_EN),sector:idx(SECTOR_EN)}};
+const SECTOR_IDS=SECTOR_NL.map(s=>s.id);
 const TEAM_COLORS=["#1F5AFF","#FF9000","#2FBF71","#8B5CF6","#E4572E","#0EA5B5"];
 const POOL_SRC={scenario:["A","B","C","D","E"],action:["J1","J2","J3","J4","J5","J6","J7","J8","J9","J10","J11","J12","C1","C2","C3","C4","C5","C6"]};
 const ROUNDS=[
@@ -344,10 +387,19 @@ const T={
   chanceH:"Kansronde",chanceHint:"Elk team trekt nu een kanskaart — mazzel of pech, met directe impact op de score.",drawChance:"🎲 Trek kanskaart",chanceDrawn:"Kanskaart getrokken",waitChance:"Wacht tot alle teams hun kanskaart hebben getrokken.",
   quizResult:"Je koos {c} juiste afdelingen{w}. {p}",quizWrong:" en {w} onjuiste",quizPts:"+{n} munten!",quizNo:"Geen munten dit keer.",correctWas:"De juiste afdelingen:",tension:"Spanningsveld:",
   chose:"Koos",noEff:"geen effect",resultTitle:"Resultaat",yourResult:"Jullie resultaat",
+  sectorLbl:"Sectorgebeurtenis",allTeams:"Alle teams",sectorWait:"Sectorgebeurtenis dit kwartaal:",
+  debriefH:"Debrief per team",debriefP:"Loop samen de gemaakte keuzes langs. Vraag bij elke keuze: waarom deze — en wat was de afweging?",noChoices:"Geen keuzes vastgelegd.",
+  reflectH:"Reflectievragen voor de nabespreking",refl:["Welke keuze had de meeste impact op jullie meters — en waarom?","Waar botsten korte- en langetermijnbelangen het hardst?","Welke keuze zouden jullie nu anders maken?","Wat betekent dit voor jullie echte werk bij de corporatie?"],
+  copyDebrief:"📋 Kopieer debrief",debriefCopied:"Debrief gekopieerd ✓",
   netLive:"● Live-join actief",netOff:"● Offline",pNetLive:"✓ Live-verbinding klaar — je kunt meedoen.",pNetOff:"⚠ Deze pagina heeft nog geen live-verbinding. Open de online-gehoste versie.",
   joinH:"Doe mee",joinSub:"Behind the Front Door — bestuur samen jullie corporatie.",roomcode:"Kamercode",yourname:"Jouw naam",teamw:"Team",joinbtn:"Meedoen →",
   youin:"Je bent binnen! 🎉",jwRoom:"kamer",waitstart:"Wachten tot de spelleider het spel start",jwBanner:"De live-verbinding wordt gekoppeld zodra de realtime-laag is ingesteld.",
-  yourTurn:"JULLIE ZIJN AAN ZET!",done:"Klaar!",yourFinal:"Jullie eindscore:",seeBoard:"Bekijk het hoofdbord bij de spelleider."},
+  yourTurn:"JULLIE ZIJN AAN ZET!",done:"Klaar!",yourFinal:"Jullie eindscore:",seeBoard:"Bekijk het hoofdbord bij de spelleider.",
+  helpBtn:"❔ Uitleg",helpTitle:"Zo werkt Behind the Front Door",meterLegendH:"De vier meters",setupLegendH:"In het kort",helpTurnH:"Zo werkt een beurt",
+  helpTurnSteps:["🃏 Trek een kaart met een situatie","🤝 Kies één van de aanpakken — geen is fout, elke keuze heeft een plus én een min","➡️ Het volgende team is aan zet"],
+  helpChanceH:"Kaarten en symbolen",helpChanceTxt:"🍀 Mazzel · ⚡ Pech — elk team trekt aan het eind van een kwartaal een kanskaart. 🌐 Een sectorgebeurtenis raakt alle teams tegelijk.",helpScoreH:"Scoren",
+  joinTips:["📱 Kies op dit scherm zodra jullie team aan de beurt is","🖥️ Het hoofdbord bij de spelleider toont steeds de actuele stand","🎲 Elk kwartaal trekt jullie team ook een kanskaart"]
+ },
  en:{sub:"Main board · facilitator",room:"Room",newgame:"New game",copy:"Join link",copied:"Copied ✓",confirm:"Start a new game? The state will be cleared.",
   setupH:"Set up teams",setupP:"Each team runs a fictional housing corporation with 500 homes. Meters start at 10 (0–20), budget at 12 coins + quiz bonus (0–4). Teams take turns.",
   tname:"Team name",qbonus:"Quiz bonus (0–4)",remove:"Remove",addteam:"+ Add team",startgame:"Start game →",stand:"Standings",
@@ -368,10 +420,19 @@ const T={
   chanceH:"Chance round",chanceHint:"Each team now draws a chance card — luck or bad luck, with direct impact on the score.",drawChance:"🎲 Draw chance card",chanceDrawn:"Chance card drawn",waitChance:"Wait until all teams have drawn their chance card.",
   quizResult:"You picked {c} correct departments{w}. {p}",quizWrong:" and {w} wrong",quizPts:"+{n} coins!",quizNo:"No coins this time.",correctWas:"The correct departments:",tension:"Tension:",
   chose:"Chose",noEff:"no effect",resultTitle:"Result",yourResult:"Your result",
+  sectorLbl:"Sector event",allTeams:"All teams",sectorWait:"Sector event this quarter:",
+  debriefH:"Debrief per team",debriefP:"Walk through the choices together. For each one ask: why this one — and what was the trade-off?",noChoices:"No choices recorded.",
+  reflectH:"Reflection questions for the debrief",refl:["Which choice had the biggest impact on your meters — and why?","Where did short- and long-term interests clash hardest?","Which choice would you make differently now?","What does this mean for your real work at the corporation?"],
+  copyDebrief:"📋 Copy debrief",debriefCopied:"Debrief copied ✓",
   netLive:"● Live join active",netOff:"● Offline",pNetLive:"✓ Live connection ready — you can join.",pNetOff:"⚠ This page has no live connection yet. Open the hosted version.",
   joinH:"Join",joinSub:"Behind the Front Door — steer your corporation together.",roomcode:"Room code",yourname:"Your name",teamw:"Team",joinbtn:"Join →",
   youin:"You're in! 🎉",jwRoom:"room",waitstart:"Waiting for the facilitator to start",jwBanner:"The live connection is set up once the realtime layer is configured.",
-  yourTurn:"IT'S YOUR TURN!",done:"Done!",yourFinal:"Your final score:",seeBoard:"See the main board at the facilitator."}
+  yourTurn:"IT'S YOUR TURN!",done:"Done!",yourFinal:"Your final score:",seeBoard:"See the main board at the facilitator.",
+  helpBtn:"❔ Help",helpTitle:"How Behind the Front Door works",meterLegendH:"The four meters",setupLegendH:"In short",helpTurnH:"How a turn works",
+  helpTurnSteps:["🃏 Draw a card with a situation","🤝 Pick one of the approaches — none is wrong, every choice has a plus and a minus","➡️ The next team is up"],
+  helpChanceH:"Cards and symbols",helpChanceTxt:"🍀 Luck · ⚡ Bad luck — each team draws a chance card at the end of a quarter. 🌐 A sector event affects all teams at once.",helpScoreH:"Scoring",
+  joinTips:["📱 Choose on this screen once your team is up","🖥️ The main board at the facilitator always shows the current standings","🎲 Each quarter your team also draws a chance card"]
+ }
 };
 
 /* ============ state & helpers ============ */
@@ -383,7 +444,7 @@ function tpl(s,o){return String(s).replace(/\{(\w+)\}/g,(m,k)=>o[k]!=null?o[k]:"
 function met(l){return MET[l||L()];}
 function dep(i,l){return DEPTS[i][l||L()];}
 function curContent(){return CONTENT[L()];}
-function freshState(){return {lang:"nl",sound:true,showEffects:false,room:randCode(),phase:"setup",setup:[{name:"Team 1",bonus:0},{name:"Team 2",bonus:0},{name:"Team 3",bonus:0}],teams:[],order:[],round:0,turnIdx:0,stage:"roundintro",resolved:false,shown:false,dealt:{},pool:{},incomeDone:{},chance:{},turnResult:null,choiceRec:null};}
+function freshState(){return {lang:"nl",sound:true,showEffects:false,room:randCode(),phase:"setup",setup:[{name:"Team 1",bonus:0},{name:"Team 2",bonus:0},{name:"Team 3",bonus:0}],teams:[],order:[],round:0,turnIdx:0,stage:"roundintro",resolved:false,shown:false,dealt:{},pool:{},incomeDone:{},chance:{},log:[],sector:{},usedSector:[],turnResult:null,choiceRec:null};}
 function randCode(){const a="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";let s="";for(let i=0;i<4;i++)s+=a[Math.floor(Math.random()*a.length)];return s;}
 function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 function save(){try{localStorage.setItem(LS,JSON.stringify(state));}catch(e){}}
@@ -416,12 +477,17 @@ function curCard(){return state.dealt[state.round+"-"+state.turnIdx];}
 function curTeam(){return state.order.length?teamById(state.order[state.turnIdx]):null;}
 function startGame(){
   state.teams=state.setup.map((s,i)=>({id:i+1,name:s.name||("Team "+(i+1)),sat:10,fin:10,comp:10,dur:10,coins:12+(parseInt(s.bonus)||0)}));
-  state.order=state.teams.map(t=>t.id);state.phase="playing";state.dealt={};state.pool={};state.incomeDone={};
+  state.order=state.teams.map(t=>t.id);state.phase="playing";state.dealt={};state.pool={};state.incomeDone={};state.log=[];state.sector={};state.usedSector=[];
   enterRound(0);
 }
 function enterRound(r){
   state.round=r;state.stage="roundintro";state.turnIdx=0;state.resolved=false;state.turnResult=null;state.choiceRec=null;state.chance={};
   const inc=ROUNDS[r].income||0;if(inc>0&&!state.incomeDone[r]){state.order.forEach(id=>{teamById(id).coins+=inc;});state.incomeDone[r]=true;}
+  if(ROUNDS[r].type==="action"&&state.sector[r]==null){
+    let pool=SECTOR_IDS.filter(id=>!state.usedSector.includes(id));if(!pool.length){pool=SECTOR_IDS.slice();state.usedSector=[];}
+    const sid=pool[Math.floor(Math.random()*pool.length)];state.usedSector.push(sid);state.sector[r]=sid;
+    const se=CONTENT.nl.sector[sid];state.order.forEach(tid=>{const t=teamById(tid);t.coins=Math.max(0,t.coins+(se.coins||0));Object.keys(se.fx||{}).forEach(k=>{t[k]=clamp(t[k]+se.fx[k],0,20);});});
+  }
   render();
 }
 function beginRound(){state.stage="turn";state.turnIdx=0;state.resolved=false;state.shown=false;state.turnResult=null;state.choiceRec=null;render();}
@@ -429,6 +495,7 @@ function drawTurnCard(){if(state.stage!=="turn"||state.shown)return;dealCard(sta
 function resolveChoice(teamId,opt){
   if(state.resolved)return;const card=curCard();if(!card)return;const d=cardData(card);if(!d.o)return;const o=d.o[opt],t=teamById(teamId);if(!o)return;
   t.coins=Math.max(0,t.coins+o.coins);Object.keys(o.fx||{}).forEach(k=>{t[k]=clamp(t[k]+o.fx[k],0,20);});
+  state.log.push({r:state.round,tid:teamId,tn:t.name,ttl:d.t,opt:o.l,sp:d.sp||"",coins:o.coins,fx:o.fx||{}});
   state.choiceRec={opt};state.turnResult={kind:"choice",coins:o.coins,fx:o.fx,label:o.l};state.resolved=true;sfx("click");render();
 }
 function resolveQuiz(teamId,sel){
@@ -459,7 +526,24 @@ function applyChrome(){
   $("#setupH").textContent=TT("setupH");$("#setupP").textContent=TT("setupP");$("#addTeam").textContent=TT("addteam");$("#startGame").textContent=TT("startgame");
   $("#scoresH").textContent=TT("finalH");$("#scoresP").textContent=TT("finalP");$("#footNL").textContent=TT("foot");$("#standH").textContent=TT("stand");
   const live=fbReady();const ns=$("#netStatus");ns.className="netchip "+(live?"live":"off");ns.textContent=live?TT("netLive"):TT("netOff");
-  $("#soundToggle").textContent=SOUND?"🔊":"🔇";$("#fxToggle").textContent=state.showEffects?"🙈":"👁";document.documentElement.lang=L();
+  $("#soundToggle").textContent=SOUND?"🔊":"🔇";$("#fxToggle").textContent=state.showEffects?"🙈":"👁";$("#helpToggle").textContent=TT("helpBtn");document.documentElement.lang=L();
+  renderExtras();
+}
+function renderExtras(){
+  const Mn=met();
+  const chips=["sat","fin","comp","dur"].map(k=>'<span class="lg">'+Mn[k]+'</span>').join("");
+  const steps=TT("helpTurnSteps").map(s=>'<li>'+esc(s)+'</li>').join("");
+  const help='<h2 style="margin-top:0">'+esc(TT("helpTitle"))+'</h2>'+
+    '<p class="hint" style="margin-top:0">'+esc(TT("setupP"))+'</p>'+
+    '<h3 style="font-size:13px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin:14px 0 4px">'+esc(TT("meterLegendH"))+'</h3>'+
+    '<div class="legend">'+chips+'</div>'+
+    '<h3 style="font-size:13px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin:14px 0 4px">'+esc(TT("helpTurnH"))+'</h3>'+
+    '<ul class="steplist">'+steps+'</ul>'+
+    '<div class="banner" style="margin-top:12px"><b>'+esc(TT("helpChanceH"))+'</b><br>'+esc(TT("helpChanceTxt"))+'</div>'+
+    '<h3 style="font-size:13px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin:14px 0 4px">'+esc(TT("helpScoreH"))+'</h3>'+
+    '<p class="hint" style="margin:0">'+esc(TT("finalP"))+'</p>';
+  const hp=$("#helpPanel");if(hp)hp.innerHTML=help;
+  const sl=$("#setupLegend");if(sl)sl.innerHTML='<div class="legend">'+chips+'</div><ul class="steplist">'+steps+'</ul>';
 }
 function show(v){["setup","play","scores"].forEach(x=>$("#view-"+x).classList.add("hide"));$("#view-"+v).classList.remove("hide");}
 function render(){
@@ -499,7 +583,7 @@ function cardHead(card){const d=cardData(card);const cat="assets/"+(CAT[card.id]
   return '<div class="illo" style="background-image:url(\''+cat+'\')"><span class="kind">'+esc(kl)+'</span></div><div class="body"><p class="ct">'+esc(d.t)+'</p><p class="cx">'+esc(d.x)+'</p>';}
 function turnControls(card,role){
   const d=cardData(card),pre=role==="host"?"data-hact":"data-pact";
-  return '<p class="meta"><b>'+TT("chooseAB")+'</b></p><div class="pickbtns">'+d.o.map((o,i)=>'<button class="btn '+(i===0?"":"soft")+'" '+pre+'="choice" data-opt="'+i+'">'+esc(o.l)+(state.showEffects?' <span style="font-weight:400;opacity:.8">· '+tagFx(o)+'</span>':'')+'</button>').join("")+'</div>';
+  return '<p class="meta"><b>'+TT("chooseAB")+'</b></p><div class="pickbtns">'+d.o.map((o,i)=>'<button class="btn '+(i===0?"":"soft")+'" '+pre+'="choice" data-opt="'+i+'">'+esc(o.l)+(o.e?'<span class="oesub">'+esc(o.e)+'</span>':'')+(state.showEffects?'<span class="oesub">'+tagFx(o)+'</span>':'')+'</button>').join("")+'</div>';
 }
 function resultBox(card){
   const d=cardData(card),tr=state.turnResult;if(!tr)return "";
@@ -516,6 +600,7 @@ function renderStage(){
       '<div style="font-size:30px;font-weight:900;margin:4px 0 8px">'+esc(TT("rounds")[rid])+'</div>'+
       '<p class="hint" style="max-width:440px;margin:0 auto 14px">'+esc(TT("roundhint")[rid])+'</p>'+
       (inc>0?'<div class="banner" style="display:inline-block;text-align:start">'+tpl(TT("income"),{n:inc})+'</div><div style="height:10px"></div>':'')+
+      (state.sector[state.round]!=null?(()=>{const se=curContent().sector[state.sector[state.round]];return '<div class="banner" style="display:block;text-align:start;max-width:460px;margin:0 auto 14px;border-color:#FF9000;background:#fff6ec"><b>🌐 '+esc(TT("sectorLbl"))+' · '+esc(se.t)+'</b><br><span style="font-size:13px">'+esc(se.x)+'</span><br><span style="font-size:12px;color:var(--muted)">'+esc(TT("allTeams"))+' · '+chFx(se)+'</span></div>';})():'')+
       '<button class="btn warn big" id="beginRoundBtn">'+TT("beginRound")+'</button></div>';
   } else if(state.stage==="turn"){
     const team=curTeam(),col=tcolor(team.id);
@@ -545,17 +630,37 @@ function renderStage(){
   stage.innerHTML=h;
 }
 function renderScores(){const w=$("#scoreWrap");const Mn=met();const ranked=state.teams.map(t=>({t,s:score(t)})).sort((a,b)=>b.s.total-a.s.total);
-  w.innerHTML=ranked.map((r,i)=>'<div class="rank'+(i===0?" first":"")+'"><div class="pos">'+(i===0?"🏆":(i+1))+'</div><div><div class="rn">'+esc(r.t.name)+'</div><div class="rd">'+Mn.sat+' '+r.t.sat+' · '+Mn.fin+' '+r.t.fin+' · '+Mn.comp+' '+r.t.comp+' · '+Mn.dur+' '+r.t.dur+' · 🪙/2 '+Math.floor(r.t.coins/2)+(r.s.penalty?' · Aw −'+r.s.penalty:'')+'</div></div><div class="rs">'+r.s.total+'</div></div>').join("");
+  let html=ranked.map((r,i)=>'<div class="rank'+(i===0?" first":"")+'"><div class="pos">'+(i===0?"🏆":(i+1))+'</div><div><div class="rn">'+esc(r.t.name)+'</div><div class="rd">'+Mn.sat+' '+r.t.sat+' · '+Mn.fin+' '+r.t.fin+' · '+Mn.comp+' '+r.t.comp+' · '+Mn.dur+' '+r.t.dur+' · 🪙/2 '+Math.floor(r.t.coins/2)+(r.s.penalty?' · Aw −'+r.s.penalty:'')+'</div></div><div class="rs">'+r.s.total+'</div></div>').join("");
+  html+='<div class="debrief"><h3 style="margin:0 0 4px">'+esc(TT("debriefH"))+'</h3><p class="hint" style="margin:0 0 14px">'+esc(TT("debriefP"))+'</p>';
+  state.teams.forEach(t=>{const entries=(state.log||[]).filter(e=>e.tid===t.id);const col=tcolor(t.id);
+    html+='<div class="dbteam"><div class="dbh" style="border-left:4px solid '+col+'">'+esc(t.name)+'</div>';
+    if(!entries.length)html+='<div class="hint" style="padding:6px 10px">'+esc(TT("noChoices"))+'</div>';
+    else html+=entries.map(e=>'<div class="dbrow"><div class="dbttl"><span class="dbr">R'+(e.r+1)+'</span> '+esc(e.ttl)+'</div><div class="dbopt">→ '+esc(e.opt)+' <span class="dbeff">'+chFx(e)+'</span></div>'+(e.sp?'<div class="dbsp">⚖ '+esc(e.sp)+'</div>':'')+'</div>').join("");
+    html+='</div>';});
+  html+='<div class="reflect"><h4 style="margin:16px 0 6px">'+esc(TT("reflectH"))+'</h4><ul style="margin:0 0 14px;padding-left:20px">'+TT("refl").map(q=>'<li style="margin:3px 0">'+esc(q)+'</li>').join("")+'</ul></div>';
+  html+='<button class="btn soft" id="copyDebrief">'+esc(TT("copyDebrief"))+'</button></div>';
+  w.innerHTML=html;
 }
+function debriefText(){const Mn=met();let out=TT("finalH").toUpperCase()+" — "+state.room+"\n\n";
+  const ranked=state.teams.map(t=>({t,s:score(t)})).sort((a,b)=>b.s.total-a.s.total);
+  ranked.forEach((r,i)=>{out+=(i+1)+". "+r.t.name+" — "+r.s.total+"\n";});
+  out+="\n"+TT("debriefH")+"\n";
+  state.teams.forEach(t=>{out+="\n=== "+t.name+" ===\n";const entries=(state.log||[]).filter(e=>e.tid===t.id);
+    if(!entries.length){out+=TT("noChoices")+"\n";return;}
+    entries.forEach(e=>{out+="R"+(e.r+1)+" · "+e.ttl+"\n   → "+e.opt+"  ["+chFx(e).replace(/<[^>]+>/g,"")+"]\n"+(e.sp?"   ⚖ "+e.sp+"\n":"");});});
+  out+="\n"+TT("reflectH")+"\n";TT("refl").forEach(q=>{out+="- "+q+"\n";});
+  return out;}
 
 /* ============ events (host) ============ */
 document.addEventListener("click",e=>{
-  const el=e.target.closest("[data-setup],[data-delteam],[data-hact],[data-hchance],#addTeam,#startGame,#beginRoundBtn,#drawCardBtn,#nextTurnBtn,#nextRoundBtn,#resetGame,#againBtn,#copyJoin,#langToggle,#soundToggle,#fxToggle");
+  const el=e.target.closest("[data-setup],[data-delteam],[data-hact],[data-hchance],#addTeam,#startGame,#beginRoundBtn,#drawCardBtn,#nextTurnBtn,#nextRoundBtn,#resetGame,#againBtn,#copyJoin,#copyDebrief,#langToggle,#soundToggle,#fxToggle,#helpToggle");
   if(!el)return;
   if(el.id==="copyJoin"){copyJoin(el);return;}
+  if(el.id==="copyDebrief"){const txt=debriefText();const done=()=>{el.textContent=TT("debriefCopied");setTimeout(()=>{el.textContent=TT("copyDebrief");},1800);};if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done).catch(()=>{fallbackCopy(txt);done();});}else{fallbackCopy(txt);done();}return;}
   if(el.id==="drawCardBtn"){const d=$("#deckBig");if(d){d.classList.add("shuf");setTimeout(drawTurnCard,420);}else drawTurnCard();return;}
   if(el.id==="soundToggle"){SOUND=!SOUND;if(state)state.sound=SOUND;save();$("#soundToggle").textContent=SOUND?"🔊":"🔇";return;}
   if(el.id==="fxToggle"){state.showEffects=!state.showEffects;render();return;}
+  if(el.id==="helpToggle"){$("#helpPanel").classList.toggle("hide");return;}
   if(el.id==="langToggle"){state.lang=(L()==="nl"?"en":"nl");render();return;}
   if(el.dataset.delteam!=null){state.setup.splice(parseInt(el.dataset.delteam),1);renderSetup();return;}
   if(el.id==="addTeam"){if(state.setup.length<6){state.setup.push({name:"Team "+(state.setup.length+1),bonus:0});renderSetup();}return;}
@@ -569,6 +674,7 @@ document.addEventListener("click",e=>{
 });
 document.addEventListener("input",e=>{const el=e.target;if(el.dataset&&el.dataset.setup){state.setup[parseInt(el.dataset.i)][el.dataset.setup]=el.dataset.setup==="bonus"?clamp(parseInt(el.value)||0,0,4):el.value;}});
 
+function fallbackCopy(t){try{const ta=document.createElement("textarea");ta.value=t;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.select();document.execCommand("copy");document.body.removeChild(ta);}catch(e){prompt("Debrief:",t);}}
 function copyJoin(btn){const base=location.href.split("?")[0].split("#")[0];const link=base+"?role=player&room="+state.room+"&lang="+L();const done=()=>{const o=btn.textContent;btn.textContent=TT("copied");setTimeout(()=>btn.textContent=o,1400);};if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(link).then(done,()=>prompt("Join-link:",link));else prompt("Join-link:",link);}
 
 /* ============ realtime ============ */
@@ -579,9 +685,11 @@ function pubSnapshot(){
   const team=curTeam(),card=(state.phase==="playing"&&state.stage==="turn"&&state.shown)?curCard():null;
   let cp=null;
   if(card){const d=cardData(card);
-    cp={type:card.type,cat:"assets/"+(CAT[card.id]||"buurt")+".jpg",title:d.t,text:d.x,options:d.o.map(o=>({l:o.l,tags:tagFx(o)}))};
+    cp={type:card.type,cat:"assets/"+(CAT[card.id]||"buurt")+".jpg",title:d.t,text:d.x,options:d.o.map(o=>({l:o.l,e:o.e,tags:tagFx(o)}))};
   }
-  return {lang:L(),phase:state.phase,stage:state.stage,shown:!!state.shown,showEffects:!!state.showEffects,
+  const secId=(state.phase==="playing"&&state.sector[state.round]!=null)?state.sector[state.round]:null;
+  const secP=secId!=null?(()=>{const se=curContent().sector[secId];return {t:se.t,x:se.x,fx:chFx(se)};})():null;
+  return {lang:L(),phase:state.phase,stage:state.stage,shown:!!state.shown,showEffects:!!state.showEffects,sector:secP,
     roundLabel:state.phase==="playing"?TT("rounds")[ROUNDS[state.round].id]:"",curTeamId:team?team.id:null,curTeamName:team?team.name:"",resolved:!!state.resolved,
     card:cp,turnResult:state.resolved?state.turnResult:null,
     teams:state.teams.map(t=>{const sc=score(t);const ch=state.chance[t.id]?curContent().chance[state.chance[t.id]]:null;return {id:t.id,name:t.name,color:tcolor(t.id),sat:t.sat,fin:t.fin,comp:t.comp,dur:t.dur,coins:t.coins,score:sc.total,flags:sc.flags,chance:ch?{t:ch.t,fx:chFx(ch),good:ch.good}:null};})};
@@ -604,7 +712,7 @@ const NET={db:null,role:null,room:null,seen:{},
 /* ============ render: player ============ */
 function pt(l,k){return (T[l]||T.nl)[k];}
 function pmeter(k,v,Mn){return '<div class="mrow"><span class="ml">'+Mn[k]+'</span><span class="bar'+(v<5?" red":"")+'"><span style="width:'+(v/20*100)+'%"></span></span><span class="mv">'+v+'</span></div>';}
-function showPlayerBoard(){const p=document.getElementById("player");p.classList.remove("player-shell");p.innerHTML='<header class="top"><div class="top-in"><div class="brandline">'+logoSVG()+'<div><h1>Behind the Front Door</h1><div class="sub">'+esc(PLAYER.name)+' · '+esc(PLAYER.teamLabel)+'</div></div></div></div></header><div class="wrap"><div id="pBoard" style="padding-top:18px"></div><footer>'+pt(PLAYER.lang,"footS")+'</footer></div>';renderPlayer(null);}
+function showPlayerBoard(){const p=document.getElementById("player");p.classList.remove("player-shell");p.innerHTML='<header class="top"><div class="top-in"><div class="brandline">'+logoSVG()+'<div><h1>Behind the Front Door</h1><div class="sub">'+esc(PLAYER.name)+' · '+esc(PLAYER.teamLabel)+' <a href="#" onclick="try{localStorage.removeItem(&quot;bftd_p_&quot;+PLAYER.room)}catch(e){};location.reload();return false" style="color:#94a3b8;font-size:11px;text-decoration:none;margin-inline-start:8px">↻</a></div></div></div></div></header><div class="wrap"><div id="pBoard" style="padding-top:18px"></div><footer>'+pt(PLAYER.lang,"footS")+'</footer></div>';renderPlayer(null);}
 function renderPlayer(pub){
   const host=document.getElementById("pBoard");if(!host)return;const l=(pub&&pub.lang)||PLAYER.lang;PLAYER.lang=l;const Mn=MET[l];
   if(!pub){host.innerHTML='<div class="panel"><h2>'+pt(l,"jwRoom")+' '+esc(PLAYER.room)+'</h2><p class="hint" style="margin:0">'+pt(l,"waitstart")+'<span class="dot"></span><span class="dot"></span><span class="dot"></span></p></div>';return;}
@@ -617,17 +725,19 @@ function renderPlayer(pub){
   else if(pub.stage==="turn"&&pub.curTeamName){top='<div class="panel" style="text-align:center"><b style="color:'+((pub.teams.find(t=>t.id===pub.curTeamId)||{}).color||"#1F5AFF")+'">'+esc(pub.curTeamName)+'</b> '+pt(l,"theirTurn")+' — '+pt(l,"waitTurn")+'<span class="dot"></span><span class="dot"></span><span class="dot"></span></div>';}
   else if(pub.stage==="chance"&&!myChance){top='<div class="panel" style="text-align:center">🎲 '+pt(l,"chanceH")+'</div>';}
   else {top='<div class="panel" style="text-align:center">'+esc(pub.roundLabel||"")+'</div>';}
+  let secB="";
+  if(pub.sector&&pub.phase!=="scores"){secB='<div class="panel" style="margin-top:14px;border-color:#FF9000;background:#fff6ec"><b>🌐 '+pt(l,"sectorLbl")+': '+esc(pub.sector.t)+'</b><div class="hint" style="margin:4px 0 0">'+esc(pub.sector.x)+' · '+esc(pub.sector.fx)+'</div></div>';}
   let mid="";
   if(myTurn&&!pub.shown){mid='<div class="panel" style="margin-top:14px;text-align:center"><div class="deckbig" style="margin:0 auto 14px"><div class="cb">↗</div><div class="cb">↗</div><div class="cb">↗</div></div><button class="btn warn big" data-pdraw="1">🃏 '+pt(l,"drawCard")+'</button></div>';}
   else if(myTurn&&pub.card){const c=pub.card;mid='<div class="panel" style="margin-top:14px"><div class="gc '+c.type+' deal"><div class="illo" style="background-image:url(\''+esc(c.cat)+'\')"></div><div class="body"><p class="ct">'+esc(c.title)+'</p><p class="cx">'+esc(c.text)+'</p>';
-    mid+='<p class="meta"><b>'+pt(l,"chooseAB")+'</b></p><div class="pickbtns">'+c.options.map((o,i)=>'<button class="btn '+(i===0?"":"soft")+'" data-pact="choice" data-opt="'+i+'">'+esc(o.l)+(pub.showEffects?' <span style="font-weight:400;opacity:.8">· '+o.tags+'</span>':'')+'</button>').join("")+'</div>';
+    mid+='<p class="meta"><b>'+pt(l,"chooseAB")+'</b></p><div class="pickbtns">'+c.options.map((o,i)=>'<button class="btn '+(i===0?"":"soft")+'" data-pact="choice" data-opt="'+i+'">'+esc(o.l)+(o.e?'<span class="oesub">'+esc(o.e)+'</span>':'')+(pub.showEffects?'<span class="oesub">'+o.tags+'</span>':'')+'</button>').join("")+'</div>';
     mid+='</div></div></div>';}
   else if(myChance){mid='<div class="panel" style="margin-top:14px;text-align:center"><div class="deckmini" style="margin:0 auto 12px">🎲</div><button class="btn warn big" data-pchance="1">'+pt(l,"drawChance")+'</button></div>';}
   let dash="";
   if(my){const ch=my.chance;dash='<div class="panel" style="margin-top:14px"><div class="th" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><b>'+esc(my.name)+'</b><span class="coins">🪙 '+my.coins+'</span></div>'+["sat","fin","comp","dur"].map(k=>pmeter(k,my[k],Mn)).join("")+'<div class="st" style="display:flex;justify-content:space-between;margin-top:6px;padding-top:6px;border-top:1px dashed var(--line)"><span style="color:var(--muted)">'+pt(l,"stand")+'</span><b>'+my.score+'</b></div>'+(ch?'<div class="minichance '+(ch.good?"good":"bad")+'" style="margin-top:8px">'+(ch.good?"🍀 ":"⚡ ")+esc(ch.t)+' — '+esc(ch.fx)+'</div>':'')+'</div>';}
-  host.innerHTML=top+mid+dash;
+  host.innerHTML=top+secB+mid+dash;
 }
-function localizeJoin(l){$("#jfH").textContent=pt(l,"joinH");$("#jfSub").textContent=pt(l,"joinSub");$("#jfRoomL").textContent=pt(l,"roomcode");$("#jfNameL").textContent=pt(l,"yourname");$("#jfTeamL").textContent=pt(l,"teamw");$("#pName").placeholder=pt(l,"yourname");$("#joinBtn").textContent=pt(l,"joinbtn");$("#jwH").textContent=pt(l,"youin");$("#jwRoomL").textContent=pt(l,"jwRoom");$("#jwWait").innerHTML=pt(l,"waitstart")+'<span class="dot"></span><span class="dot"></span><span class="dot"></span>';$("#jwBanner").textContent=pt(l,"jwBanner");document.documentElement.lang=l;}
+function localizeJoin(l){$("#jfH").textContent=pt(l,"joinH");$("#jfSub").textContent=pt(l,"joinSub");$("#jfRoomL").textContent=pt(l,"roomcode");$("#jfNameL").textContent=pt(l,"yourname");$("#jfTeamL").textContent=pt(l,"teamw");$("#pName").placeholder=pt(l,"yourname");$("#joinBtn").textContent=pt(l,"joinbtn");$("#jwH").textContent=pt(l,"youin");$("#jwRoomL").textContent=pt(l,"jwRoom");$("#jwWait").innerHTML=pt(l,"waitstart")+'<span class="dot"></span><span class="dot"></span><span class="dot"></span>';$("#jwBanner").textContent=pt(l,"jwBanner");const jt=$("#joinTips");if(jt)jt.innerHTML=pt(l,"joinTips").map(x=>"<li>"+esc(x)+"</li>").join("");document.documentElement.lang=l;}
 function initPlayer(room,plang){
   document.getElementById("pLogo").innerHTML=logoSVG();$("#facilitator").classList.add("hide");$("#player").classList.remove("hide");if(room)$("#pRoom").value=room;localizeJoin(plang);
   const live=fbReady();const pn=$("#pNet");pn.className="pnet "+(live?"live":"off");pn.textContent=live?pt(plang,"pNetLive"):pt(plang,"pNetOff");
@@ -636,8 +746,10 @@ function initPlayer(room,plang){
     if(b.dataset.pchance){sfx("draw");NET.send(PLAYER.room,PLAYER.teamId,{type:"chance"});b.disabled=true;return;}
     if(b.dataset.pact==="choice"){sfx("click");NET.send(PLAYER.room,PLAYER.teamId,{type:"choice",opt:parseInt(b.dataset.opt)});$$('#pBoard [data-pact]').forEach(x=>x.disabled=true);return;}
   });
+  if(room&&fbReady()){try{const sv=JSON.parse(localStorage.getItem("bftd_p_"+room)||"null");if(sv&&sv.teamId){PLAYER=Object.assign(sv,{lang:plang});if(NET.initPlayer(room,renderPlayer)){NET.presence(room,PLAYER.pid,{name:PLAYER.name,team:PLAYER.teamId});showPlayerBoard();return;}}}catch(e){}}
   $("#joinBtn").addEventListener("click",()=>{const name=$("#pName").value.trim()||(plang==="en"?"Player":"Speler");const code=($("#pRoom").value.trim().toUpperCase())||"----";const teamId=parseInt($("#pTeam").value);const teamLabel=$("#pTeam").selectedOptions[0].textContent;
     PLAYER={pid:randCode()+randCode(),name,teamId,teamLabel,room:code,lang:plang};
+    try{localStorage.setItem("bftd_p_"+code,JSON.stringify(PLAYER));}catch(e){}
     if(NET.initPlayer(code,renderPlayer)){NET.presence(code,PLAYER.pid,{name,team:teamId});showPlayerBoard();}
     else{$("#joinWho").textContent=name+" · "+teamLabel;$("#joinRoomEcho").textContent=code;$("#joinForm").style.display="none";$("#joinWaiting").style.display="block";}
   });
@@ -647,7 +759,7 @@ function initPlayer(room,plang){
 (function boot(){
   const p=new URLSearchParams(location.search);
   if(p.get("role")==="player"){initPlayer((p.get("room")||"").toUpperCase(),p.get("lang")==="en"?"en":"nl");return;}
-  state=load()||freshState();if(!state.room)state.room=randCode();if(!state.lang)state.lang="nl";if(!state.dealt)state.dealt={};if(!state.pool)state.pool={};if(!state.chance)state.chance={};if(!state.incomeDone)state.incomeDone={};if(!state.order)state.order=[];if(state.shown==null)state.shown=false;SOUND=state.sound!==false;
+  state=load()||freshState();if(!state.room)state.room=randCode();if(!state.lang)state.lang="nl";if(!state.dealt)state.dealt={};if(!state.pool)state.pool={};if(!state.chance)state.chance={};if(!state.incomeDone)state.incomeDone={};if(!state.order)state.order=[];if(state.shown==null)state.shown=false;if(!state.log)state.log=[];if(!state.sector)state.sector={};if(!state.usedSector)state.usedSector=[];SOUND=state.sound!==false;
   render();NET.initHost();
 })();
 </script>

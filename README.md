@@ -15,6 +15,13 @@ te openen op je laptop of te hosten via GitHub Pages.
   kosten en metereffecten worden automatisch verwerkt (met een ↺ om een keuze te wijzigen).
 - **Kwartaalinkomsten** en **crisis-kosten voor alle teams** met één klik.
 - **Eindstand** met ranking, score-opbouw en Aw-straf.
+- **Sectorgebeurtenissen**: elk kwartaal een gedeelde gebeurtenis (rentestijging, subsidieronde,
+  nieuwe klimaatnorm…) die álle teams tegelijk raakt — een plenair moment en gedeelde spanning,
+  aangekondigd op het bord en bij de spelers.
+- **Debrief per team**: op de eindstand zie je per team álle gemaakte keuzes met hun spanningsveld,
+  plus reflectievragen én een knop om de hele debrief te kopiëren voor de nabespreking.
+- **Herverbinden**: ververst een speler zijn scherm of valt de verbinding kort weg, dan komt hij
+  automatisch terug in zijn team (met een ↺ om als iemand anders opnieuw in te stappen).
 - De stand wordt in je browser bewaard; "Nieuw spel" begint opnieuw.
 
 ## Hosten op GitHub Pages (gratis)
@@ -49,12 +56,29 @@ Zolang de configuratie leeg is, blijft het bord gewoon offline werken via het ge
    (in elk geval `apiKey`, `authDomain`, `databaseURL`, `projectId`, `appId`).
 5. Push het bestand naar GitHub (of ververs lokaal). Klaar — spelers kunnen nu live meedoen.
 
-**Databaseregels (testmodus)** staan open op lezen/schrijven. Voor een training is dat prima; voor
-langer gebruik kun je ze beperken tot de spelmap:
+**Databaseregels (testmodus)** staan volledig open op lezen/schrijven. Voor een korte training is dat
+prima, maar laat dat niet maandenlang zo staan. Beperk de schrijfrechten tot de drie takken die het
+spel echt gebruikt (`pub`, `act`, `players`) binnen een kamer:
 
 ```json
-{ "rules": { "rooms": { ".read": true, ".write": true } } }
+{
+  "rules": {
+    "rooms": {
+      "$room": {
+        ".read": true,
+        "pub":     { ".write": true },
+        "act":     { ".write": true },
+        "players": { ".write": true }
+      }
+    }
+  }
+}
 ```
+
+Zo kan niemand meer buiten de spelstructuur om schrijven. Wil je het écht dichttimmeren (voorkomen dat
+een handige deelnemer namens een ander team stuurt), dan is **Firebase Authentication** met
+per-gebruiker-regels de volgende stap — dat vraagt wat meer opzet en is voor een begeleide
+trainingssessie meestal overkill.
 
 > Let op: dit is een spel zonder persoonsgegevens. Zet geen gevoelige data in de kamer.
 
