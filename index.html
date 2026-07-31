@@ -842,10 +842,14 @@ const NET={
       if(this.ref)this.ref.set(state).catch(()=>{});
     },120);
   },
-  listenState(cb){
-    if(!this.db)return;
-    const r=this.db.ref("rooms/"+state.room+"/state");
+  listenState(room,cb){
+    if(!this.db||!room)return;
+    const r=this.db.ref("rooms/"+room+"/state");
     r.on("value",snap=>{const v=snap.val();if(v)cb(v);});
+  },
+  fetchTeamsOnce(room){
+    if(!this.db||!room)return Promise.resolve(null);
+    return this.db.ref("rooms/"+room+"/state").once("value").then(snap=>snap.val()).catch(()=>null);
   },
   joinAsPlayer(room,name,team){
     if(!this.db)return Promise.resolve();
@@ -888,18 +892,41 @@ function initPlayerView(){
   $("jfH").textContent=T.nl.jfH;$("jfSub").textContent=T.nl.jfSub;$("jfRoomL").textContent=T.nl.jfRoomL;
   $("jfNameL").textContent=T.nl.jfNameL;$("jfTeamL").textContent=T.nl.jfTeamL;$("joinBtn").textContent=T.nl.joinBtn;
   $("joinTips").innerHTML=`<li>${T.nl.jfSub}</li>`;
-  let joinedRoom=null,playerLang="nl";
+  let joinedRoom=null,playerLang="nl",knownTeams=null;
+  NET.init();
+
+  function populateTeamOptions(teams){
+    const sel=$("pTeam");
+    const prevVal=sel.value;
+    const list=(teams&&teams.length)?teams:[{id:1,name:"Team 1"},{id:2,name:"Team 2"}];
+    sel.innerHTML=list.map(t=>`<option value="${esc(t.id)}">${esc(t.name)}</option>`).join("");
+    if(prevVal&&list.some(t=>String(t.id)===String(prevVal)))sel.value=prevVal;
+  }
+  function refreshTeamsForRoom(){
+    const room=($("pRoom").value||"").trim().toUpperCase();
+    if(!room||!NET.db)return;
+    NET.fetchTeamsOnce(room).then(snap=>{
+      if(snap&&snap.teams&&snap.teams.length){knownTeams=snap.teams;populateTeamOptions(snap.teams);}
+    });
+  }
+  $("pRoom").addEventListener("blur",refreshTeamsForRoom);
+  $("pRoom").addEventListener("change",refreshTeamsForRoom);
+  if(roomFromUrl){
+    // give the Firebase SDK a moment to finish initializing before the first lookup
+    setTimeout(refreshTeamsForRoom,300);
+  }
+
   $("joinBtn").onclick=()=>{
     const room=($("pRoom").value||"").trim().toUpperCase();
     const name=($("pName").value||"").trim();
     const team=$("pTeam").value;
     if(!room||!name)return;
     joinedRoom=room;
-    NET.init();
     NET.joinAsPlayer(room,name,team);
     $("joinForm").style.display="none";
     $("joinWaiting").style.display="block";
-    $("joinWho").textContent=name+" · Team "+team;
+    const teamName=(knownTeams&&knownTeams.find(t=>String(t.id)===String(team))||{}).name||("Team "+team);
+    $("joinWho").textContent=name+" · "+teamName;
     $("joinRoomEcho").textContent=room;
     $("jwH").textContent=T.nl.jwH;$("jwWait").textContent=T.nl.jwWait;$("jwRoomL").textContent=T.nl.jwRoomL;
     subscribeAsPlayer(room,team);
@@ -907,7 +934,7 @@ function initPlayerView(){
   function subscribeAsPlayer(room,team){
     if(!NET.db){$("jwBanner").textContent=T.nl.netOff;$("jwBanner").classList.remove("hide");return;}
     $("pNet").textContent=T.nl.netLive;$("pNet").className="pnet live";
-    NET.listenState(snap=>{
+    NET.listenState(room,snap=>{
       playerLang=snap.lang||"nl";
       renderPlayerDashboard(snap,team);
     });
@@ -918,6 +945,9 @@ function initPlayerView(){
     const active=snap.teams[snap.activeTeamIdx];
     let html=`<h1 style="font-size:20px">${esc(L.brand)}</h1>`;
     if(me)html+=`<p class="s">${esc(me.name)} · ${me.coins} ${L.coinsLbl.toLowerCase()} · ${me.turnsTaken}/${snap.turnsPerTeam}</p>`;
+    if(snap.appStage==="setup"){
+      html+=`<p class="s">${esc(L.jwWait)}</p>`;
+    }
     if(snap.appStage==="play"&&active){
       const mine=String(active.id)===String(team);
       html+=`<div class="yourturn" style="background:${active.color};font-size:16px">${mine?"🎯 "+esc(L.yourTurnBanner(active.name)):esc(active.name)+"…"}</div>`;
