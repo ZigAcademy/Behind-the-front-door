@@ -97,12 +97,15 @@
   @media (prefers-color-scheme:dark){.tile.task{background:#16233D;border-color:#26324A}}
   .tile.here{outline:3px solid var(--orange);outline-offset:-2px}
   .ringcenter{position:absolute;left:12.5%;top:12.5%;width:75%;height:75%;background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:14px;overflow:auto;z-index:2;display:flex;flex-direction:column;justify-content:center}
-  .pawnlayer{position:absolute;inset:0;pointer-events:none;z-index:6}
-  .pw2{position:absolute;width:24px;height:24px;border-radius:50%;border:2px solid #fff;box-shadow:0 3px 8px rgba(0,0,0,.4);color:#fff;font-weight:900;font-size:11px;display:flex;align-items:center;justify-content:center;transition:left .4s cubic-bezier(.34,1.4,.4,1),top .4s cubic-bezier(.34,1.4,.4,1);left:0;top:0}
+  .pawnlayer{position:absolute;inset:0;pointer-events:none;z-index:6;display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr);gap:5px}
+  .pawncell{display:flex;align-items:center;justify-content:center;gap:3px;flex-wrap:wrap;padding:2px;overflow:visible}
+  .pw2{width:24px;height:24px;border-radius:50%;border:2px solid #fff;box-shadow:0 3px 8px rgba(0,0,0,.4);color:#fff;font-weight:900;font-size:11px;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+  .pw2.hop{animation:pawnhop .4s cubic-bezier(.34,1.4,.4,1)}
+  @keyframes pawnhop{0%{transform:translate(var(--fx,0),var(--fy,0)) scale(.8);opacity:.55}55%{transform:translate(calc(var(--fx,0) * .12),calc(var(--fy,0) * .12 - 9px)) scale(1.2)}100%{transform:translate(0,0) scale(1);opacity:1}}
   .dice{width:88px;height:88px;border-radius:20px;background:var(--card);border:3px solid var(--line);box-shadow:0 10px 22px rgba(0,0,0,.2);display:flex;align-items:center;justify-content:center;font-size:48px;margin:0 auto 8px}
   .dice.rolling{animation:diceroll .7s cubic-bezier(.34,1.4,.4,1)}
   @keyframes diceroll{0%{transform:rotate(0) scale(1)}12%{transform:rotate(-28deg) scale(1.18)}26%{transform:rotate(24deg) scale(1.24)}40%{transform:rotate(-20deg) scale(1.16)}55%{transform:rotate(14deg) scale(1.1)}70%{transform:rotate(-9deg) scale(1.05)}85%{transform:rotate(4deg) scale(1.02)}100%{transform:rotate(0) scale(1)}}
-  @media (max-width:860px){.tile{font-size:11px}.tile .tt{display:none}.pw2{width:15px;height:15px;font-size:7px}.dice{width:62px;height:62px;font-size:32px}}
+  @media (max-width:860px){.tile{font-size:11px}.tile .tt{display:none}.pw2{width:16px;height:16px;font-size:8px}.dice{width:62px;height:62px;font-size:32px}}
   .playgrid{display:grid;grid-template-columns:1fr minmax(230px,290px);gap:18px;align-items:start}
   @media (max-width:980px){.playgrid{grid-template-columns:1fr}}
   .stand2{display:flex;flex-direction:column;gap:7px;max-height:78vh;overflow:auto}
@@ -491,6 +494,7 @@ function startGame(){
   state.turnsPerTeam=computeTurnsPerTeam();
   state.teams.forEach(tm=>{tm.coins=10;tm.met={sat:0,fin:0,comp:0,dur:0};tm.boardPos=0;tm.turnsTaken=0;tm.history=[];tm.seenTask=[];tm.seenChance=[];tm.seenShock=false;tm.laps=0;});
   state.activeTeamIdx=0;
+  _lastPawnPos={};
   state.turn={phase:"idle",dice:null,walkTo:null,cardType:null,card:null,chosenIdx:null,lapGain:0};
   state.appStage="play";
   render();saveLocal();NET.publish();
@@ -694,20 +698,35 @@ function renderBoardPath(){
   wrap.innerHTML=html;
 }
 
+let _lastPawnPos={};
 function renderPawns(){
   const layer=$("pawnLayer");
-  const cellPct=100/8;
-  let html="";
-  state.teams.forEach((team,ti)=>{
+  const grouped={};
+  state.teams.forEach(team=>{
     const i=team.boardPos%RING_LEN;
-    const pos=RING_LAYOUT[i];
-    const baseLeft=(pos.col-1)*cellPct, baseTop=(pos.row-1)*cellPct;
-    const fan=state.teams.length>1?(ti-(state.teams.length-1)/2)*7:0;
-    const left=clamp(baseLeft+cellPct/2-12+fan,2,90);
-    const top=clamp(baseTop+cellPct/2-12+fan,2,90);
-    html+=`<div class="pw2" style="left:${left}%;top:${top}%;background:${team.color}">${ti+1}</div>`;
+    (grouped[i]=grouped[i]||[]).push(team);
+  });
+  let html="";
+  Object.keys(grouped).forEach(idxStr=>{
+    const idx=parseInt(idxStr,10);
+    const pos=RING_LAYOUT[idx];
+    const teamsHere=grouped[idx];
+    const pawnsHtml=teamsHere.map(team=>{
+      const prevRaw=_lastPawnPos[team.id];
+      const moved=prevRaw!==undefined&&prevRaw!==team.boardPos;
+      let styleVars="";
+      if(moved){
+        const prevIdx=((prevRaw%RING_LEN)+RING_LEN)%RING_LEN;
+        const prevPos=RING_LAYOUT[prevIdx];
+        const dx=(prevPos.col-pos.col)*26,dy=(prevPos.row-pos.row)*26;
+        styleVars=`--fx:${dx}px;--fy:${dy}px;`;
+      }
+      return `<div class="pw2${moved?" hop":""}" style="background:${team.color};${styleVars}" title="${esc(team.name)}">${team.id}</div>`;
+    }).join("");
+    html+=`<div class="pawncell" style="grid-row:${pos.row};grid-column:${pos.col}">${pawnsHtml}</div>`;
   });
   layer.innerHTML=html;
+  state.teams.forEach(team=>{_lastPawnPos[team.id]=team.boardPos;});
 }
 
 function renderStage(){
@@ -943,14 +962,38 @@ function initPlayerView(){
     const L=T[playerLang]||T.nl;
     const me=snap.teams.find(t=>String(t.id)===String(team));
     const active=snap.teams[snap.activeTeamIdx];
+    const mine=active&&String(active.id)===String(team);
     let html=`<h1 style="font-size:20px">${esc(L.brand)}</h1>`;
     if(me)html+=`<p class="s">${esc(me.name)} · ${me.coins} ${L.coinsLbl.toLowerCase()} · ${me.turnsTaken}/${snap.turnsPerTeam}</p>`;
     if(snap.appStage==="setup"){
       html+=`<p class="s">${esc(L.jwWait)}</p>`;
     }
     if(snap.appStage==="play"&&active){
-      const mine=String(active.id)===String(team);
-      html+=`<div class="yourturn" style="background:${active.color};font-size:16px">${mine?"🎯 "+esc(L.yourTurnBanner(active.name)):esc(active.name)+"…"}</div>`;
+      const turn=snap.turn||{phase:"idle"};
+      html+=`<div class="yourturn" style="background:${active.color};font-size:16px">${mine?"🎯 ":""}${esc(L.yourTurnBanner(active.name))}</div>`;
+      if(turn.phase==="rolling"){
+        html+=`<div style="text-align:center"><div class="dice rolling">🎲</div></div>`;
+      }else if(turn.phase==="walking"){
+        html+=`<div style="text-align:center"><div class="dice">${turn.dice||"🎲"}</div><p class="hint">${L.walking}</p></div>`;
+      }else if(turn.phase==="card"&&turn.card){
+        const cat=CAT[turn.card.id];
+        html+=`<div class="cardface" style="margin-top:10px">${cat?`<div class="illo" style="background-image:url('assets/${cat}.jpg')"></div>`:""}<div class="badge">${turn.cardType==="shock"?L.drawShock:(turn.cardType==="chance"?L.drawChance:L.drawTask)}</div><h3>${esc(turn.card.t)}</h3><p>${esc(turn.card.x)}</p>`;
+        if(turn.cardType==="chance"){
+          html+=`<p class="hint">${turn.card.coins>0?"+":""}${turn.card.coins} ${L.coinsLbl.toLowerCase()}</p>`;
+        }else if(turn.card.o){
+          html+=`<p class="hint" style="margin-bottom:6px">${L.chooseOpt}</p><div class="opts">`+turn.card.o.map(o=>`<div class="btn soft optbtn" style="opacity:.85">${esc(o.l)}<br><span class="hint">${esc(o.e)}</span></div>`).join("")+`</div>`;
+        }
+        html+=`</div>`;
+      }else if(turn.phase==="resolved"){
+        let detail="";
+        if(turn.card&&turn.card.o&&turn.chosenIdx!=null){
+          const o=turn.card.o[turn.chosenIdx];
+          detail=`<div class="cardface" style="margin-top:10px"><p class="hint"><b>${esc(o.l)}</b> — ${o.coins>0?"+":""}${o.coins} ${L.coinsLbl.toLowerCase()}</p></div>`;
+        }else if(turn.cardType==="start"||turn.lapGain){
+          detail=`<p class="hint" style="text-align:center;margin-top:10px">${L.passedStart}</p>`;
+        }
+        html+=detail;
+      }
     }
     if(snap.appStage==="scores"){
       const sorted=snap.teams.slice().sort((a,b)=>b.coins-a.coins);
