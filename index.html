@@ -690,11 +690,25 @@ const VAKJE_VARIANTS={
   kennisduel:["vakje-kennisduel","vakje-kennisduel-blauw","vakje-kennisduel-oranje"],
   shock:["vakje-shock","vakje-shock-blauw","vakje-shock-oranje"]
 };
+function tileCategories(){
+  // 0=origineel/cream, 1=blauw, 2=oranje -- gekozen zodat geen twee opeenvolgende
+  // vakjes (rond de hele ring, inclusief de sluiting tussen laatste en eerste) dezelfde
+  // achtergrondkleur-categorie krijgen.
+  const n=RING_LEN;
+  const cats=[];
+  for(let i=0;i<n;i++) cats.push(i%3);
+  if(cats[n-1]===cats[0]){
+    for(let c=0;c<3;c++){
+      if(c!==cats[n-2] && c!==cats[0]){ cats[n-1]=c; break; }
+    }
+  }
+  return cats;
+}
+const TILE_CATS=tileCategories();
 function vakjeVariantFor(i,type){
-  let n=0;
-  for(let j=0;j<i;j++) if(TILE_TYPES[j]===type) n++;
   const arr=VAKJE_VARIANTS[type]||[];
-  return arr.length?arr[n%arr.length]:type;
+  if(!arr.length) return type;
+  return arr[TILE_CATS[i]%arr.length];
 }
 const SP_ICON={start:"🏁",task:"🏠",chance:"🍀",shock:"💥",kennisduel:"🧠"};
 const DURATION_PRESETS={short:45,medium:70,long:100};
