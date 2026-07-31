@@ -157,6 +157,24 @@
   @keyframes pulse{0%,100%{opacity:.3}50%{opacity:1}}
   .cardface{border:1px solid var(--line);border-radius:16px;background:var(--card);box-shadow:0 16px 34px rgba(0,0,0,.2);padding:16px 18px;animation:deal .6s cubic-bezier(.2,.9,.3,1.1) both;max-width:520px;margin:0 auto}
   .cardface .illo{width:min(180px,55%);aspect-ratio:1/1;margin:0 auto 12px;border-radius:12px;background-size:cover;background-position:center;box-shadow:0 6px 16px rgba(0,0,0,.2)}
+  .tile.kennisduel{background:linear-gradient(160deg,#efe7fd,#e3d6fb);border-color:#c9b3f5}
+  @media (prefers-color-scheme:dark){.tile.kennisduel{background:linear-gradient(160deg,#241a3a,#2c2050);border-color:#4a3a78}}
+  .cardface.kd{border-color:#c9b3f5;box-shadow:0 18px 40px rgba(91,58,168,.3)}
+  .kd-illo{width:min(140px,45%);aspect-ratio:1/1;margin:0 auto 12px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#a78bfa,#5b3aa8 70%);display:flex;align-items:center;justify-content:center;font-size:52px;box-shadow:0 10px 26px rgba(91,58,168,.45);animation:kdpulse 1.8s ease-in-out infinite}
+  @keyframes kdpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+  .badge.kdbadge{background:#5b3aa8;color:#fff}
+  .kdopt{border:1.5px solid #d9c9f7}
+  .kdverdict{font-weight:900;font-size:16px;padding:7px 13px;border-radius:10px;margin-bottom:6px;display:inline-block}
+  .kdverdict.good{background:#e9f9f0;color:#137a44}
+  .kdverdict.bad{background:#fdeee9;color:#a4321f}
+  @media (prefers-color-scheme:dark){.kdverdict.good{background:#12301f}.kdverdict.bad{background:#331912}}
+  #fxCanvas{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9999}
+  .srow2.hit{animation:hitflash 1.1s ease}
+  @keyframes hitflash{0%{box-shadow:0 0 0 3px #8B5CF6}70%{box-shadow:0 0 0 3px #8B5CF6}100%{box-shadow:none}}
+  .tile.here{animation:tilepop .5s ease}
+  @keyframes tilepop{0%{transform:scale(1)}40%{transform:scale(1.14)}100%{transform:scale(1)}}
+  .yourturn,.announce{position:relative;overflow:hidden}
+
   .cardface h3{margin:0 0 8px;font-size:19px;letter-spacing:-.2px;text-align:center}
   .cardface p{font-size:14px;margin:0 0 8px}
   .badge{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;background:var(--soft);color:var(--blue);border-radius:7px;padding:3px 9px;margin-bottom:8px}
@@ -165,6 +183,7 @@
 </style>
 </head>
 <body>
+<canvas id="fxCanvas"></canvas>
 
 <div id="facilitator">
   <header class="top"><div class="top-in">
@@ -281,7 +300,7 @@ window.FIREBASE_CONFIG = {
 "use strict";
 /* ============ data ============ */
 const MET={nl:{sat:"😊 Tevredenheid",fin:"💶 Financieel",comp:"📋 Compliance",dur:"🌱 Duurzaamheid"},en:{sat:"😊 Satisfaction",fin:"💶 Financial",comp:"📋 Compliance",dur:"🌱 Sustainability"}};
-const CAT={A:"onderhoud",B:"toewijzing",C:"sociaal",D:"duurzaam",E:"onderhoud",J1:"onderhoud",J2:"digitaal",J3:"sociaal",J4:"toewijzing",J5:"financien",J6:"sociaal",J7:"financien",J8:"toewijzing",J9:"duurzaam",J10:"digitaal",J11:"sociaal",J12:"toewijzing",C1:"duurzaam",C2:"digitaal",C3:"duurzaam",C4:"onderhoud",C5:"financien",C6:"financien",S:"onderhoud"};
+const CAT={A:"onderhoud",B:"toewijzing",C:"sociaal",D:"duurzaam",E:"onderhoud",J1:"onderhoud",J2:"digitaal",J3:"sociaal",J4:"toewijzing",J5:"financien",J6:"sociaal",J7:"financien",J8:"toewijzing",J9:"duurzaam",J10:"digitaal",J11:"sociaal",J12:"toewijzing",C1:"duurzaam",C2:"digitaal",C3:"duurzaam",C4:"onderhoud",C5:"financien",C6:"financien",S:"onderhoud",N1:"onderhoud",N2:"toewijzing",N3:"sociaal",N4:"duurzaam",N5:"digitaal",N6:"financien",N7:"onderhoud",N8:"toewijzing",N9:"sociaal",N10:"duurzaam",N11:"digitaal",N12:"financien",N13:"onderhoud",N14:"toewijzing",N15:"sociaal",N16:"duurzaam",N17:"digitaal",N18:"financien",N19:"onderhoud",N20:"toewijzing",N21:"sociaal",N22:"digitaal",KD1:"kennisduel",KD2:"kennisduel",KD3:"kennisduel",KD4:"kennisduel",KD5:"kennisduel",KD6:"kennisduel",KD7:"kennisduel",KD8:"kennisduel",KD9:"kennisduel",KD10:"kennisduel",KD11:"kennisduel",KD12:"kennisduel",KD13:"kennisduel",KD14:"kennisduel",KD15:"kennisduel",KD16:"kennisduel"};
 const TASK_NL=[
  {id:"A",t:"De schimmelmelding",x:"Een huurder meldt via het portaal schimmel in de slaapkamer. In het gezin woont een baby van vier maanden. Er zit een foto bij, met de boodschap: dit duurt nu al drie weken. De huurder is ongerust en voelt zich niet gehoord.",o:[{l:"A · Direct herstellen, gezin ontzien",e:"Snel en grondig, ook al is het duur.",coins:-3,fx:{sat:2,comp:1}},{l:"B · Regulier inplannen",e:"Via de vaste aannemer, geen voorrang.",coins:-1,fx:{sat:1}},{l:"C · Laten ventileren, zelf oplossen",e:"Kosten drukken, bal bij de huurder.",coins:0,fx:{sat:-2,comp:-1}}],sp:"Klanttevredenheid versus kostenbeheersing. Bij een baby komen reputatie en zorgplicht erbij — één bericht op sociale media en het is een mediakwestie."},
  {id:"B",t:"De zzp'er",x:"Een zelfstandige met sterk wisselend inkomen reageert op een sociale huurwoning. Vorig jaar verdiende hij te veel voor de inkomensgrens, dit jaar zit hij er ruim onder. Hij staat al zeven jaar ingeschreven en hoopt eindelijk aan de beurt te zijn.",o:[{l:"A · Toewijzen op actueel inkomen",e:"Menselijke maat, met een stevig dossier.",coins:-1,fx:{sat:2,comp:-1}},{l:"B · Extra toetsen, dan beslissen",e:"Zorgvuldig, kost tijd.",coins:-1,fx:{comp:2,sat:-1}},{l:"C · Afwijzen op de regels",e:"Veilig, maar teleurstellend.",coins:0,fx:{comp:1,sat:-2}}],sp:"Snelheid versus compliance, en wettelijke kaders versus de menselijke maat. Zeven jaar wachten voelt onrechtvaardig, maar de accountant toetst op de regels, niet op het gevoel."},
@@ -306,6 +325,29 @@ const TASK_NL=[
  {id:"C4",t:"Aannemer failliet",x:"Midden in de renovatie van 60 woningen gaat de hoofdaannemer failliet. De steigers staan er verlaten bij en de bewoners zitten tussen het stof.",o:[{l:"A · Duurdere partij, doorbouwen",e:"Bewoners ontzien, duur.",coins:-3,fx:{sat:1,dur:1}},{l:"B · Pauzeren, opnieuw aanbesteden",e:"Goedkoper, bewoners de dupe.",coins:-1,fx:{sat:-2,dur:-1}},{l:"C · Zelf tijdelijk afronden",e:"Improviseren, wisselvallig.",coins:-2,fx:{sat:-1}}]},
  {id:"C5",t:"Mediastorm om toewijzing",x:"Een landelijk dagblad kopt dat jullie toewijzingsalgoritme bepaalde groepen benadeelt. De wethouder stelt vragen en huurdersorganisaties eisen opheldering.",o:[{l:"A · Onafhankelijk onderzoek",e:"Vertrouwen herstellen.",coins:-1,fx:{comp:2}},{l:"B · Eigen analyse delen",e:"Sneller, minder onafhankelijk.",coins:0,fx:{comp:-1}},{l:"C · Verweren met persbericht",e:"Stelling nemen, riskant.",coins:0,fx:{sat:-2,comp:-1}}]},
  {id:"C6",t:"Verhuurderheffing 2.0",x:"Het rijk kondigt onverwacht een nieuwe heffing aan op sociale huurwoningen. Het gat in de begroting is fors — er zal iets moeten sneuvelen.",o:[{l:"A · Bezuinigen op de organisatie",e:"Pijn intern, koers behouden.",coins:-3,fx:{comp:1}},{l:"B · Investeringen temporiseren",e:"Duurzaamheid levert in.",coins:-1,fx:{dur:-2}},{l:"C · Huren verhogen",e:"Huurders betalen mee.",coins:0,fx:{sat:-2,fin:1}}]}
+,
+ {id:"N1",t:"De verborgen legionella",x:"Een routinematige watermonster in een complex met veel oudere bewoners toont een verhoogde legionellawaarde. Ontruimen is ingrijpend; niets doen is levensgevaarlijk.",o:[{l:"A · Volledige sanering + tijdelijke evacuatie",e:"Grondig en veilig, zwaar voor bewoners.",coins:-5,fx:{sat:-1,comp:2}},{l:"B · Doorspoelen en chloreren, bewoners blijven",e:"Sneller, risico blijft deels.",coins:-2,fx:{comp:-1}},{l:"C · Waarschuwingsbrief, zelf laten doorspoelen",e:"Goedkoop, gevaarlijk onverantwoord.",coins:0,fx:{comp:-3,sat:-1}}]},
+ {id:"N2",t:"Voorrang voor de mantelzorger",x:"Een dochter wil met voorrang een woning naast haar dementerende moeder om mantelzorg te bieden. De urgente wachtlijst staat al vol met medische spoedgevallen.",o:[{l:"A · Mantelzorg-urgentie toekennen",e:"Menselijk, precedent voor de lijst.",coins:-1,fx:{sat:2,comp:-1}},{l:"B · Verwijzen naar reguliere urgentieregeling",e:"Consistent, voelt kil.",coins:0,fx:{sat:-2,comp:1}},{l:"C · Informeel bemiddelen met de buurvrouw",e:"Creatief, buiten de regels om.",coins:-1,fx:{sat:1,comp:-2}}]},
+ {id:"N3",t:"De burenruzie escaleert",x:"Twee buren liggen al maanden overhoop om geluidsoverlast; de politie is al drie keer langs geweest. Een van beiden dreigt te vertrekken.",o:[{l:"A · Professionele mediation inzetten",e:"Duurder, structurele kans op rust.",coins:-2,fx:{sat:1,comp:1}},{l:"B · Formele waarschuwing aan veroorzaker",e:"Kiest partij, risico op willekeur.",coins:-1,fx:{sat:-1,comp:1}},{l:"C · Niet ingrijpen, buren laten oplossen",e:"Gratis, escalatiegevaar.",coins:0,fx:{sat:-2,comp:-1}}]},
+ {id:"N4",t:"Het gasvrije experiment",x:"Een pilotwijk van 40 woningen kan als eerste in de regio volledig van het gas af, met een unieke subsidie. De techniek is nieuw; bewoners vrezen hoge stookkosten.",o:[{l:"A · Vol inzetten op de pilot",e:"Voorloper, risico bij bewoners.",coins:-4,fx:{dur:3,sat:-1}},{l:"B · Kleinschalig experiment, 10 woningen",e:"Voorzichtig leren.",coins:-2,fx:{dur:1}},{l:"C · Wachten op bewezen techniek elders",e:"Veilig, kans gemist.",coins:0,fx:{dur:-1,sat:1}}]},
+ {id:"N5",t:"De AI-toewijzingstool",x:"Een leverancier biedt een AI-tool die woningtoewijzing sneller en 'objectiever' zou maken. De werking is niet volledig transparant, maar bespaart veel tijd.",o:[{l:"A · Volledig invoeren",e:"Snel, uitlegbaarheid onzeker.",coins:1,fx:{comp:-1,fin:1}},{l:"B · Pilot met menselijke tweede toets",e:"Zorgvuldig, kost tijd.",coins:-2,fx:{comp:1}},{l:"C · Afzien, alles handmatig",e:"Veilig, trager en duurder.",coins:0,fx:{comp:1,fin:-1}}]},
+ {id:"N6",t:"Renteswap onder water",x:"Een jaren geleden afgesloten renteswap staat fors 'onder water' door dalende rente. Vroegtijdig afkopen kost nu veel geld; laten lopen drukt jarenlang op de kasstroom.",o:[{l:"A · Nu afkopen, pijn in één keer",e:"Duur nu, rust later.",coins:-4,fx:{fin:2}},{l:"B · Laten lopen, jaarlijks bijbetalen",e:"Uitstel van de pijn.",coins:-1,fx:{fin:-1}},{l:"C · Herstructureren met de bank",e:"Compromis, extra voorwaarden.",coins:-2,fx:{fin:1,comp:-1}}]},
+ {id:"N7",t:"De asbestdaken",x:"Op tweehonderd schuurtjes en garages ligt verweerd asbesthoudend dakleer. Er is geen wettelijke saneringsplicht meer, maar de risico's nemen toe.",o:[{l:"A · Landelijk saneren, alles ineens",e:"Veilig, forse investering.",coins:-4,fx:{comp:2,dur:1}},{l:"B · Alleen zichtbaar beschadigde daken",e:"Pragmatisch, restrisico blijft.",coins:-2,fx:{comp:0}},{l:"C · Niets doen, wettelijk geen plicht",e:"Gratis, risico schuift door.",coins:0,fx:{comp:-2,sat:-1}}]},
+ {id:"N8",t:"De onderverhuurder",x:"Een controle wijst uit dat een huurder zijn sociale huurwoning al een jaar onderverhuurt aan toeristen via een platform, tegen een fors hogere prijs.",o:[{l:"A · Direct huurcontract ontbinden",e:"Streng en duidelijk, hard middel.",coins:-1,fx:{comp:2,sat:-1}},{l:"B · Waarschuwen, kans op herstel geven",e:"Coulant, precedent voor anderen.",coins:0,fx:{comp:-1,sat:1}},{l:"C · Boete opleggen, contract laten doorlopen",e:"Snel geld, zwak signaal.",coins:1,fx:{comp:-1}}]},
+ {id:"N9",t:"Het rouwende gezin",x:"Een huurder overlijdt; de inwonende, net-meerderjarige zoon woont er zijn hele leven maar heeft zelf geen inkomen. De familie wil dat hij mag blijven.",o:[{l:"A · Contract overzetten op de zoon",e:"Menselijk, wijkt af van beleid.",coins:-1,fx:{sat:2,comp:-1}},{l:"B · Tijdelijke overgangsperiode van 6 maanden",e:"Compromis, biedt ademruimte.",coins:-1,fx:{sat:1}},{l:"C · Contract beëindigen volgens de regels",e:"Consequent, hard voor de zoon.",coins:0,fx:{sat:-2,comp:1}}]},
+ {id:"N10",t:"Het verwilderde groene dak",x:"Twintig complexen kregen vijf jaar geleden groene daken voor de biodiversiteit, maar zonder onderhoudscontract zijn ze nu overwoekerd en lekken enkele daken.",o:[{l:"A · Volledig onderhoudscontract afsluiten",e:"Structureel, kost jaarlijks.",coins:-3,fx:{dur:1,fin:-1}},{l:"B · Alleen de lekkende daken herstellen",e:"Symptoombestrijding.",coins:-1,fx:{dur:-1}},{l:"C · Groene daken verwijderen",e:"Simpel maar een stap terug.",coins:-2,fx:{dur:-2,fin:1}}]},
+ {id:"N11",t:"De chatbot met verkeerd advies",x:"Jullie nieuwe klantenservice-chatbot blijkt huurders al weken verkeerd te informeren over betalingsregelingen, wat tot onterechte aanmaningen leidde.",o:[{l:"A · Uitzetten, alles handmatig herstellen",e:"Grondig, arbeidsintensief.",coins:-2,fx:{sat:1,comp:1}},{l:"B · Bijstellen, alleen actieve klachten oplossen",e:"Sneller, minder volledig.",coins:-1,fx:{sat:-1}},{l:"C · Stilzwijgend herstellen, geen ruchtbaarheid",e:"Risicovol als het uitkomt.",coins:0,fx:{comp:-2,sat:-1}}]},
+ {id:"N12",t:"De lege plint",x:"Twintig commerciële ruimtes in de plint van een groot complex staan al twee jaar leeg. Een investeerder biedt een lage maar gegarandeerde huur voor twintig jaar.",o:[{l:"A · Direct tekenen, lage maar zekere huur",e:"Zekerheid, lage opbrengst.",coins:3,fx:{fin:-1}},{l:"B · Wachten op een betere huurder",e:"Kans op beter, langer leegstandsverlies.",coins:-2,fx:{fin:1}},{l:"C · Ombouwen tot sociale voorzieningen",e:"Maatschappelijke winst, geen huur.",coins:-3,fx:{sat:2,fin:-1}}]},
+ {id:"N13",t:"De keukenbrand",x:"Een keukenbrand door een defecte wasdroger richt grote schade aan in een portiek van acht woningen. De verzekering dekt niet alles; bewoners zitten voorlopig in hotels.",o:[{l:"A · Volledig voorschieten, later verhalen",e:"Bewoners ontzien, onzeker verhaal.",coins:-3,fx:{sat:2}},{l:"B · Wachten op de verzekeringsuitkering",e:"Veilig financieel, lange hotelperiode.",coins:-1,fx:{sat:-2}},{l:"C · Versneld noodherstel, kort verblijf",e:"Snel, duurder per saldo.",coins:-2,fx:{sat:1,fin:-1}}]},
+ {id:"N14",t:"De discriminatieklacht",x:"Een mysteryonderzoek van een lokale krant suggereert dat woningzoekenden met een niet-Nederlandse achternaam vaker worden afgewezen. Het onderzoek is niet waterdicht, maar de suggestie is er.",o:[{l:"A · Extern vervolgonderzoek + trainingstraject",e:"Grondig, kost tijd en geld.",coins:-2,fx:{comp:2}},{l:"B · Eigen interne check, geen extern onderzoek",e:"Sneller, minder geloofwaardig.",coins:0,fx:{comp:0}},{l:"C · De methodologie publiekelijk betwisten",e:"Verdedigend, riskant.",coins:0,fx:{comp:-2,sat:-1}}]},
+ {id:"N15",t:"De verzamelaar",x:"Bij een noodzakelijke keuring blijkt een huurder de woning volledig te hebben volgestouwd met spullen. Brandgevaar is reëel, maar de huurder heeft duidelijk hulp nodig, geen straf.",o:[{l:"A · Zorgtraject + gefaseerd opruimen",e:"Zorgvuldig, traag proces.",coins:-2,fx:{sat:1,comp:1}},{l:"B · Ontruiming wegens brandgevaar",e:"Snel veilig, hard middel.",coins:-1,fx:{comp:1,sat:-2}},{l:"C · Waarschuwen, zelf laten opruimen",e:"Goedkoop, risico blijft.",coins:0,fx:{comp:-1}}]},
+ {id:"N16",t:"Het windpark naast de wijk",x:"Een energiecoöperatie vraagt of jullie meedoen in een windpark vlak bij een van jullie wijken. Bewoners zijn verdeeld: lagere energielasten tegenover horizonvervuiling.",o:[{l:"A · Volledig instappen als investeerder",e:"Grote impact, hoog risico.",coins:-4,fx:{dur:2}},{l:"B · Alleen meedoen als afnemer",e:"Kleiner voordeel, veiliger.",coins:-1,fx:{dur:1}},{l:"C · Niet meedoen",e:"Bewoners tevreden, kans gemist.",coins:0,fx:{dur:-1,sat:1}}]},
+ {id:"N17",t:"Het vergeten systeem",x:"Een verouderd, allang 'tijdelijk' extern systeem voor de klantenservice blijkt al maanden onbeveiligd toegankelijk vanaf het internet. Niemand weet hoeveel data al is bekeken.",o:[{l:"A · Direct offline halen, groot onderzoek",e:"Grondig, ontwricht de dienstverlening.",coins:-3,fx:{comp:2}},{l:"B · Snel patchen, geen verder onderzoek",e:"Praktisch, onzekerheid blijft.",coins:-1,fx:{comp:-1}},{l:"C · Laten draaien tot vervanging klaar is",e:"Gemakzuchtig, groot risico.",coins:0,fx:{comp:-3,sat:-1}}]},
+ {id:"N18",t:"De erfpachtclausule",x:"Bij honderd woningen blijkt de erfpachtcanon dit jaar fors te worden herzien, met terugwerkende kracht tot vijf jaar. De gemeente wijst niet mee.",o:[{l:"A · Bezwaar aantekenen en procederen",e:"Kan lonen, kost tijd en onzekerheid.",coins:-2,fx:{comp:1}},{l:"B · Betalen en doorberekenen in de huur",e:"Snel opgelost, huurders boos.",coins:1,fx:{sat:-2}},{l:"C · Betalen uit eigen reserves",e:"Huurders ontzien, forse aderlating.",coins:-4,fx:{sat:1}}]},
+ {id:"N19",t:"De onbereikbare lift",x:"De enige lift in een seniorencomplex van twaalf verdiepingen is defect en onderdelen zijn zes weken leverbaar. Bewoners boven de vierde verdieping zitten praktisch vast.",o:[{l:"A · Spoedimport van onderdelen",e:"Snel opgelost, hoge kosten.",coins:-4,fx:{sat:2}},{l:"B · Tijdelijke hulpdienst regelen",e:"Redelijke overbrugging.",coins:-2,fx:{sat:1}},{l:"C · Wachten op reguliere levering",e:"Goedkoop, zware impact op bewoners.",coins:0,fx:{sat:-3}}]},
+ {id:"N20",t:"Inkomensverlies na scheiding",x:"Een huurder is net gescheiden en kan de eengezinswoning niet meer op eigen inkomen betalen, maar wil er voor de kinderen kunnen blijven wonen.",o:[{l:"A · Tijdelijke huurkorting toekennen",e:"Steun nu, precedentwerking.",coins:-2,fx:{sat:2}},{l:"B · Actief bemiddelen naar kleinere woning",e:"Lost het structureel op, kost begeleiding.",coins:-1,fx:{comp:1}},{l:"C · Reguliere regels toepassen",e:"Consequent, hard voor het gezin.",coins:0,fx:{sat:-2,comp:1}}]},
+ {id:"N21",t:"De klokkenluider",x:"Een medewerker meldt intern dat een leidinggevende structureel onderhoudsbudget verkeerd labelt om targets te halen. Onderzoek kan het teamvertrouwen schaden; negeren kan groter escaleren.",o:[{l:"A · Onafhankelijk onderzoek starten",e:"Zuiver, spanning in het team.",coins:-2,fx:{comp:2,sat:-1}},{l:"B · Intern, informeel gesprek",e:"Snel, minder grondig.",coins:-1,fx:{comp:0}},{l:"C · Melding wegwuiven",e:"Rust nu, risico later.",coins:0,fx:{comp:-2}}]},
+ {id:"N22",t:"Het voorspellende algoritme",x:"De gemeente vraagt jullie woningdata te delen voor een algoritme dat 'kwetsbare wijken' moet voorspellen. Het doel is goed, maar het risico op stigmatisering van bewoners is reëel.",o:[{l:"A · Volledig meewerken, data delen",e:"Behulpzaam, privacyrisico.",coins:-1,fx:{comp:1,sat:-1}},{l:"B · Alleen geanonimiseerde, samengevoegde data",e:"Balans tussen meewerken en privacy.",coins:-1,fx:{comp:1}},{l:"C · Niet meewerken",e:"Privacy voorop, gemeente teleurgesteld.",coins:0,fx:{comp:-1,sat:1}}]}
 ];
 const TASK_EN=[
  {id:"A",t:"The mould report",x:"A tenant reports mould in the bedroom via the portal. A four-month-old baby lives with the family. A photo is attached, with the message: this has been going on for three weeks now. The tenant is worried and feels unheard.",o:[{l:"A · Repair now, spare the family",e:"Fast and thorough, even if pricey.",coins:-3,fx:{sat:2,comp:1}},{l:"B · Schedule a regular repair",e:"Via the usual contractor, no priority.",coins:-1,fx:{sat:1}},{l:"C · Let them ventilate, DIY",e:"Cut costs, ball with the tenant.",coins:0,fx:{sat:-2,comp:-1}}],sp:"Customer satisfaction versus cost control. With a baby, reputation and duty of care come on top — one social-media post and it's a media issue."},
@@ -331,6 +373,29 @@ const TASK_EN=[
  {id:"C4",t:"Contractor bankrupt",x:"Halfway through renovating 60 homes the main contractor goes bankrupt. The scaffolding stands abandoned and the residents are left amid the dust.",o:[{l:"A · Pricier party, keep building",e:"Spare residents, costly.",coins:-3,fx:{sat:1,dur:1}},{l:"B · Pause, re-tender",e:"Cheaper, residents suffer.",coins:-1,fx:{sat:-2,dur:-1}},{l:"C · Finish it yourself",e:"Improvise, patchy.",coins:-2,fx:{sat:-1}}]},
  {id:"C5",t:"Media storm over allocation",x:"A national newspaper headlines that your allocation algorithm disadvantages certain groups. The alderman asks questions and tenant organisations demand answers.",o:[{l:"A · Independent research",e:"Restore trust.",coins:-1,fx:{comp:2}},{l:"B · Share your own analysis",e:"Faster, less independent.",coins:0,fx:{comp:-1}},{l:"C · Defend with a press release",e:"Take a stand, risky.",coins:0,fx:{sat:-2,comp:-1}}]},
  {id:"C6",t:"Landlord levy 2.0",x:"The state unexpectedly announces a new levy on social rental homes. The gap in the budget is large — something will have to give.",o:[{l:"A · Cut in the organisation",e:"Internal pain, keep the course.",coins:-3,fx:{comp:1}},{l:"B · Slow down investments",e:"Sacrifice sustainability.",coins:-1,fx:{dur:-2}},{l:"C · Raise rents",e:"Tenants chip in.",coins:0,fx:{sat:-2,fin:1}}]}
+,
+ {id:"N1",t:"The hidden legionella",x:"A routine water sample in a complex with many older residents shows an elevated legionella reading. Evacuating is drastic; doing nothing is dangerous.",o:[{l:"A · Full remediation + temporary evacuation",e:"Thorough and safe, hard on residents.",coins:-5,fx:{sat:-1,comp:2}},{l:"B · Flush and chlorinate, residents stay",e:"Faster, some risk remains.",coins:-2,fx:{comp:-1}},{l:"C · Warning letter, let them flush it themselves",e:"Cheap, dangerously irresponsible.",coins:0,fx:{comp:-3,sat:-1}}]},
+ {id:"N2",t:"Priority for the family carer",x:"A daughter wants priority for a home next to her mother, who has dementia, to provide care. The urgent waiting list is already full of medical emergencies.",o:[{l:"A · Grant carer priority",e:"Humane, sets a precedent for the list.",coins:-1,fx:{sat:2,comp:-1}},{l:"B · Refer to the regular urgency scheme",e:"Consistent, feels cold.",coins:0,fx:{sat:-2,comp:1}},{l:"C · Broker an informal deal with the neighbour",e:"Creative, bends the rules.",coins:-1,fx:{sat:1,comp:-2}}]},
+ {id:"N3",t:"The neighbour feud escalates",x:"Two neighbours have been at odds for months over noise; police have visited three times already. One threatens to leave.",o:[{l:"A · Bring in professional mediation",e:"Costlier, real chance of lasting calm.",coins:-2,fx:{sat:1,comp:1}},{l:"B · Formal warning to the offender",e:"Takes a side, risk of perceived bias.",coins:-1,fx:{sat:-1,comp:1}},{l:"C · Don't intervene, let them sort it out",e:"Free, risk of escalation.",coins:0,fx:{sat:-2,comp:-1}}]},
+ {id:"N4",t:"The gas-free experiment",x:"A pilot neighbourhood of 40 homes could be the region's first to go fully gas-free, with a unique subsidy. The technology is new; residents fear high heating bills.",o:[{l:"A · Go all-in on the pilot",e:"Front-runner, risk lands on residents.",coins:-4,fx:{dur:3,sat:-1}},{l:"B · Small-scale experiment, 10 homes",e:"Cautious learning.",coins:-2,fx:{dur:1}},{l:"C · Wait for proven technology elsewhere",e:"Safe, a missed chance.",coins:0,fx:{dur:-1,sat:1}}]},
+ {id:"N5",t:"The AI allocation tool",x:"A vendor offers an AI tool that would make housing allocation faster and 'more objective'. It isn't fully transparent, but it saves a lot of admin time.",o:[{l:"A · Roll it out fully",e:"Fast, explainability uncertain.",coins:1,fx:{comp:-1,fin:1}},{l:"B · Pilot with a human second check",e:"Careful, costs time.",coins:-2,fx:{comp:1}},{l:"C · Skip it, keep it all manual",e:"Safe, slower and pricier.",coins:0,fx:{comp:1,fin:-1}}]},
+ {id:"N6",t:"Interest-rate swap underwater",x:"An interest-rate swap signed years ago is now deeply 'underwater' as rates fell. Buying it out now is costly; leaving it running drags on cash flow for years.",o:[{l:"A · Buy it out now, one big hit",e:"Costly now, calm later.",coins:-4,fx:{fin:2}},{l:"B · Let it run, pay in annually",e:"Delays the pain.",coins:-1,fx:{fin:-1}},{l:"C · Restructure with the bank",e:"Compromise, extra conditions.",coins:-2,fx:{fin:1,comp:-1}}]},
+ {id:"N7",t:"The asbestos roofs",x:"Two hundred sheds and garages have weathered asbestos-containing roofing. There's no legal duty to remediate anymore, but the risks are rising.",o:[{l:"A · Remediate nationwide, all at once",e:"Safe, a big investment.",coins:-4,fx:{comp:2,dur:1}},{l:"B · Only visibly damaged roofs",e:"Pragmatic, residual risk remains.",coins:-2,fx:{comp:0}},{l:"C · Do nothing, no legal duty",e:"Free, risk is deferred.",coins:0,fx:{comp:-2,sat:-1}}]},
+ {id:"N8",t:"The sub-letter",x:"An inspection shows a tenant has been sub-letting their social home to tourists via a platform for a year, at a much higher price.",o:[{l:"A · Terminate the lease immediately",e:"Strict and clear, a hard measure.",coins:-1,fx:{comp:2,sat:-1}},{l:"B · Warn them, give a chance to fix it",e:"Lenient, sets a precedent.",coins:0,fx:{comp:-1,sat:1}},{l:"C · Impose a fine, let the lease continue",e:"Quick cash, a weak signal.",coins:1,fx:{comp:-1}}]},
+ {id:"N9",t:"The grieving family",x:"A tenant passes away; the live-in, just-adult son has lived there his whole life but has no income of his own. The family wants him to stay.",o:[{l:"A · Transfer the lease to the son",e:"Humane, departs from policy.",coins:-1,fx:{sat:2,comp:-1}},{l:"B · A temporary 6-month transition",e:"A compromise, some breathing room.",coins:-1,fx:{sat:1}},{l:"C · End the lease per the rules",e:"Consistent, hard on the son.",coins:0,fx:{sat:-2,comp:1}}]},
+ {id:"N10",t:"The overgrown green roof",x:"Twenty complexes got green roofs for biodiversity five years ago, but without a maintenance contract they're now overgrown, and some leak.",o:[{l:"A · Sign a full maintenance contract",e:"Structural, costs annually.",coins:-3,fx:{dur:1,fin:-1}},{l:"B · Only fix the leaking roofs",e:"Treats the symptom.",coins:-1,fx:{dur:-1}},{l:"C · Remove the green roofs",e:"Simple, but a step backward.",coins:-2,fx:{dur:-2,fin:1}}]},
+ {id:"N11",t:"The chatbot with bad advice",x:"Your new customer-service chatbot has been misinforming tenants about payment plans for weeks, leading to unjust reminder notices.",o:[{l:"A · Turn it off, fix everything by hand",e:"Thorough, labour-intensive.",coins:-2,fx:{sat:1,comp:1}},{l:"B · Adjust it, only fix active complaints",e:"Faster, less complete.",coins:-1,fx:{sat:-1}},{l:"C · Quietly fix it, no publicity",e:"Risky if it comes out.",coins:0,fx:{comp:-2,sat:-1}}]},
+ {id:"N12",t:"The empty ground floor",x:"Twenty commercial units in a large complex's ground floor have been empty for two years. An investor offers a low but guaranteed rent for twenty years.",o:[{l:"A · Sign now, low but certain rent",e:"Certainty, low return.",coins:3,fx:{fin:-1}},{l:"B · Wait for a better tenant",e:"Chance of better, longer vacancy loss.",coins:-2,fx:{fin:1}},{l:"C · Convert to social facilities",e:"Social gain, no rent.",coins:-3,fx:{sat:2,fin:-1}}]},
+ {id:"N13",t:"The kitchen fire",x:"A kitchen fire from a faulty dryer causes major damage to a stairwell of eight homes. Insurance doesn't cover everything; residents are in hotels for now.",o:[{l:"A · Advance the full cost, claim it back later",e:"Spares residents, uncertain recovery.",coins:-3,fx:{sat:2}},{l:"B · Wait for the insurance payout",e:"Financially safe, a long hotel stay.",coins:-1,fx:{sat:-2}},{l:"C · Accelerated emergency repair, short stay",e:"Fast, costs more overall.",coins:-2,fx:{sat:1,fin:-1}}]},
+ {id:"N14",t:"The discrimination complaint",x:"A local newspaper's mystery-shopper investigation suggests applicants with a non-Dutch surname are rejected more often. The study isn't airtight, but the suggestion is out there.",o:[{l:"A · External follow-up study + training",e:"Thorough, costs time and money.",coins:-2,fx:{comp:2}},{l:"B · Your own internal check only",e:"Faster, less credible.",coins:0,fx:{comp:0}},{l:"C · Publicly dispute the methodology",e:"Defensive, risky.",coins:0,fx:{comp:-2,sat:-1}}]},
+ {id:"N15",t:"The hoarder",x:"A necessary inspection shows a tenant has completely packed the home with belongings. Fire risk is real, but the tenant clearly needs help, not punishment.",o:[{l:"A · Care plan + phased clean-up",e:"Careful, a slow process.",coins:-2,fx:{sat:1,comp:1}},{l:"B · Evict due to fire risk",e:"Fast and safe, a hard measure.",coins:-1,fx:{comp:1,sat:-2}},{l:"C · Warn them, let them clean up themselves",e:"Cheap, risk remains.",coins:0,fx:{comp:-1}}]},
+ {id:"N16",t:"The wind farm next door",x:"An energy cooperative asks if you'll invest in a wind farm near one of your neighbourhoods. Residents are split: lower energy bills versus a spoiled view.",o:[{l:"A · Invest fully",e:"Big impact, high risk.",coins:-4,fx:{dur:2}},{l:"B · Join only as an off-taker",e:"Smaller upside, safer.",coins:-1,fx:{dur:1}},{l:"C · Don't participate",e:"Residents pleased, a missed chance.",coins:0,fx:{dur:-1,sat:1}}]},
+ {id:"N17",t:"The forgotten system",x:"An outdated, long-'temporary' external customer-service system turns out to have been unsecured and reachable from the internet for months. Nobody knows how much data was seen.",o:[{l:"A · Take it offline immediately, full investigation",e:"Thorough, disrupts service.",coins:-3,fx:{comp:2}},{l:"B · Patch it quickly, no further investigation",e:"Practical, uncertainty remains.",coins:-1,fx:{comp:-1}},{l:"C · Keep it running until the replacement is ready",e:"Complacent, big risk.",coins:0,fx:{comp:-3,sat:-1}}]},
+ {id:"N18",t:"The ground-lease clause",x:"For a hundred homes, the ground-lease fee is being sharply revised this year, retroactive five years. The municipality won't share the cost.",o:[{l:"A · File an objection and litigate",e:"Could pay off, costs time and certainty.",coins:-2,fx:{comp:1}},{l:"B · Pay and pass it on in the rent",e:"Quickly resolved, tenants angry.",coins:1,fx:{sat:-2}},{l:"C · Pay from your own reserves",e:"Spares tenants, a big hit.",coins:-4,fx:{sat:1}}]},
+ {id:"N19",t:"The unreachable elevator",x:"The only lift in a twelve-storey senior complex is broken and parts take six weeks to arrive. Residents above the fourth floor are practically stuck.",o:[{l:"A · Emergency import of parts",e:"Fixed fast, expensive.",coins:-4,fx:{sat:2}},{l:"B · Arrange a temporary help service",e:"A reasonable bridge.",coins:-2,fx:{sat:1}},{l:"C · Wait for the regular delivery",e:"Cheap, hard on residents.",coins:0,fx:{sat:-3}}]},
+ {id:"N20",t:"Income loss after divorce",x:"A tenant has just divorced and can no longer afford the family home on their own income, but wants to stay for the children's sake.",o:[{l:"A · Grant a temporary rent reduction",e:"Support now, sets a precedent.",coins:-2,fx:{sat:2}},{l:"B · Actively broker a move to a smaller home",e:"A structural fix, needs guidance.",coins:-1,fx:{comp:1}},{l:"C · Apply the regular rules",e:"Consistent, hard on the family.",coins:0,fx:{sat:-2,comp:1}}]},
+ {id:"N21",t:"The whistleblower",x:"An employee reports internally that a manager is systematically mislabelling maintenance budget to hit targets. Investigating may damage team trust; ignoring it may escalate further.",o:[{l:"A · Start an independent investigation",e:"Clean, tension in the team.",coins:-2,fx:{comp:2,sat:-1}},{l:"B · An informal internal conversation",e:"Fast, less thorough.",coins:-1,fx:{comp:0}},{l:"C · Wave off the report",e:"Calm now, risk later.",coins:0,fx:{comp:-2}}]},
+ {id:"N22",t:"The predictive algorithm",x:"The municipality asks you to share housing data for an algorithm meant to predict 'vulnerable neighbourhoods'. The goal is good, but the risk of stigmatising residents is real.",o:[{l:"A · Cooperate fully, share the data",e:"Helpful, a privacy risk.",coins:-1,fx:{comp:1,sat:-1}},{l:"B · Share only anonymised, aggregated data",e:"A balance of cooperation and privacy.",coins:-1,fx:{comp:1}},{l:"C · Don't cooperate",e:"Privacy first, municipality disappointed.",coins:0,fx:{comp:-1,sat:1}}]}
 ];
 const SHOCK_NL={id:"S",t:"Constructieve gebreken",x:"Bij een periodieke inspectie blijken de galerijen van een jaren-60-flat constructief onveilig. Dertig woningen hebben per direct herstel nodig. Uitstel is geen optie zonder de veiligheid van bewoners op het spel te zetten.",o:[{l:"A · Direct herstellen",e:"Uit eigen middelen.",coins:-4,fx:{}},{l:"B · Geborgde lening (WSW)",e:"Kost nu 2 munten.",coins:-2,fx:{comp:1}},{l:"C · Gefaseerd",e:"Galerijen deels afsluiten.",coins:-2,fx:{sat:-2,comp:-2}}]};
 const SHOCK_EN={id:"S",t:"Structural defects",x:"A periodic inspection reveals the galleries of a 1960s block are structurally unsafe. Thirty homes need immediate repair. Delay is not an option without risking residents' safety.",o:[{l:"A · Repair now",e:"From own funds.",coins:-4,fx:{}},{l:"B · Guaranteed loan (WSW)",e:"Costs 2 coins now.",coins:-2,fx:{comp:1}},{l:"C · Phased",e:"Partly close galleries.",coins:-2,fx:{sat:-2,comp:-2}}]};
@@ -414,16 +479,181 @@ const SECTOR_EN=[
  {id:"SE7",t:"New climate standard",x:"A tightened standard forces everyone to go greener.",coins:0,fx:{dur:-1}},
  {id:"SE8",t:"Labour shortage",x:"A tight labour market slows all corporations.",coins:0,fx:{comp:-1}}
 ];
+const KD_NL=[
+ {id:"KD1",kd:true,t:"Kennisduel: DAEB",x:"Wat betekent de afkorting DAEB, de kern van het sociale huurwerk van corporaties?",o:[
+  {l:"A · Diensten van Algemeen Economisch Belang",correct:true,coins:2,fx:{comp:1},duelTarget:true,targetCoins:-1,e:"Klopt — de Europese term waaronder sociale huisvesting als staatssteun is toegestaan."},
+  {l:"B · Duurzame Aanpak Energiebesparing",coins:-1,fx:{},e:"Niet correct — bestaat niet als officiële term."},
+  {l:"C · Directe Aanpak Extra Bouwopgave",coins:-1,fx:{},e:"Niet correct."},
+  {l:"D · Dienstverlening Aan Elke Bewoner",coins:-1,fx:{},e:"Niet correct — klinkt sympathiek, is geen bestaande term."}]},
+ {id:"KD2",kd:true,t:"Kennisduel: de Aw",x:"Wat is de rol van de Autoriteit woningcorporaties (Aw)?",o:[
+  {l:"A · Onafhankelijk toezicht op governance, integriteit en financiën",coins:-1,fx:{},e:"Niet gekozen — dit was wel het juiste antwoord."},
+  {l:"B · De koepelorganisatie van alle corporaties",coins:-1,fx:{},e:"Niet correct — dat is Aedes."},
+  {l:"C · De uitvoerder van de huurtoeslag",coins:-1,fx:{},e:"Niet correct — dat is de Belastingdienst."},
+  {l:"D · Onafhankelijk toezichthouder op governance, integriteit en financiën",correct:true,coins:2,fx:{comp:1},duelTarget:true,targetCoins:-1,e:"Klopt — de Aw controleert of corporaties zich aan de regels houden."}]},
+ {id:"KD3",kd:true,t:"Kennisduel: het WSW",x:"Wat doet het Waarborgfonds Sociale Woningbouw (WSW) voor corporaties?",o:[
+  {l:"A · Het bouwt woningen namens corporaties",coins:-1,fx:{},e:"Niet correct."},
+  {l:"B · Het geeft borging waardoor corporaties goedkoper kunnen lenen",correct:true,coins:2,fx:{fin:1},duelTarget:true,targetCoins:-1,e:"Klopt — door de borging (met achtervang van rijk en gemeenten) is lenen veel goedkoper."},
+  {l:"C · Het keurt nieuwbouwplannen goed",coins:-1,fx:{},e:"Niet correct."},
+  {l:"D · Het int de huur bij wanbetaling",coins:-1,fx:{},e:"Niet correct."}]},
+ {id:"KD4",kd:true,t:"Kennisduel: passend toewijzen",x:"Wat houdt de regel 'passend toewijzen' voor corporaties in?",o:[
+  {l:"A · Huishoudens met recht op huurtoeslag moeten een woning onder de aftoppingsgrens krijgen",correct:true,coins:2,fx:{comp:1},duelTarget:true,targetCoins:-1,e:"Klopt — dit voorkomt dat mensen met een laag inkomen in een te dure woning terechtkomen."},
+  {l:"B · Elke woning moet passen bij de gezinsgrootte",coins:-1,fx:{},e:"Niet correct — dat is een ander toewijzingscriterium."},
+  {l:"C · Huurders mogen zelf kiezen welke woning bij hen past",coins:-1,fx:{},e:"Niet correct."},
+  {l:"D · Woningen moeten energetisch passend zijn bij het inkomen",coins:-1,fx:{},e:"Niet correct."}]},
+ {id:"KD5",kd:true,t:"Kennisduel: verhuurderheffing",x:"Wat gebeurde er per 2023 met de landelijke verhuurderheffing voor corporaties?",o:[
+  {l:"A · Ze werd verdubbeld",coins:-1,fx:{},e:"Niet correct."},
+  {l:"B · Ze werd afgeschaft, in ruil voor investeringsafspraken",correct:true,coins:2,fx:{fin:1},duelTarget:true,targetCoins:-1,e:"Klopt — afgeschaft als onderdeel van de Nationale Prestatieafspraken."},
+  {l:"C · Ze gold voortaan alleen nog voor niet-DAEB-bezit",coins:-1,fx:{},e:"Niet correct."},
+  {l:"D · Ze werd omgezet in een verplichte huurkorting",coins:-1,fx:{},e:"Niet correct."}]},
+ {id:"KD6",kd:true,t:"Kennisduel: prestatieafspraken",x:"Tussen wie worden lokale prestatieafspraken over de volkshuisvesting gemaakt?",o:[
+  {l:"A · Alleen tussen corporatie en Rijk",coins:-1,fx:{},e:"Niet correct."},
+  {l:"B · Gemeente, corporatie én huurdersorganisatie samen",correct:true,coins:2,fx:{comp:1},duelTarget:true,targetCoins:-1,e:"Klopt — de wet verplicht deze driehoek tot jaarlijkse afspraken."},
+  {l:"C · Alleen tussen huurders en corporatie",coins:-1,fx:{},e:"Niet correct."},
+  {l:"D · Alleen tussen gemeente en Rijk",coins:-1,fx:{},e:"Niet correct."}]},
+ {id:"KD7",kd:true,t:"Kennisduel: huursombenadering",x:"Wat is de 'huursombenadering' bij de jaarlijkse huurverhoging?",o:[
+  {l:"A · Elke individuele huur mag onbeperkt stijgen",coins:-1,fx:{},e:"Niet correct."},
+  {l:"B · De optelsom van alle huurstijgingen van de corporatie samen is begrensd",correct:true,coins:2,fx:{fin:1},duelTarget:true,targetCoins:-1,e:"Klopt — dit geeft ruimte om te schuiven tussen woningen binnen een totaalplafond."},
+  {l:"C · Alleen nieuwbouwhuren mogen stijgen",coins:-1,fx:{},e:"Niet correct."},
+  {l:"D · De huur mag nooit meer stijgen dan de inflatie per woning",coins:-1,fx:{},e:"Niet correct — dat geldt niet per individuele woning."}]},
+ {id:"KD8",kd:true,t:"Kennisduel: DAEB-scheiding",x:"Waarom moeten corporaties sinds de Woningwet 2015 hun DAEB- en niet-DAEB-bezit scheiden?",o:[
+  {l:"A · Om oneerlijke concurrentie met marktpartijen te voorkomen",correct:true,coins:2,fx:{comp:1},duelTarget:true,targetCoins:-1,e:"Klopt — staatssteun voor sociale taken mag niet weglekken naar commerciële activiteiten."},
+  {l:"B · Om fiscaal minder vennootschapsbelasting te betalen",coins:-1,fx:{},e:"Niet correct."},
+  {l:"C · Omdat de Aw dat makkelijker vindt controleren",coins:-1,fx:{},e:"Niet de kernreden."},
+  {l:"D · Om sneller te kunnen bouwen",coins:-1,fx:{},e:"Niet correct."}]},
+ {id:"KD9",kd:true,t:"Kennisduel: WWS",x:"Waar bepaalt het Woningwaarderingsstelsel (WWS), het 'puntensysteem', vooral de hoogte van?",o:[
+  {l:"A · De maximale huurprijs van een sociale huurwoning",correct:true,coins:2,fx:{comp:1},duelTarget:true,targetCoins:-1,e:"Klopt — punten voor oppervlak, voorzieningen en WOZ-waarde bepalen de maximale huur."},
+  {l:"B · De hoogte van de huurtoeslag",coins:-1,fx:{},e:"Niet correct — dat regelt de Belastingdienst."},
+  {l:"C · De urgentie op de wachtlijst",coins:-1,fx:{},e:"Niet correct."},
+  {l:"D · De energieprestatie van een woning",coins:-1,fx:{},e:"Niet correct, al telt het energielabel wel mee als los onderdeel."}]},
+ {id:"KD10",kd:true,t:"Kennisduel: huurtoeslag",x:"Wat bepaalt vooral of een huishouden recht heeft op huurtoeslag?",o:[
+  {l:"A · Alleen de hoogte van de huur",coins:-1,fx:{},e:"Niet volledig — inkomen en huishoudgrootte tellen ook mee."},
+  {l:"B · Een combinatie van inkomen, huurprijs en huishoudsamenstelling",correct:true,coins:2,fx:{sat:1},duelTarget:true,targetCoins:-1,e:"Klopt — alle drie samen bepalen het recht op en de hoogte van huurtoeslag."},
+  {l:"C · Alleen de leeftijd van de aanvrager",coins:-1,fx:{},e:"Niet correct."},
+  {l:"D · Alleen het vermogen van de aanvrager",coins:-1,fx:{},e:"Niet correct — vermogen telt mee, maar is niet het enige criterium."}]},
+ {id:"KD11",kd:true,t:"Kennisduel: nieuwbouw financieren",x:"Hoe financieren corporaties vooral hun nieuwbouw?",o:[
+  {l:"A · Rechtstreekse subsidie van het Rijk voor elke woning",coins:-1,fx:{},e:"Niet correct — er zijn wel gerichte fondsen, maar dit is niet de hoofdroute."},
+  {l:"B · Eigen leningen, goedkoper dankzij WSW-borging",correct:true,coins:2,fx:{fin:1},duelTarget:true,targetCoins:-1,e:"Klopt — corporaties lenen zelf, geborgd door het WSW."},
+  {l:"C · Volledig uit de huurinkomsten van dat jaar",coins:-1,fx:{},e:"Niet correct — dat zou nieuwbouw vrijwel onmogelijk maken."},
+  {l:"D · Uitsluitend via de gemeente",coins:-1,fx:{},e:"Niet correct."}]},
+ {id:"KD12",kd:true,t:"Kennisduel: Volkshuisvestingsfonds",x:"Waar is het Volkshuisvestingsfonds voor bedoeld?",o:[
+  {l:"A · Rijksbijdrage voor leefbaarheid en verduurzaming in kwetsbare wijken",correct:true,coins:2,fx:{dur:1},duelTarget:true,targetCoins:-1,e:"Klopt — gericht op de aanpak van kwetsbare gebieden."},
+  {l:"B · Een pensioenfonds voor corporatiemedewerkers",coins:-1,fx:{},e:"Niet correct."},
+  {l:"C · Een noodfonds voor huurachterstanden",coins:-1,fx:{},e:"Niet correct."},
+  {l:"D · Een fonds voor juridische bijstand van huurders",coins:-1,fx:{},e:"Niet correct."}]},
+ {id:"KD13",kd:true,t:"Kennisduel: toezicht bij lage score",x:"Wat gebeurt er doorgaans als een corporatie structureel zwak scoort op bijvoorbeeld financiële continuïteit?",o:[
+  {l:"A · Niets, de Aw kijkt alleen naar incidenten",coins:-1,fx:{},e:"Niet correct."},
+  {l:"B · Verscherpt toezicht en eventueel ingrijpen door de toezichthouder",correct:true,coins:2,fx:{comp:1},duelTarget:true,targetCoins:-1,e:"Klopt — structurele zwakte leidt tot verscherpt toezicht van de Aw."},
+  {l:"C · Automatische fusie met een andere corporatie",coins:-1,fx:{},e:"Niet correct — dit is geen automatisme."},
+  {l:"D · Een boete van de gemeente",coins:-1,fx:{},e:"Niet correct — de gemeente legt geen boetes op aan corporaties."}]},
+ {id:"KD14",kd:true,t:"Kennisduel: marktverkenning",x:"Wat is een 'marktverkenning' of markttoets bij bepaalde nieuwbouwplannen van corporaties?",o:[
+  {l:"A · Onderzoek of commerciële partijen het project ook willen en kunnen realiseren",correct:true,coins:2,fx:{comp:1},duelTarget:true,targetCoins:-1,e:"Klopt — dit voorkomt oneerlijke concurrentie met de markt bij niet-DAEB-projecten."},
+  {l:"B · Een marktonderzoek naar huurwensen van bewoners",coins:-1,fx:{},e:"Niet correct."},
+  {l:"C · Een taxatie van de grondprijs",coins:-1,fx:{},e:"Niet correct."},
+  {l:"D · Een peiling onder de gemeenteraad",coins:-1,fx:{},e:"Niet correct."}]},
+ {id:"KD15",kd:true,t:"Kennisduel: goedkoop lenen",x:"Waarom kunnen corporaties relatief goedkoop lenen vergeleken met commerciële verhuurders?",o:[
+  {l:"A · Omdat ze geen belasting betalen",coins:-1,fx:{},e:"Niet correct — corporaties betalen wel degelijk vennootschapsbelasting."},
+  {l:"B · Dankzij WSW-borging met achtervang van Rijk en gemeenten",correct:true,coins:2,fx:{fin:1},duelTarget:true,targetCoins:-1,e:"Klopt — die achtervang maakt corporatieleningen voor banken vrijwel risicovrij."},
+  {l:"C · Omdat ze verplicht bij één huisbankier moeten lenen",coins:-1,fx:{},e:"Niet correct."},
+  {l:"D · Omdat woningen als onderpand altijd meer waard worden",coins:-1,fx:{},e:"Niet de kernreden."}]},
+ {id:"KD16",kd:true,t:"Kennisduel: energielabel en huur",x:"Wat is het effect van het energielabel van een woning binnen het puntensysteem (WWS)?",o:[
+  {l:"A · Een beter energielabel levert extra punten en dus huurruimte op",correct:true,coins:2,fx:{dur:1},duelTarget:true,targetCoins:-1,e:"Klopt — energielabel telt mee in de WWS-punten en daarmee de maximale huur."},
+  {l:"B · Het energielabel heeft geen invloed op de maximale huur",coins:-1,fx:{},e:"Niet correct."},
+  {l:"C · Alleen label A of hoger telt, de rest niet",coins:-1,fx:{},e:"Niet correct — alle labels wegen mee, in oplopende mate."},
+  {l:"D · Het energielabel telt alleen mee bij nieuwbouw",coins:-1,fx:{},e:"Niet correct — het geldt voor alle woningen."}]}
+];
+const KD_EN=[
+ {id:"KD1",kd:true,t:"Knowledge duel: DAEB",x:"What does the abbreviation DAEB stand for, the core of corporations' social housing task?",o:[
+  {l:"A · Services of General Economic Interest",correct:true,coins:2,fx:{comp:1},duelTarget:true,targetCoins:-1,e:"Correct — the EU term under which social housing is allowed as state aid."},
+  {l:"B · Direct Approach to Energy Budgeting",coins:-1,fx:{},e:"Not correct — not an official term."},
+  {l:"C · Direct Action for Extra Building",coins:-1,fx:{},e:"Not correct."},
+  {l:"D · Delivering Aid to Every Beneficiary",coins:-1,fx:{},e:"Not correct — sounds nice, isn't a real term."}]},
+ {id:"KD2",kd:true,t:"Knowledge duel: the Aw",x:"What is the role of the Authority for Housing Corporations (Aw)?",o:[
+  {l:"A · Independent oversight of governance, integrity and finances",coins:-1,fx:{},e:"Not chosen — this was actually the right answer."},
+  {l:"B · The umbrella organisation for all corporations",coins:-1,fx:{},e:"Not correct — that's Aedes."},
+  {l:"C · The body that pays out rent benefit",coins:-1,fx:{},e:"Not correct — that's the Tax Authority."},
+  {l:"D · Independent supervisor of governance, integrity and finances",correct:true,coins:2,fx:{comp:1},duelTarget:true,targetCoins:-1,e:"Correct — the Aw checks whether corporations follow the rules."}]},
+ {id:"KD3",kd:true,t:"Knowledge duel: the WSW",x:"What does the Social Housing Guarantee Fund (WSW) do for corporations?",o:[
+  {l:"A · It builds homes on behalf of corporations",coins:-1,fx:{},e:"Not correct."},
+  {l:"B · It guarantees loans, making borrowing much cheaper",correct:true,coins:2,fx:{fin:1},duelTarget:true,targetCoins:-1,e:"Correct — the guarantee (backstopped by the state and municipalities) makes borrowing much cheaper."},
+  {l:"C · It approves new-build plans",coins:-1,fx:{},e:"Not correct."},
+  {l:"D · It collects rent in case of arrears",coins:-1,fx:{},e:"Not correct."}]},
+ {id:"KD4",kd:true,t:"Knowledge duel: passend toewijzen",x:"What does the 'passend toewijzen' (suitable allocation) rule require of corporations?",o:[
+  {l:"A · Households entitled to rent benefit must get a home below the capping limit",correct:true,coins:2,fx:{comp:1},duelTarget:true,targetCoins:-1,e:"Correct — this stops low-income households ending up in homes that are too expensive."},
+  {l:"B · Every home must fit the household size",coins:-1,fx:{},e:"Not correct — that's a different allocation criterion."},
+  {l:"C · Tenants may freely choose whichever home suits them",coins:-1,fx:{},e:"Not correct."},
+  {l:"D · Homes must be energy-suitable for the income level",coins:-1,fx:{},e:"Not correct."}]},
+ {id:"KD5",kd:true,t:"Knowledge duel: the landlord levy",x:"What happened to the national landlord levy (verhuurderheffing) for corporations in 2023?",o:[
+  {l:"A · It was doubled",coins:-1,fx:{},e:"Not correct."},
+  {l:"B · It was abolished, in exchange for investment commitments",correct:true,coins:2,fx:{fin:1},duelTarget:true,targetCoins:-1,e:"Correct — abolished as part of the National Performance Agreements."},
+  {l:"C · It now only applied to non-DAEB property",coins:-1,fx:{},e:"Not correct."},
+  {l:"D · It was converted into a mandatory rent discount",coins:-1,fx:{},e:"Not correct."}]},
+ {id:"KD6",kd:true,t:"Knowledge duel: performance agreements",x:"Between whom are local performance agreements on housing policy made?",o:[
+  {l:"A · Only between the corporation and central government",coins:-1,fx:{},e:"Not correct."},
+  {l:"B · Municipality, corporation, and tenant organisation together",correct:true,coins:2,fx:{comp:1},duelTarget:true,targetCoins:-1,e:"Correct — the law requires this trio to agree annually."},
+  {l:"C · Only between tenants and the corporation",coins:-1,fx:{},e:"Not correct."},
+  {l:"D · Only between the municipality and central government",coins:-1,fx:{},e:"Not correct."}]},
+ {id:"KD7",kd:true,t:"Knowledge duel: the rent-sum approach",x:"What is the 'huursombenadering' (rent-sum approach) for the annual rent increase?",o:[
+  {l:"A · Any individual rent may rise without limit",coins:-1,fx:{},e:"Not correct."},
+  {l:"B · The total of all the corporation's rent increases together is capped",correct:true,coins:2,fx:{fin:1},duelTarget:true,targetCoins:-1,e:"Correct — this allows shifting increases between homes under one overall cap."},
+  {l:"C · Only new-build rents may rise",coins:-1,fx:{},e:"Not correct."},
+  {l:"D · Rent may never rise faster than inflation per home",coins:-1,fx:{},e:"Not correct — that doesn't apply per individual home."}]},
+ {id:"KD8",kd:true,t:"Knowledge duel: DAEB separation",x:"Why have corporations had to separate DAEB and non-DAEB property since the 2015 Housing Act?",o:[
+  {l:"A · To prevent unfair competition with market parties",correct:true,coins:2,fx:{comp:1},duelTarget:true,targetCoins:-1,e:"Correct — state aid for social tasks may not leak into commercial activities."},
+  {l:"B · To pay less corporate tax",coins:-1,fx:{},e:"Not correct."},
+  {l:"C · Because the Aw finds it easier to supervise that way",coins:-1,fx:{},e:"Not the core reason."},
+  {l:"D · To be able to build faster",coins:-1,fx:{},e:"Not correct."}]},
+ {id:"KD9",kd:true,t:"Knowledge duel: the WWS",x:"What does the Housing Valuation System (WWS), the 'points system', mainly determine?",o:[
+  {l:"A · The maximum rent of a social rental home",correct:true,coins:2,fx:{comp:1},duelTarget:true,targetCoins:-1,e:"Correct — points for size, facilities and WOZ value set the maximum rent."},
+  {l:"B · The amount of rent benefit",coins:-1,fx:{},e:"Not correct — that's handled by the Tax Authority."},
+  {l:"C · Priority on the waiting list",coins:-1,fx:{},e:"Not correct."},
+  {l:"D · A home's energy performance",coins:-1,fx:{},e:"Not correct on its own, though the energy label is one factor within it."}]},
+ {id:"KD10",kd:true,t:"Knowledge duel: rent benefit",x:"What mainly determines whether a household is entitled to rent benefit?",o:[
+  {l:"A · Only the rent amount",coins:-1,fx:{},e:"Not complete — income and household size matter too."},
+  {l:"B · A combination of income, rent, and household composition",correct:true,coins:2,fx:{sat:1},duelTarget:true,targetCoins:-1,e:"Correct — all three together determine eligibility and amount."},
+  {l:"C · Only the applicant's age",coins:-1,fx:{},e:"Not correct."},
+  {l:"D · Only the applicant's assets",coins:-1,fx:{},e:"Not correct — assets matter, but aren't the only criterion."}]},
+ {id:"KD11",kd:true,t:"Knowledge duel: financing new build",x:"How do corporations mainly finance new construction?",o:[
+  {l:"A · Direct state subsidy for every home",coins:-1,fx:{},e:"Not correct — targeted funds exist, but this isn't the main route."},
+  {l:"B · Their own loans, cheaper thanks to WSW guarantees",correct:true,coins:2,fx:{fin:1},duelTarget:true,targetCoins:-1,e:"Correct — corporations borrow themselves, guaranteed by the WSW."},
+  {l:"C · Entirely from that year's rental income",coins:-1,fx:{},e:"Not correct — that would make new build nearly impossible."},
+  {l:"D · Solely via the municipality",coins:-1,fx:{},e:"Not correct."}]},
+ {id:"KD12",kd:true,t:"Knowledge duel: the Housing Fund",x:"What is the Volkshuisvestingsfonds (National Housing Fund) intended for?",o:[
+  {l:"A · State funding for liveability and sustainability in vulnerable neighbourhoods",correct:true,coins:2,fx:{dur:1},duelTarget:true,targetCoins:-1,e:"Correct — aimed at tackling vulnerable areas."},
+  {l:"B · A pension fund for corporation staff",coins:-1,fx:{},e:"Not correct."},
+  {l:"C · An emergency fund for rent arrears",coins:-1,fx:{},e:"Not correct."},
+  {l:"D · A legal-aid fund for tenants",coins:-1,fx:{},e:"Not correct."}]},
+ {id:"KD13",kd:true,t:"Knowledge duel: supervision on weak scores",x:"What typically happens if a corporation scores structurally weak on, say, financial continuity?",o:[
+  {l:"A · Nothing, the Aw only looks at incidents",coins:-1,fx:{},e:"Not correct."},
+  {l:"B · Stricter supervision and possible intervention by the regulator",correct:true,coins:2,fx:{comp:1},duelTarget:true,targetCoins:-1,e:"Correct — structural weakness leads to stricter Aw oversight."},
+  {l:"C · Automatic merger with another corporation",coins:-1,fx:{},e:"Not correct — that's not automatic."},
+  {l:"D · A fine from the municipality",coins:-1,fx:{},e:"Not correct — municipalities don't fine corporations."}]},
+ {id:"KD14",kd:true,t:"Knowledge duel: the market test",x:"What is a 'market test' for certain new-build plans by corporations?",o:[
+  {l:"A · Checking whether commercial parties want and can realise the project too",correct:true,coins:2,fx:{comp:1},duelTarget:true,targetCoins:-1,e:"Correct — prevents unfair competition with the market on non-DAEB projects."},
+  {l:"B · Market research into residents' rent preferences",coins:-1,fx:{},e:"Not correct."},
+  {l:"C · A valuation of the land price",coins:-1,fx:{},e:"Not correct."},
+  {l:"D · A survey among the city council",coins:-1,fx:{},e:"Not correct."}]},
+ {id:"KD15",kd:true,t:"Knowledge duel: cheap borrowing",x:"Why can corporations borrow relatively cheaply compared to commercial landlords?",o:[
+  {l:"A · Because they pay no tax at all",coins:-1,fx:{},e:"Not correct — corporations do pay corporate tax."},
+  {l:"B · Thanks to WSW guarantees backstopped by the state and municipalities",correct:true,coins:2,fx:{fin:1},duelTarget:true,targetCoins:-1,e:"Correct — that backstop makes corporation loans nearly risk-free for banks."},
+  {l:"C · Because they must borrow from one designated bank",coins:-1,fx:{},e:"Not correct."},
+  {l:"D · Because homes as collateral always gain value",coins:-1,fx:{},e:"Not the core reason."}]},
+ {id:"KD16",kd:true,t:"Knowledge duel: energy label and rent",x:"What effect does a home's energy label have within the points system (WWS)?",o:[
+  {l:"A · A better label earns extra points and thus more rent room",correct:true,coins:2,fx:{dur:1},duelTarget:true,targetCoins:-1,e:"Correct — the energy label counts toward WWS points and so the maximum rent."},
+  {l:"B · The energy label has no effect on the maximum rent",coins:-1,fx:{},e:"Not correct."},
+  {l:"C · Only label A or higher counts, the rest doesn't",coins:-1,fx:{},e:"Not correct — all labels weigh in, on a sliding scale."},
+  {l:"D · The energy label only counts for new build",coins:-1,fx:{},e:"Not correct — it applies to all homes."}]}
+];
 function idx(a){return Object.fromEntries(a.map(o=>[o.id,o]));}
-const CONTENT={nl:{task:idx(TASK_NL),shock:{S:SHOCK_NL},chance:idx(CHANCE_NL),sector:idx(SECTOR_NL)},en:{task:idx(TASK_EN),shock:{S:SHOCK_EN},chance:idx(CHANCE_EN),sector:idx(SECTOR_EN)}};
+const CONTENT={nl:{task:idx(TASK_NL),shock:{S:SHOCK_NL},chance:idx(CHANCE_NL),sector:idx(SECTOR_NL),kd:idx(KD_NL)},en:{task:idx(TASK_EN),shock:{S:SHOCK_EN},chance:idx(CHANCE_EN),sector:idx(SECTOR_EN),kd:idx(KD_EN)}};
 const TASK_IDS_NL=TASK_NL.map(c=>c.id),TASK_IDS_EN=TASK_EN.map(c=>c.id);
+const KD_IDS_NL=KD_NL.map(c=>c.id),KD_IDS_EN=KD_EN.map(c=>c.id);
 const CHANCE_IDS_NL=CHANCE_NL.map(c=>c.id),CHANCE_IDS_EN=CHANCE_EN.map(c=>c.id);
 const SECTOR_IDS=SECTOR_NL.map(s=>s.id);
 const TEAM_COLORS=["#1F5AFF","#FF9000","#2FBF71","#8B5CF6","#E4572E","#0EA5B5"];
 /* ---- board: fixed 28-tile ring, every tile matters ---- */
 const RING_LEN=28;
-const TILE_TYPES=["start","task","task","chance","task","task","chance","task","chance","task","task","chance","task","chance","shock","task","chance","task","task","chance","task","chance","task","task","chance","task","chance","task"];
-const SP_ICON={start:"🏁",task:"🏠",chance:"🍀",shock:"💥"};
+const TILE_TYPES=["start","task","task","chance","task","task","kennisduel","task","chance","task","task","chance","task","kennisduel","shock","task","chance","task","task","kennisduel","task","chance","task","task","chance","task","kennisduel","task"];
+const SP_ICON={start:"🏁",task:"🏠",chance:"🍀",shock:"💥",kennisduel:"🧠"};
 const DURATION_PRESETS={short:45,medium:70,long:100};
 const AVG_MIN_PER_TURN=2.5;
 const TURNS_MIN=4,TURNS_MAX=16;
@@ -440,7 +670,8 @@ const T={
   waitRoll:(n)=>`Wacht tot ${n} zelf de dobbelsteen gooit op hun eigen scherm…`,rollFallback:"Of gooi hier als host (back-up):",
   drawCardBtn:"🎴 Trek een kaart",waitDrawCard:(n)=>`${n} staat op dit vakje — wacht tot zij zelf een kaart trekken…`,drawCardFallback:"Of trek hier als host (back-up):",
   ackChanceFallback:"Of bevestig hier als host (back-up):",nextTurnFallback:"Of ga hier verder als host (back-up):",
-  drawTask:"Trek een opdrachtkaart",drawChance:"Trek een kanskaart",drawShock:"⚠️ Onvoorziene gebeurtenis!",
+  drawTask:"Trek een opdrachtkaart",drawChance:"Trek een kanskaart",drawShock:"⚠️ Onvoorziene gebeurtenis!",drawKennisduel:"🧠 Kennisduel",
+  kdVersus:(n)=>`⚔️ Bij een goed antwoord tik je munten af bij <b>${n}</b>`,kdCorrect:"✅ Goed antwoord!",kdWrong:"❌ Helaas, niet correct.",legKennisduel:"Kennisduel — sectorkennis, verover munten van je rivaal",
   chooseOpt:"Kies een aanpak:",confirmChoice:"Bevestigen",continueBtn:"Volgende beurt →",
   choiceSent:"✓ Keuze verzonden — wordt verwerkt op het hoofdscherm…",waitForYourTeam:"Wacht tot iemand in jouw team een keuze maakt…",
   passedStart:"🏁 Rondje voltooid! +5 munten huurinkomsten.",collectedStart:"🏁 Aangekomen op Start! +5 munten huurinkomsten.",
@@ -450,7 +681,7 @@ const T={
   scoresH:"Eindstand",scoresP:"Bekijk de resultaten en bespreek de belangrijkste keuzes na.",againBtn:"Nieuw spel",
   sectorBanner:(t,x)=>`<b>🌐 Sectorgebeurtenis — ${t}</b><br>${x}`,sectorBtnTip:"Los een gebeurtenis los die alle teams raakt",
   legend:"Legenda vakjes",legStart:"Start/Finish — inkomsten bij passeren",legTask:"Opdracht — kies uit 3 opties",legChance:"Kans — automatisch effect",legShock:"Shock — grote onverwachte gebeurtenis",
-  helpTitle:"Hoe werkt het?",helpBody:"<ol><li>Elk team gooit op zijn beurt één dobbelsteen en de pion loopt stap voor stap naar het nieuwe vakje.</li><li>Het vakje bepaalt wat je krijgt: een <b>opdracht</b> (kies uit 3 opties), een <b>kans</b> (automatisch effect) of de <b>shock</b> (bijzondere gebeurtenis).</li><li>Elke ronde langs Start levert het team huurinkomsten op.</li><li>Na het ingestelde aantal beurten per team volgt de eindstand.</li></ol>",
+  helpTitle:"Hoe werkt het?",helpBody:"<ol><li>Elk team gooit op zijn beurt één dobbelsteen en de pion loopt stap voor stap naar het nieuwe vakje.</li><li>Het vakje bepaalt wat je krijgt: een <b>opdracht</b> (kies uit 3 opties), een <b>kans</b> (automatisch effect), een <b>kennisduel</b> (meerkeuzevraag over de sector — bij een goed antwoord tik je munten af bij je rivaal) of de <b>shock</b> (bijzondere gebeurtenis).</li><li>Elke ronde langs Start levert het team huurinkomsten op.</li><li>Na het ingestelde aantal beurten per team volgt de eindstand.</li></ol>",
   jfH:"Doe mee",jfSub:"Vul de kamercode in en kies je team.",jfRoomL:"Kamercode",jfNameL:"Jouw naam",jfTeamL:"Team",joinBtn:"Meedoen →",
   jwH:"Je bent binnen! 🎉",jwWait:"Wacht tot je team aan de beurt is — dit scherm werkt live mee.",jwRoomL:"kamer",
   netLive:"Live verbonden",netOff:"Offline (lokaal)",footNL:"Zig Grow · Behind the Front Door",
@@ -466,7 +697,8 @@ const T={
   waitRoll:(n)=>`Waiting for ${n} to roll the dice on their own screen…`,rollFallback:"Or roll here as host (backup):",
   drawCardBtn:"🎴 Draw a card",waitDrawCard:(n)=>`${n} is on this tile — waiting for them to draw a card…`,drawCardFallback:"Or draw here as host (backup):",
   ackChanceFallback:"Or confirm here as host (backup):",nextTurnFallback:"Or continue here as host (backup):",
-  drawTask:"Draw a task card",drawChance:"Draw a chance card",drawShock:"⚠️ Unforeseen event!",
+  drawTask:"Draw a task card",drawChance:"Draw a chance card",drawShock:"⚠️ Unforeseen event!",drawKennisduel:"🧠 Knowledge duel",
+  kdVersus:(n)=>`⚔️ A correct answer steals coins from <b>${n}</b>`,kdCorrect:"✅ Correct answer!",kdWrong:"❌ Not correct, unfortunately.",legKennisduel:"Knowledge duel — sector knowledge, steal coins from your rival",
   chooseOpt:"Choose an approach:",confirmChoice:"Confirm",continueBtn:"Next turn →",
   choiceSent:"✓ Choice sent — being processed on the main screen…",waitForYourTeam:"Waiting for someone on your team to choose…",
   passedStart:"🏁 Lap complete! +5 coins in rent income.",collectedStart:"🏁 Arrived at Start! +5 coins in rent income.",
@@ -476,7 +708,7 @@ const T={
   scoresH:"Final standings",scoresP:"Review the results and debrief the key choices.",againBtn:"New game",
   sectorBanner:(t,x)=>`<b>🌐 Sector event — ${t}</b><br>${x}`,sectorBtnTip:"Trigger an event that affects all teams",
   legend:"Tile legend",legStart:"Start/Finish — income when passing",legTask:"Task — choose from 3 options",legChance:"Chance — automatic effect",legShock:"Shock — major unforeseen event",
-  helpTitle:"How does it work?",helpBody:"<ol><li>Each team rolls one die on its turn and the pawn walks step by step to the new tile.</li><li>The tile decides what you get: a <b>task</b> (choose from 3 options), a <b>chance</b> (automatic effect) or the <b>shock</b> (special event).</li><li>Each lap past Start earns the team rent income.</li><li>After the configured number of turns per team, the final standings appear.</li></ol>",
+  helpTitle:"How does it work?",helpBody:"<ol><li>Each team rolls one die on its turn and the pawn walks step by step to the new tile.</li><li>The tile decides what you get: a <b>task</b> (choose from 3 options), a <b>chance</b> (automatic effect), a <b>knowledge duel</b> (multiple-choice question about the sector — a correct answer steals coins from your rival) or the <b>shock</b> (special event).</li><li>Each lap past Start earns the team rent income.</li><li>After the configured number of turns per team, the final standings appear.</li></ol>",
   jfH:"Join in",jfSub:"Enter the room code and pick your team.",jfRoomL:"Room code",jfNameL:"Your name",jfTeamL:"Team",joinBtn:"Join →",
   jwH:"You're in! 🎉",jwWait:"Wait until your team is up — this screen updates live.",jwRoomL:"room",
   netLive:"Live connected",netOff:"Offline (local)",footNL:"Zig Grow · Behind the Front Door",
@@ -484,6 +716,49 @@ const T={
 };
 /* ============ helpers ============ */
 const $=id=>document.getElementById(id);
+/* ============ lightweight confetti (no deps) ============ */
+const FX={parts:[],raf:null,canvas:null,ctx:null,
+  ensure(){
+    if(this.canvas)return;
+    this.canvas=$("fxCanvas");if(!this.canvas)return;
+    this.ctx=this.canvas.getContext("2d");
+    const resize=()=>{this.canvas.width=innerWidth;this.canvas.height=innerHeight;};
+    resize();addEventListener("resize",resize);
+  },
+  burst(cx,cy,colors,n){
+    if(!state||!state.fxOn)return;
+    this.ensure();if(!this.ctx)return;
+    n=n||70;
+    for(let i=0;i<n;i++){
+      const ang=Math.random()*Math.PI*2,spd=2+Math.random()*6;
+      this.parts.push({x:cx,y:cy,vx:Math.cos(ang)*spd,vy:Math.sin(ang)*spd-3,g:0.14+Math.random()*0.08,
+        r:3+Math.random()*4,rot:Math.random()*Math.PI,vr:(Math.random()-.5)*0.3,
+        color:colors[rnd(colors.length)],life:60+Math.floor(Math.random()*40)});
+    }
+    if(!this.raf)this.raf=requestAnimationFrame(()=>this.tick());
+  },
+  tick(){
+    this.raf=null;
+    if(!this.ctx){this.parts=[];return;}
+    const c=this.ctx;
+    c.clearRect(0,0,this.canvas.width,this.canvas.height);
+    this.parts=this.parts.filter(p=>p.life>0);
+    this.parts.forEach(p=>{
+      p.vy+=p.g;p.x+=p.vx;p.y+=p.vy;p.rot+=p.vr;p.life--;
+      c.save();c.translate(p.x,p.y);c.rotate(p.rot);c.globalAlpha=Math.max(0,Math.min(1,p.life/30));
+      c.fillStyle=p.color;c.fillRect(-p.r,-p.r*.6,p.r*2,p.r*1.2);c.restore();
+    });
+    if(this.parts.length)this.raf=requestAnimationFrame(()=>this.tick());
+    else{c.clearRect(0,0,this.canvas.width,this.canvas.height);}
+  }
+};
+function celebrate(kind){
+  if(!state||!state.fxOn)return;
+  const cx=innerWidth/2,cy=innerHeight*0.28;
+  if(kind==="leader")FX.burst(cx,cy,["#1F5AFF","#FF9000","#2FBF71"],80);
+  else if(kind==="kd")FX.burst(cx,cy,["#8B5CF6","#5b3aa8","#c9b3f5"],55);
+  else if(kind==="win")FX.burst(cx,cy,["#1F5AFF","#FF9000","#2FBF71","#8B5CF6","#E4572E"],140);
+}
 function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 function rnd(n){return Math.floor(Math.random()*n);}
 function clamp(v,lo,hi){return Math.max(lo,Math.min(hi,v));}
@@ -492,6 +767,7 @@ function roomCode(){let s="";const A="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";for(let 
 function pick(arr){return arr[rnd(arr.length)];}
 function taskIds(){return state.lang==="nl"?TASK_IDS_NL.slice():TASK_IDS_EN.slice();}
 function chanceIds(){return state.lang==="nl"?CHANCE_IDS_NL.slice():CHANCE_IDS_EN.slice();}
+function kdIds(){return state.lang==="nl"?KD_IDS_NL.slice():KD_IDS_EN.slice();}
 function contentFor(){return CONTENT[state.lang];}
 
 function computeTurnsPerTeam(){
@@ -507,7 +783,7 @@ let state=null;
 function freshTeam(i){
   return {id:i+1,name:(state&&state.lang==="en"?"Team ":"Team ")+(i+1),color:TEAM_COLORS[i%TEAM_COLORS.length],
     coins:10,met:{sat:0,fin:0,comp:0,dur:0},boardPos:0,turnsTaken:0,history:[],
-    seenTask:[],seenChance:[],seenShock:false,laps:0};
+    seenTask:[],seenChance:[],seenKD:[],seenShock:false,laps:0};
 }
 function freshState(){
   const s={
@@ -540,7 +816,7 @@ function tileTypeAt(pos){return TILE_TYPES[pos%RING_LEN];}
    own device OR the facilitator's screen (fallback) drive every step. */
 function startGame(){
   state.turnsPerTeam=computeTurnsPerTeam();
-  state.teams.forEach(tm=>{tm.coins=10;tm.met={sat:0,fin:0,comp:0,dur:0};tm.boardPos=0;tm.turnsTaken=0;tm.history=[];tm.seenTask=[];tm.seenChance=[];tm.seenShock=false;tm.laps=0;});
+  state.teams.forEach(tm=>{tm.coins=10;tm.met={sat:0,fin:0,comp:0,dur:0};tm.boardPos=0;tm.turnsTaken=0;tm.history=[];tm.seenTask=[];tm.seenChance=[];tm.seenKD=[];tm.seenShock=false;tm.laps=0;});
   state.activeTeamIdx=0;
   _lastPawnPos={};
   state.turn={phase:"idle",dice:null,walkTo:null,cardType:null,card:null,pendingCard:null,chosenIdx:null,lapGain:0,token:uid()};
@@ -570,6 +846,7 @@ function checkLeaderChange(){
   state.teams.forEach(t=>{if(t.coins>leader.coins)leader=t;});
   if(state.lastLeaderId!=null&&state.lastLeaderId!==leader.id){
     state.leadChangeBanner={teamId:leader.id,teamName:leader.name,color:leader.color,at:Date.now()};
+    celebrate("leader");
   }
   state.lastLeaderId=leader.id;
 }
@@ -613,6 +890,7 @@ function landingAction(){
   state.turn.cardType=type;
   state.turn.card=null;
   state.turn.pendingCard=null;
+  state.turn.kdRival=null;
   if(type==="start"){
     state.turn.phase="resolved";
     render();saveLocal();NET.publish();
@@ -620,6 +898,11 @@ function landingAction(){
   }
   if(type==="chance")state.turn.pendingCard=drawChanceFor(team);
   else if(type==="shock")state.turn.pendingCard=contentFor().shock.S;
+  else if(type==="kennisduel"){
+    state.turn.pendingCard=drawKDFor(team);
+    const rival=resolveDuelTarget(team);
+    if(rival)state.turn.kdRival={id:rival.id,name:rival.name,color:rival.color};
+  }
   else state.turn.pendingCard=drawTaskFor(team);
   state.turn.phase="landed";
   render();saveLocal();NET.publish();
@@ -668,6 +951,14 @@ function drawChanceFor(team){
   team.seenChance.push(id);
   return contentFor().chance[id];
 }
+function drawKDFor(team){
+  const all=kdIds();
+  let avail=all.filter(id=>!team.seenKD.includes(id));
+  if(avail.length===0){team.seenKD=[];avail=all.slice();}
+  const id=pick(avail);
+  team.seenKD.push(id);
+  return contentFor().kd[id];
+}
 function applyCardEffect(team,fx,coins){
   team.coins=Math.max(0,team.coins+(coins||0));
   if(fx)Object.keys(fx).forEach(k=>{team.met[k]=(team.met[k]||0)+fx[k];});
@@ -683,7 +974,17 @@ function resolveChoice(optIdx){
   if(!opt)return;
   applyCardEffect(team,opt.fx,opt.coins);
   state.turn.chosenIdx=optIdx;
-  team.history.push({turn:team.turnsTaken+1,type:state.turn.cardType,id:card.id,title:card.t,option:opt.l,coins:opt.coins});
+  state.turn.kdResult=null;
+  if(opt.duelTarget&&state.turn.kdRival){
+    const target=state.teams.find(t=>t.id===state.turn.kdRival.id);
+    if(target){
+      applyCardEffect(target,opt.targetFx||{},opt.targetCoins||0);
+      target.history.push({turn:"🧠",type:"kd-target",id:card.id,title:card.t,sourceTeam:team.name,coins:opt.targetCoins||0});
+      state.turn.kdResult={id:target.id,name:target.name,color:target.color,coins:opt.targetCoins||0};
+      celebrate("kd");
+    }
+  }
+  team.history.push({turn:team.turnsTaken+1,type:state.turn.cardType,id:card.id,title:card.t,option:opt.l,coins:opt.coins,correct:opt.correct===true,explain:opt.e});
   state.turn.phase="resolved";
   NET.clearAction();
   render();saveLocal();NET.publish();
@@ -706,6 +1007,7 @@ function nextTurn(){
   if(allDone){
     state.appStage="scores";
     render();saveLocal();NET.publish();
+    setTimeout(()=>celebrate("win"),200);
     return;
   }
   let next=(state.activeTeamIdx+1)%state.teams.length;
@@ -870,6 +1172,15 @@ function renderStage(){
         ${duel?`<p class="hint" style="color:#a4321f">${L.duelAffects(esc(duel.name))} (${duel.coins>0?"+":""}${duel.coins} ${L.coinsLbl.toLowerCase()})</p>`:""}
         <p class="hint" style="margin-bottom:4px">${L.ackChanceFallback}</p>
         <button class="btn soft" id="ackCardBtn">${L.confirmChoice}</button></div>`;
+    }else if(type==="kennisduel"){
+      const rival=state.turn.kdRival;
+      html=`<div class="cardface kd"><div class="kd-illo"><span>🧠</span></div><div class="badge kdbadge">${L.drawKennisduel}</div>
+        <h3>${esc(card.t)}</h3><p>${esc(card.x)}</p>
+        ${rival?`<p class="hint" style="color:#5b3aa8">${L.kdVersus(esc(rival.name))}</p>`:""}
+        <p class="hint" style="margin-bottom:6px">${L.chooseOpt}</p>
+        <div class="opts">`+
+        card.o.map((o,idx)=>`<button class="btn soft optbtn kdopt" data-idx="${idx}"><b>${esc(o.l)}</b></button>`).join("")+
+        `</div></div>`;
     }else{
       const cat=CAT[card.id];
       html=`<div class="cardface">${cat?`<div class="illo" style="background-image:url('assets/${cat}.jpg')"></div>`:""}<div class="badge">${type==="shock"?L.drawShock:L.drawTask}</div>
@@ -886,7 +1197,19 @@ function renderStage(){
     else if(state.turn.lapGain){msg=L.passedStart;}
     const card=state.turn.card;
     let detail="";
-    if(card&&state.turn.chosenIdx!=null){const o=card.o[state.turn.chosenIdx];detail=`<p class="hint"><b>${esc(o.l)}</b> — ${o.coins>0?"+":""}${o.coins} ${L.coinsLbl.toLowerCase()}</p>`;}
+    if(card&&state.turn.chosenIdx!=null){
+      const o=card.o[state.turn.chosenIdx];
+      if(type==="kennisduel"){
+        const correct=o.correct===true;
+        const kdRes=state.turn.kdResult;
+        detail=`<div class="kdverdict ${correct?'good':'bad'}">${correct?L.kdCorrect:L.kdWrong}</div>
+          <p class="hint">${esc(o.e||"")}</p>
+          <p class="hint"><b>${o.coins>0?"+":""}${o.coins}</b> ${L.coinsLbl.toLowerCase()}</p>
+          ${kdRes?`<p class="hint" style="color:#5b3aa8">${L.duelAffects(esc(kdRes.name))} (${kdRes.coins>0?"+":""}${kdRes.coins} ${L.coinsLbl.toLowerCase()})</p>`:""}`;
+      }else{
+        detail=`<p class="hint"><b>${esc(o.l)}</b> — ${o.coins>0?"+":""}${o.coins} ${L.coinsLbl.toLowerCase()}</p>`;
+      }
+    }
     html=`<div style="text-align:center">${msg?`<p class="hint">${msg}</p>`:""}${detail}
       <p class="hint" style="margin-bottom:4px">${L.nextTurnFallback}</p>
       <button class="btn soft" id="nextTurnBtn">${L.continueBtn}</button></div>`;
@@ -903,9 +1226,10 @@ function renderCompactStand(){
   const L=T[state.lang];
   const wrap=$("standCompact");
   const sorted=state.teams.slice().sort((a,b)=>b.coins-a.coins);
+  const hitId=(state.turn&&(state.turn.kdResult||state.turn.duelTarget)&&(state.turn.phase==="card"||state.turn.phase==="resolved"))?(state.turn.kdResult||state.turn.duelTarget).id:null;
   wrap.innerHTML=sorted.map(t=>{
     const metsHtml=Object.keys(MET[state.lang]).map(k=>`<span${t.met[k]<0?' class="low"':''}>${MET[state.lang][k].split(" ")[0]}${t.met[k]>0?"+":""}${t.met[k]}</span>`).join(" ");
-    return `<div class="srow2${t.id===activeTeam().id&&state.appStage==="play"?" up":""}">
+    return `<div class="srow2${t.id===activeTeam().id&&state.appStage==="play"?" up":""}${t.id===hitId?" hit":""}">
       <div class="sr-top"><span class="pos">${sorted.indexOf(t)+1}</span><span class="dot2" style="background:${t.color}"></span><span class="nm">${esc(t.name)}</span><span class="sc">${t.coins}</span></div>
       <div class="sr-bot"><span class="mets">${metsHtml}</span><span class="cn">${t.turnsTaken}/${state.turnsPerTeam}</span></div>
     </div>`;
@@ -958,7 +1282,7 @@ function renderScores(){
 function renderLegendAndHelp(){
   const L=T[state.lang];
   $("setupLegend").innerHTML=`<div class="legend" style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:14px;font-size:13px;color:var(--muted)">
-    <span>🏁 ${L.legStart}</span><span>🏠 ${L.legTask}</span><span>🍀 ${L.legChance}</span><span>💥 ${L.legShock}</span></div>`;
+    <span>🏁 ${L.legStart}</span><span>🏠 ${L.legTask}</span><span>🍀 ${L.legChance}</span><span>🧠 ${L.legKennisduel}</span><span>💥 ${L.legShock}</span></div>`;
   $("helpPanel").innerHTML=`<h3 style="margin-top:0">${L.helpTitle}</h3>${L.helpBody}`;
 }
 
@@ -1163,8 +1487,9 @@ function initPlayerView(){
           main+=`<div style="text-align:center"><div class="ti" style="font-size:40px">${SP_ICON[turn.cardType]||""}</div><p class="hint">${L.waitForYourTeam}</p></div>`;
         }
       }else if(turn.phase==="card"&&turn.card){
+        const isKD=turn.cardType==="kennisduel";
         const cat=CAT[turn.card.id];
-        main+=`<div class="cardface" style="margin-top:10px">${cat?`<div class="illo" style="background-image:url('assets/${cat}.jpg')"></div>`:""}<div class="badge">${turn.cardType==="shock"?L.drawShock:(turn.cardType==="chance"?L.drawChance:L.drawTask)}</div>${turn.card.duel?`<div class="badge" style="background:#EAF0FF;color:#1F5AFF;margin-inline-start:6px">${L.duelBadge}</div>`:""}<h3>${esc(turn.card.t)}</h3><p>${esc(turn.card.x)}</p>`;
+        main+=`<div class="cardface${isKD?" kd":""}" style="margin-top:10px">${isKD?`<div class="kd-illo"><span>🧠</span></div>`:(cat?`<div class="illo" style="background-image:url('assets/${cat}.jpg')"></div>`:"")}<div class="badge${isKD?" kdbadge":""}">${isKD?L.drawKennisduel:(turn.cardType==="shock"?L.drawShock:(turn.cardType==="chance"?L.drawChance:L.drawTask))}</div>${turn.card.duel?`<div class="badge" style="background:#EAF0FF;color:#1F5AFF;margin-inline-start:6px">${L.duelBadge}</div>`:""}<h3>${esc(turn.card.t)}</h3><p>${esc(turn.card.x)}</p>${isKD&&turn.kdRival?`<p class="hint" style="color:#5b3aa8">${L.kdVersus(esc(turn.kdRival.name))}</p>`:""}`;
         if(turn.cardType==="chance"){
           main+=`<p class="hint">${turn.card.coins>0?"+":""}${turn.card.coins} ${L.coinsLbl.toLowerCase()}</p>`;
           if(turn.duelTarget){
@@ -1178,10 +1503,10 @@ function initPlayerView(){
           if(mine){
             const sent=wasSent(turn,"choice");
             main+=`<p class="hint" style="margin-bottom:6px">${sent?L.choiceSent:L.chooseOpt}</p><div class="opts">`+
-              turn.card.o.map((o,idx)=>`<button class="btn soft optbtn playerOpt" data-idx="${idx}"${sent?" disabled":""}>${esc(o.l)}<br><span class="hint">${esc(o.e)}</span></button>`).join("")+
+              turn.card.o.map((o,idx)=>`<button class="btn soft optbtn playerOpt${isKD?" kdopt":""}" data-idx="${idx}"${sent?" disabled":""}>${esc(o.l)}${isKD?"":`<br><span class="hint">${esc(o.e)}</span>`}</button>`).join("")+
               `</div>`;
           }else{
-            main+=`<p class="hint" style="margin-bottom:6px">${L.waitForYourTeam}</p><div class="opts">`+turn.card.o.map(o=>`<div class="btn soft optbtn" style="opacity:.7">${esc(o.l)}<br><span class="hint">${esc(o.e)}</span></div>`).join("")+`</div>`;
+            main+=`<p class="hint" style="margin-bottom:6px">${L.waitForYourTeam}</p><div class="opts">`+turn.card.o.map(o=>`<div class="btn soft optbtn" style="opacity:.7">${esc(o.l)}${isKD?"":`<br><span class="hint">${esc(o.e)}</span>`}</div>`).join("")+`</div>`;
           }
         }
         main+=`</div>`;
@@ -1189,7 +1514,12 @@ function initPlayerView(){
         let detail="";
         if(turn.card&&turn.card.o&&turn.chosenIdx!=null){
           const o=turn.card.o[turn.chosenIdx];
-          detail=`<div class="cardface" style="margin-top:10px"><p class="hint"><b>${esc(o.l)}</b> — ${o.coins>0?"+":""}${o.coins} ${L.coinsLbl.toLowerCase()}</p></div>`;
+          if(turn.cardType==="kennisduel"){
+            const correct=o.correct===true;
+            detail=`<div class="cardface" style="margin-top:10px"><div class="kdverdict ${correct?'good':'bad'}">${correct?L.kdCorrect:L.kdWrong}</div><p class="hint">${esc(o.e||"")}</p><p class="hint"><b>${o.coins>0?"+":""}${o.coins}</b> ${L.coinsLbl.toLowerCase()}</p></div>`;
+          }else{
+            detail=`<div class="cardface" style="margin-top:10px"><p class="hint"><b>${esc(o.l)}</b> — ${o.coins>0?"+":""}${o.coins} ${L.coinsLbl.toLowerCase()}</p></div>`;
+          }
         }else if(turn.cardType==="start"||turn.lapGain){
           detail=`<p class="hint" style="text-align:center;margin-top:10px">${L.passedStart}</p>`;
         }
