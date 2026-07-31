@@ -135,11 +135,22 @@
   .reflect ul{color:var(--ink)}.reflect h4{font-size:14px}
   footer{color:#93a3c0;font-size:12.5px;text-align:center;margin-top:34px;padding-top:16px;border-top:1px solid rgba(255,255,255,.14)}
   .hide{display:none!important}
-  .player-shell{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
-  .join-card{background:var(--card);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);padding:30px;max-width:430px;width:100%;text-align:center}
+  .player-shell{min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:20px}
+  .join-card{background:var(--card);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);padding:30px;max-width:430px;width:100%;text-align:center;margin-top:5vh}
+  .join-card.wide{max-width:1180px;text-align:start;margin-top:14px}
+  .join-card.wide #pLogo,.join-card.wide .jc-cover{max-width:360px;margin-left:auto;margin-right:auto}
   .join-card .logo{height:34px;margin:0 auto 8px}.join-card .jc-cover{aspect-ratio:2.4/1;border-radius:14px;background:#fbfaf6 center/cover no-repeat;margin:6px 0 18px}
   .join-card h1{font-size:22px;margin:0 0 4px}.join-card p.s{color:var(--muted);font-size:14px;margin:0 0 18px}
   .join-card .fldwrap{text-align:start;margin-bottom:14px}.join-card input,.join-card select{width:100%}
+  .pdash-head{text-align:center}
+  .pdash-head h1{font-size:22px;margin:0 0 6px}
+  .pdash-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:20px;align-items:start;margin-top:14px}
+  @media (max-width:760px){.pdash-grid{grid-template-columns:1fr}}
+  .pdash-main{min-width:0}
+  .pdash-side{background:var(--soft);border:1px solid var(--line);border-radius:16px;padding:14px;max-height:70vh;overflow:auto}
+  .pdash-side h3{margin:0 0 8px;font-size:13px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted)}
+  .playerOpt{width:100%;cursor:pointer}
+  .playerOpt:disabled{opacity:.55;cursor:default}
   .pnet{font-size:13px;font-weight:700;border-radius:10px;padding:10px 12px;margin:0 0 16px;text-align:start;line-height:1.4}.pnet.live{background:#e5f7ee;color:#137a44}.pnet.off{background:#fff1e0;color:#b3391b}
   .yourturn{text-align:center;padding:16px;border-radius:16px;color:#fff;font-weight:900;font-size:22px;margin-bottom:14px;box-shadow:var(--shadow);animation:announce .7s cubic-bezier(.2,.9,.3,1.2) both}
   .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--orange);margin:0 3px;animation:pulse 1.2s infinite}.dot:nth-child(2){animation-delay:.2s}.dot:nth-child(3){animation-delay:.4s}
@@ -225,7 +236,7 @@
 </div>
 
 <div id="player" class="player-shell hide">
-  <div class="join-card">
+  <div class="join-card" id="joinCard">
     <div id="pLogo"></div>
     <div class="jc-cover" style="background-image:url('assets/gameboard.jpg')"></div>
     <div id="pNet" class="pnet"></div>
@@ -411,6 +422,7 @@ const T={
   walking:"Pion loopt naar het vakje…",landed:(tile)=>`Geland op vakje ${tile}`,
   drawTask:"Trek een opdrachtkaart",drawChance:"Trek een kanskaart",drawShock:"⚠️ Onvoorziene gebeurtenis!",
   chooseOpt:"Kies een aanpak:",confirmChoice:"Bevestigen",continueBtn:"Volgende beurt →",
+  choiceSent:"✓ Keuze verzonden — wordt verwerkt op het hoofdscherm…",waitForYourTeam:"Wacht tot iemand in jouw team een keuze maakt…",
   passedStart:"🏁 Rondje voltooid! +5 munten huurinkomsten.",collectedStart:"🏁 Aangekomen op Start! +5 munten huurinkomsten.",
   chanceAutoGood:"Meevaller!",chanceAutoBad:"Tegenvaller.",
   scoresH:"Eindstand",scoresP:"Bekijk de resultaten en bespreek de belangrijkste keuzes na.",againBtn:"Nieuw spel",
@@ -431,6 +443,7 @@ const T={
   walking:"Pawn is walking to the tile…",landed:(tile)=>`Landed on tile ${tile}`,
   drawTask:"Draw a task card",drawChance:"Draw a chance card",drawShock:"⚠️ Unforeseen event!",
   chooseOpt:"Choose an approach:",confirmChoice:"Confirm",continueBtn:"Next turn →",
+  choiceSent:"✓ Choice sent — being processed on the main screen…",waitForYourTeam:"Waiting for someone on your team to choose…",
   passedStart:"🏁 Lap complete! +5 coins in rent income.",collectedStart:"🏁 Arrived at Start! +5 coins in rent income.",
   chanceAutoGood:"Lucky break!",chanceAutoBad:"Setback.",
   scoresH:"Final standings",scoresP:"Review the results and debrief the key choices.",againBtn:"New game",
@@ -475,7 +488,7 @@ function freshState(){
     teams:[0,1].map(i=>freshTeam(i)),
     durationMode:"medium",customTurns:8,turnsPerTeam:8,
     activeTeamIdx:0,
-    turn:{phase:"idle",dice:null,walkTo:null,cardType:null,card:null,chosenIdx:null,lapGain:0},
+    turn:{phase:"idle",dice:null,walkTo:null,cardType:null,card:null,chosenIdx:null,lapGain:0,token:null},
     usedSectorIds:[],lastSectorBanner:null,
     soundOn:true,fxOn:true,
     players:{},
@@ -495,7 +508,7 @@ function startGame(){
   state.teams.forEach(tm=>{tm.coins=10;tm.met={sat:0,fin:0,comp:0,dur:0};tm.boardPos=0;tm.turnsTaken=0;tm.history=[];tm.seenTask=[];tm.seenChance=[];tm.seenShock=false;tm.laps=0;});
   state.activeTeamIdx=0;
   _lastPawnPos={};
-  state.turn={phase:"idle",dice:null,walkTo:null,cardType:null,card:null,chosenIdx:null,lapGain:0};
+  state.turn={phase:"idle",dice:null,walkTo:null,cardType:null,card:null,chosenIdx:null,lapGain:0,token:null};
   state.appStage="play";
   render();saveLocal();NET.publish();
 }
@@ -506,7 +519,7 @@ function rollDice(){
   const dice=1+rnd(6);
   const from=team.boardPos;
   const to=from+dice;
-  state.turn={phase:"rolling",dice,walkTo:to,cardType:null,card:null,chosenIdx:null,lapGain:0};
+  state.turn={phase:"rolling",dice,walkTo:to,cardType:null,card:null,chosenIdx:null,lapGain:0,token:null};
   render();saveLocal();NET.publish();
   setTimeout(()=>{state.turn.phase="walking";stepWalk(from,to);},650);
 }
@@ -541,6 +554,7 @@ function landingAction(){
   if(type==="chance"){
     const card=drawChanceFor(team);
     state.turn.card=card;
+    state.turn.token=uid();
     applyCardEffect(team,card.fx,card.coins);
     team.history.push({turn:team.turnsTaken+1,type:"chance",id:card.id,title:card.t,coins:card.coins});
     state.turn.phase="card";
@@ -551,12 +565,14 @@ function landingAction(){
     const card=contentFor().shock.S;
     team.seenShock=true;
     state.turn.card=card;
+    state.turn.token=uid();
     state.turn.phase="card";
     render();saveLocal();NET.publish();
     return;
   }
   const card=drawTaskFor(team);
   state.turn.card=card;
+  state.turn.token=uid();
   state.turn.phase="card";
   render();saveLocal();NET.publish();
 }
@@ -583,6 +599,7 @@ function applyCardEffect(team,fx,coins){
 }
 
 function resolveChoice(optIdx){
+  if(state.turn.phase!=="card")return;
   const team=activeTeam();
   const card=state.turn.card;
   if(!card||!card.o)return;
@@ -592,10 +609,12 @@ function resolveChoice(optIdx){
   state.turn.chosenIdx=optIdx;
   team.history.push({turn:team.turnsTaken+1,type:state.turn.cardType,id:card.id,title:card.t,option:opt.l,coins:opt.coins});
   state.turn.phase="resolved";
+  NET.clearAction();
   render();saveLocal();NET.publish();
 }
 
 function ackAutoCard(){
+  if(state.turn.phase!=="card")return;
   state.turn.phase="resolved";
   render();saveLocal();NET.publish();
 }
@@ -603,7 +622,8 @@ function ackAutoCard(){
 function nextTurn(){
   const team=activeTeam();
   team.turnsTaken++;
-  state.turn={phase:"idle",dice:null,walkTo:null,cardType:null,card:null,chosenIdx:null,lapGain:0};
+  NET.clearAction();
+  state.turn={phase:"idle",dice:null,walkTo:null,cardType:null,card:null,chosenIdx:null,lapGain:0,token:null};
   const allDone=state.teams.every(t=>t.turnsTaken>=state.turnsPerTeam);
   if(allDone){
     state.appStage="scores";
@@ -839,7 +859,7 @@ function renderLegendAndHelp(){
 
 /* ============ NET (Firebase sync) ============ */
 const NET={
-  connected:false,db:null,ref:null,_pubTimer:null,
+  connected:false,db:null,ref:null,actionRef:null,_actionCb:null,_pubTimer:null,
   init(){
     try{
       if(!window.firebase||!window.FIREBASE_CONFIG){this.connected=false;return;}
@@ -852,6 +872,19 @@ const NET={
   bindRoom(){
     if(!this.db||!state)return;
     this.ref=this.db.ref("rooms/"+state.room+"/state");
+  },
+  bindActions(){
+    if(!this.db||!state)return;
+    if(this.actionRef)this.actionRef.off();
+    this.actionRef=this.db.ref("rooms/"+state.room+"/action");
+    if(this._actionCb)this.actionRef.on("value",this._actionCb);
+  },
+  onAction(cb){
+    this._actionCb=snap=>{const v=snap.val();if(v)cb(v);};
+    this.bindActions();
+  },
+  clearAction(){
+    if(this.actionRef)this.actionRef.remove().catch(()=>{});
   },
   publish(){
     if(!this.db)return;
@@ -874,6 +907,10 @@ const NET={
     if(!this.db)return Promise.resolve();
     const id=uid();
     return this.db.ref("rooms/"+room+"/joins/"+id).set({name,team,at:Date.now()}).then(()=>id).catch(()=>id);
+  },
+  submitChoice(room,teamId,token,optIdx){
+    if(!this.db||!room)return Promise.resolve();
+    return this.db.ref("rooms/"+room+"/action").set({team:teamId,token,optIdx,at:Date.now()}).catch(()=>{});
   }
 };
 
@@ -896,9 +933,24 @@ function wireFacilitator(){
   };
   $("resetGame").onclick=()=>{
     if(!confirm(state.lang==="nl"?"Nieuw spel starten? Voortgang gaat verloren.":"Start a new game? Progress will be lost."))return;
-    state=freshState();NET.bindRoom();renderLegendAndHelp();render();saveLocal();NET.publish();
+    state=freshState();NET.bindRoom();NET.bindActions();renderLegendAndHelp();render();saveLocal();NET.publish();
   };
   $("againBtn").onclick=()=>$("resetGame").onclick();
+}
+
+/* Applies a player-submitted card choice (received via Firebase) to the live game,
+   guarded by a per-card token so stale/late actions from a previous card are ignored. */
+function handleIncomingAction(action){
+  if(!state||!action)return;
+  const team=activeTeam();
+  const valid=state.appStage==="play"&&state.turn.phase==="card"&&state.turn.cardType!=="chance"&&
+    state.turn.token&&state.turn.token===action.token&&String(team.id)===String(action.team)&&
+    state.turn.card&&state.turn.card.o&&action.optIdx!=null&&state.turn.card.o[action.optIdx];
+  if(valid){
+    resolveChoice(action.optIdx);
+  }else{
+    NET.clearAction();
+  }
 }
 
 /* ============ player view ============ */
@@ -911,7 +963,7 @@ function initPlayerView(){
   $("jfH").textContent=T.nl.jfH;$("jfSub").textContent=T.nl.jfSub;$("jfRoomL").textContent=T.nl.jfRoomL;
   $("jfNameL").textContent=T.nl.jfNameL;$("jfTeamL").textContent=T.nl.jfTeamL;$("joinBtn").textContent=T.nl.joinBtn;
   $("joinTips").innerHTML=`<li>${T.nl.jfSub}</li>`;
-  let joinedRoom=null,playerLang="nl",knownTeams=null;
+  let joinedRoom=null,playerLang="nl",knownTeams=null,lastSubmittedToken=null;
   NET.init();
 
   function populateTeamOptions(teams){
@@ -944,6 +996,7 @@ function initPlayerView(){
     NET.joinAsPlayer(room,name,team);
     $("joinForm").style.display="none";
     $("joinWaiting").style.display="block";
+    $("joinCard").classList.add("wide");
     const teamName=(knownTeams&&knownTeams.find(t=>String(t.id)===String(team))||{}).name||("Team "+team);
     $("joinWho").textContent=name+" · "+teamName;
     $("joinRoomEcho").textContent=room;
@@ -963,27 +1016,36 @@ function initPlayerView(){
     const me=snap.teams.find(t=>String(t.id)===String(team));
     const active=snap.teams[snap.activeTeamIdx];
     const mine=active&&String(active.id)===String(team);
-    let html=`<h1 style="font-size:20px">${esc(L.brand)}</h1>`;
-    if(me)html+=`<p class="s">${esc(me.name)} · ${me.coins} ${L.coinsLbl.toLowerCase()} · ${me.turnsTaken}/${snap.turnsPerTeam}</p>`;
+    const turn=snap.turn||{phase:"idle"};
+    let head=`<h1 style="font-size:20px">${esc(L.brand)}</h1>`;
+    if(me)head+=`<p class="s">${esc(me.name)} · ${me.coins} ${L.coinsLbl.toLowerCase()} · ${me.turnsTaken}/${snap.turnsPerTeam}</p>`;
     if(snap.appStage==="setup"){
-      html+=`<p class="s">${esc(L.jwWait)}</p>`;
+      head+=`<p class="s">${esc(L.jwWait)}</p>`;
     }
+
+    let main="";
     if(snap.appStage==="play"&&active){
-      const turn=snap.turn||{phase:"idle"};
-      html+=`<div class="yourturn" style="background:${active.color};font-size:16px">${mine?"🎯 ":""}${esc(L.yourTurnBanner(active.name))}</div>`;
+      main+=`<div class="yourturn" style="background:${active.color};font-size:16px">${mine?"🎯 ":""}${esc(L.yourTurnBanner(active.name))}</div>`;
       if(turn.phase==="rolling"){
-        html+=`<div style="text-align:center"><div class="dice rolling">🎲</div></div>`;
+        main+=`<div style="text-align:center"><div class="dice rolling">🎲</div></div>`;
       }else if(turn.phase==="walking"){
-        html+=`<div style="text-align:center"><div class="dice">${turn.dice||"🎲"}</div><p class="hint">${L.walking}</p></div>`;
+        main+=`<div style="text-align:center"><div class="dice">${turn.dice||"🎲"}</div><p class="hint">${L.walking}</p></div>`;
       }else if(turn.phase==="card"&&turn.card){
         const cat=CAT[turn.card.id];
-        html+=`<div class="cardface" style="margin-top:10px">${cat?`<div class="illo" style="background-image:url('assets/${cat}.jpg')"></div>`:""}<div class="badge">${turn.cardType==="shock"?L.drawShock:(turn.cardType==="chance"?L.drawChance:L.drawTask)}</div><h3>${esc(turn.card.t)}</h3><p>${esc(turn.card.x)}</p>`;
+        const alreadySent=lastSubmittedToken&&lastSubmittedToken===turn.token;
+        main+=`<div class="cardface" style="margin-top:10px">${cat?`<div class="illo" style="background-image:url('assets/${cat}.jpg')"></div>`:""}<div class="badge">${turn.cardType==="shock"?L.drawShock:(turn.cardType==="chance"?L.drawChance:L.drawTask)}</div><h3>${esc(turn.card.t)}</h3><p>${esc(turn.card.x)}</p>`;
         if(turn.cardType==="chance"){
-          html+=`<p class="hint">${turn.card.coins>0?"+":""}${turn.card.coins} ${L.coinsLbl.toLowerCase()}</p>`;
+          main+=`<p class="hint">${turn.card.coins>0?"+":""}${turn.card.coins} ${L.coinsLbl.toLowerCase()}</p>`;
         }else if(turn.card.o){
-          html+=`<p class="hint" style="margin-bottom:6px">${L.chooseOpt}</p><div class="opts">`+turn.card.o.map(o=>`<div class="btn soft optbtn" style="opacity:.85">${esc(o.l)}<br><span class="hint">${esc(o.e)}</span></div>`).join("")+`</div>`;
+          if(mine){
+            main+=`<p class="hint" style="margin-bottom:6px">${alreadySent?L.choiceSent:L.chooseOpt}</p><div class="opts">`+
+              turn.card.o.map((o,idx)=>`<button class="btn soft optbtn playerOpt" data-idx="${idx}"${alreadySent?" disabled":""}>${esc(o.l)}<br><span class="hint">${esc(o.e)}</span></button>`).join("")+
+              `</div>`;
+          }else{
+            main+=`<p class="hint" style="margin-bottom:6px">${L.waitForYourTeam}</p><div class="opts">`+turn.card.o.map(o=>`<div class="btn soft optbtn" style="opacity:.7">${esc(o.l)}<br><span class="hint">${esc(o.e)}</span></div>`).join("")+`</div>`;
+          }
         }
-        html+=`</div>`;
+        main+=`</div>`;
       }else if(turn.phase==="resolved"){
         let detail="";
         if(turn.card&&turn.card.o&&turn.chosenIdx!=null){
@@ -992,14 +1054,38 @@ function initPlayerView(){
         }else if(turn.cardType==="start"||turn.lapGain){
           detail=`<p class="hint" style="text-align:center;margin-top:10px">${L.passedStart}</p>`;
         }
-        html+=detail;
+        main+=detail;
       }
     }
     if(snap.appStage==="scores"){
       const sorted=snap.teams.slice().sort((a,b)=>b.coins-a.coins);
-      html+="<div style='text-align:start'>"+sorted.map((t,i)=>`<div class="rank${i===0?" first":""}"><span class="pos">${i+1}</span><div class="rn" style="flex:1">${esc(t.name)}</div><span class="rs">${t.coins}</span></div>`).join("")+"</div>";
+      main+="<div>"+sorted.map((t,i)=>`<div class="rank${i===0?" first":""}"><span class="pos">${i+1}</span><div class="rn" style="flex:1">${esc(t.name)}</div><span class="rs">${t.coins}</span></div>`).join("")+"</div>";
     }
-    $("joinWaiting").innerHTML=html;
+
+    let side="";
+    if(snap.appStage==="play"){
+      const sorted=snap.teams.slice().sort((a,b)=>b.coins-a.coins);
+      side=`<h3>${L.standH}</h3><div class="stand2">`+sorted.map(t=>{
+        const metsHtml=Object.keys(MET[playerLang]).map(k=>`<span${t.met[k]<0?' class="low"':''}>${MET[playerLang][k].split(" ")[0]}${t.met[k]>0?"+":""}${t.met[k]}</span>`).join(" ");
+        return `<div class="srow2${active&&t.id===active.id?" up":""}">
+          <div class="sr-top"><span class="dot2" style="background:${t.color}"></span><span class="nm">${esc(t.name)}</span><span class="sc">${t.coins}</span></div>
+          <div class="sr-bot"><span class="mets">${metsHtml}</span><span class="cn">${t.turnsTaken}/${snap.turnsPerTeam}</span></div>
+        </div>`;
+      }).join("")+`</div>`;
+    }
+
+    $("joinWaiting").innerHTML=`<div class="pdash-head">${head}</div><div class="pdash-grid"><div class="pdash-main">${main}</div>${side?`<div class="pdash-side">${side}</div>`:""}</div>`;
+
+    if(mine&&turn.phase==="card"&&turn.cardType!=="chance"&&turn.card&&turn.card.o){
+      $("joinWaiting").querySelectorAll(".playerOpt").forEach(btn=>{
+        btn.onclick=()=>{
+          const idx=parseInt(btn.dataset.idx,10);
+          lastSubmittedToken=turn.token;
+          NET.submitChoice(joinedRoom,team,turn.token,idx);
+          renderPlayerDashboard(snap,team);
+        };
+      });
+    }
   }
 }
 
@@ -1017,6 +1103,7 @@ function boot(){
   state=(saved&&saved.teams&&saved.turnsPerTeam)?saved:freshState();
   NET.init();
   NET.bindRoom();
+  NET.onAction(handleIncomingAction);
   wireFacilitator();
   renderLegendAndHelp();
   render();
