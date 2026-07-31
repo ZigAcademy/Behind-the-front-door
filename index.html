@@ -160,7 +160,8 @@
   .tile.kennisduel{background:linear-gradient(160deg,#efe7fd,#e3d6fb);border-color:#c9b3f5}
   @media (prefers-color-scheme:dark){.tile.kennisduel{background:linear-gradient(160deg,#241a3a,#2c2050);border-color:#4a3a78}}
   .cardface.kd{border-color:#c9b3f5;box-shadow:0 18px 40px rgba(91,58,168,.3)}
-  .kd-illo{width:min(140px,45%);aspect-ratio:1/1;margin:0 auto 12px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#a78bfa,#5b3aa8 70%);display:flex;align-items:center;justify-content:center;font-size:52px;box-shadow:0 10px 26px rgba(91,58,168,.45);animation:kdpulse 1.8s ease-in-out infinite}
+  .illo.kdimg{border:3px solid #8B5CF6;box-shadow:0 0 0 6px rgba(139,92,246,.22),0 10px 26px rgba(91,58,168,.4);animation:kdpulse 1.8s ease-in-out infinite}
+  .sectorimg{width:56px;height:56px;border-radius:10px;background-size:cover;background-position:center;float:left;margin-inline-end:10px;box-shadow:0 4px 10px rgba(0,0,0,.15)}
   @keyframes kdpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
   .badge.kdbadge{background:#5b3aa8;color:#fff}
   .kdopt{border:1.5px solid #d9c9f7}
@@ -300,7 +301,34 @@ window.FIREBASE_CONFIG = {
 "use strict";
 /* ============ data ============ */
 const MET={nl:{sat:"😊 Tevredenheid",fin:"💶 Financieel",comp:"📋 Compliance",dur:"🌱 Duurzaamheid"},en:{sat:"😊 Satisfaction",fin:"💶 Financial",comp:"📋 Compliance",dur:"🌱 Sustainability"}};
-const CAT={A:"onderhoud",B:"toewijzing",C:"sociaal",D:"duurzaam",E:"onderhoud",J1:"onderhoud",J2:"digitaal",J3:"sociaal",J4:"toewijzing",J5:"financien",J6:"sociaal",J7:"financien",J8:"toewijzing",J9:"duurzaam",J10:"digitaal",J11:"sociaal",J12:"toewijzing",C1:"duurzaam",C2:"digitaal",C3:"duurzaam",C4:"onderhoud",C5:"financien",C6:"financien",S:"onderhoud",N1:"onderhoud",N2:"toewijzing",N3:"sociaal",N4:"duurzaam",N5:"digitaal",N6:"financien",N7:"onderhoud",N8:"toewijzing",N9:"sociaal",N10:"duurzaam",N11:"digitaal",N12:"financien",N13:"onderhoud",N14:"toewijzing",N15:"sociaal",N16:"duurzaam",N17:"digitaal",N18:"financien",N19:"onderhoud",N20:"toewijzing",N21:"sociaal",N22:"digitaal",KD1:"kennisduel",KD2:"kennisduel",KD3:"kennisduel",KD4:"kennisduel",KD5:"kennisduel",KD6:"kennisduel",KD7:"kennisduel",KD8:"kennisduel",KD9:"kennisduel",KD10:"kennisduel",KD11:"kennisduel",KD12:"kennisduel",KD13:"kennisduel",KD14:"kennisduel",KD15:"kennisduel",KD16:"kennisduel"};
+const CAT={A:"onderhoud",B:"wooncrisis",C:"sociaal",D:"duurzaam",E:"onderhoud",J1:"onderhoud",J2:"digitaal",J3:"leefbaarheid",J4:"toewijzing",J5:"financien",J6:"sociaal",J7:"financien",J8:"toewijzing",J9:"duurzaam",J10:"digitaal",J11:"zorg",J12:"toewijzing",C1:"duurzaam",C2:"digitaal",C3:"duurzaam",C4:"onderhoud",C5:"financien",C6:"financien",S:"shock",N1:"onderhoud",N2:"wooncrisis",N3:"participatie",N4:"duurzaam",N5:"digitaal",N6:"financien",N7:"veiligheid",N8:"toewijzing",N9:"sociaal",N10:"duurzaam",N11:"digitaal",N12:"financien",N13:"veiligheid",N14:"toewijzing",N15:"zorg",N16:"duurzaam",N17:"digitaal",N18:"financien",N19:"veiligheid",N20:"wooncrisis",N21:"sociaal",N22:"digitaal",KD1:"kennisduel",KD2:"kennisduel",KD3:"kennisduel",KD4:"kennisduel",KD5:"kennisduel",KD6:"kennisduel",KD7:"kennisduel",KD8:"kennisduel",KD9:"kennisduel",KD10:"kennisduel",KD11:"kennisduel",KD12:"kennisduel",KD13:"kennisduel",KD14:"kennisduel",KD15:"kennisduel",KD16:"kennisduel"};
+const IMG_VARIANTS={
+  onderhoud:["onderhoud","onderhoud-2","onderhoud-3","onderhoud-4"],
+  toewijzing:["toewijzing","toewijzing-2","toewijzing-3","toewijzing-4"],
+  sociaal:["sociaal","sociaal-2","sociaal-3","sociaal-4"],
+  duurzaam:["duurzaam","duurzaam-2","duurzaam-3","duurzaam-4"],
+  digitaal:["digitaal","digitaal-2","digitaal-3","digitaal-4"],
+  financien:["financien","financien-2","financien-3","financien-4"],
+  kennisduel:["duel-1","duel-2","duel-3","duel-4"],
+  shock:["shock-1","shock-2","shock-3"],
+  zorg:["zorg-1","zorg-2","zorg-3"],
+  veiligheid:["veiligheid-1","veiligheid-2","veiligheid-3"],
+  wooncrisis:["wooncrisis-1","wooncrisis-2","wooncrisis-3"],
+  leefbaarheid:["leefbaarheid-1","leefbaarheid-2","leefbaarheid-3"],
+  nieuwbouw:["nieuwbouw-1","nieuwbouw-2","nieuwbouw-3"],
+  participatie:["participatie-1","participatie-2","participatie-3"],
+  "kans-goed":["kans-goed-1","kans-goed-2","kans-goed-3","kans-goed-4"],
+  "kans-slecht":["kans-slecht-1","kans-slecht-2","kans-slecht-3","kans-slecht-4"]
+};
+const SECTOR_IMGS=["sector-1","sector-2","sector-3"];
+function hashStr(s){let h=0;for(let i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))>>>0;return h;}
+function imgFor(id,cat){
+  const variants=IMG_VARIANTS[cat];
+  if(!variants||!variants.length)return cat;
+  return variants[hashStr(String(id))%variants.length];
+}
+function sectorImgFor(id){return SECTOR_IMGS[hashStr(String(id))%SECTOR_IMGS.length];}
+
 const TASK_NL=[
  {id:"A",t:"De schimmelmelding",x:"Een huurder meldt via het portaal schimmel in de slaapkamer. In het gezin woont een baby van vier maanden. Er zit een foto bij, met de boodschap: dit duurt nu al drie weken. De huurder is ongerust en voelt zich niet gehoord.",o:[{l:"A · Direct herstellen, gezin ontzien",e:"Snel en grondig, ook al is het duur.",coins:-3,fx:{sat:2,comp:1}},{l:"B · Regulier inplannen",e:"Via de vaste aannemer, geen voorrang.",coins:-1,fx:{sat:1}},{l:"C · Laten ventileren, zelf oplossen",e:"Kosten drukken, bal bij de huurder.",coins:0,fx:{sat:-2,comp:-1}}],sp:"Klanttevredenheid versus kostenbeheersing. Bij een baby komen reputatie en zorgplicht erbij — één bericht op sociale media en het is een mediakwestie."},
  {id:"B",t:"De zzp'er",x:"Een zelfstandige met sterk wisselend inkomen reageert op een sociale huurwoning. Vorig jaar verdiende hij te veel voor de inkomensgrens, dit jaar zit hij er ruim onder. Hij staat al zeven jaar ingeschreven en hoopt eindelijk aan de beurt te zijn.",o:[{l:"A · Toewijzen op actueel inkomen",e:"Menselijke maat, met een stevig dossier.",coins:-1,fx:{sat:2,comp:-1}},{l:"B · Extra toetsen, dan beslissen",e:"Zorgvuldig, kost tijd.",coins:-1,fx:{comp:2,sat:-1}},{l:"C · Afwijzen op de regels",e:"Veilig, maar teleurstellend.",coins:0,fx:{comp:1,sat:-2}}],sp:"Snelheid versus compliance, en wettelijke kaders versus de menselijke maat. Zeven jaar wachten voelt onrechtvaardig, maar de accountant toetst op de regels, niet op het gevoel."},
@@ -1069,8 +1097,9 @@ function render(){
 
   if(state.lastSectorBanner){
     $("sectorBanner").classList.remove("hide");
-    $("sectorBanner").innerHTML=T[state.lang].sectorBanner(esc(state.lastSectorBanner.t),esc(state.lastSectorBanner.x))+
-      '<div style="margin-top:8px"><button class="btn ghost sm" id="dismissSector">OK</button></div>';
+    const sImg=sectorImgFor(state.lastSectorBanner.t);
+    $("sectorBanner").innerHTML=`<div class="sectorimg" style="background-image:url('assets/${sImg}.jpg')"></div>`+T[state.lang].sectorBanner(esc(state.lastSectorBanner.t),esc(state.lastSectorBanner.x))+
+      '<div style="margin-top:8px;clear:both"><button class="btn ghost sm" id="dismissSector">OK</button></div>';
     const db=$("dismissSector");if(db)db.onclick=()=>{state.lastSectorBanner=null;render();saveLocal();NET.publish();};
   }else{
     $("sectorBanner").classList.add("hide");
@@ -1166,7 +1195,8 @@ function renderStage(){
     if(type==="chance"){
       const bad=card.good===false;
       const duel=state.turn.duelTarget;
-      html=`<div class="cardface"><div class="badge" style="background:${bad?'#fde2dc':'#e5f7ee'};color:${bad?'#a4321f':'#137a44'}">${bad?L.chanceAutoBad:L.chanceAutoGood}</div>
+      const cimg=imgFor(card.id,bad?"kans-slecht":"kans-goed");
+      html=`<div class="cardface"><div class="illo" style="background-image:url('assets/${cimg}.jpg')"></div><div class="badge" style="background:${bad?'#fde2dc':'#e5f7ee'};color:${bad?'#a4321f':'#137a44'}">${bad?L.chanceAutoBad:L.chanceAutoGood}</div>
         ${card.duel?`<div class="badge" style="background:#EAF0FF;color:#1F5AFF;margin-inline-start:6px">${L.duelBadge}</div>`:""}
         <h3>${esc(card.t)}</h3><p>${esc(card.x)}</p>
         <p class="hint">${card.coins>0?"+":""}${card.coins} ${L.coinsLbl.toLowerCase()}</p>
@@ -1175,7 +1205,8 @@ function renderStage(){
         <button class="btn soft" id="ackCardBtn">${L.confirmChoice}</button></div>`;
     }else if(type==="kennisduel"){
       const rival=state.turn.kdRival;
-      html=`<div class="cardface kd"><div class="kd-illo"><span>🧠</span></div><div class="badge kdbadge">${L.drawKennisduel}</div>
+      const kimg=imgFor(card.id,"kennisduel");
+      html=`<div class="cardface kd"><div class="illo kdimg" style="background-image:url('assets/${kimg}.jpg')"></div><div class="badge kdbadge">${L.drawKennisduel}</div>
         <h3>${esc(card.t)}</h3><p>${esc(card.x)}</p>
         ${rival?`<p class="hint" style="color:#5b3aa8">${L.kdVersus(esc(rival.name))}</p>`:""}
         <p class="hint" style="margin-bottom:6px">${L.chooseOpt}</p>
@@ -1184,7 +1215,8 @@ function renderStage(){
         `</div></div>`;
     }else{
       const cat=CAT[card.id];
-      html=`<div class="cardface">${cat?`<div class="illo" style="background-image:url('assets/${cat}.jpg')"></div>`:""}<div class="badge">${type==="shock"?L.drawShock:L.drawTask}</div>
+      const timg=cat?imgFor(card.id,cat):null;
+      html=`<div class="cardface">${timg?`<div class="illo" style="background-image:url('assets/${timg}.jpg')"></div>`:""}<div class="badge">${type==="shock"?L.drawShock:L.drawTask}</div>
         <h3>${esc(card.t)}</h3><p>${esc(card.x)}</p>
         <p class="hint" style="margin-bottom:6px">${L.chooseOpt}</p>
         <div class="opts">`+
@@ -1489,8 +1521,13 @@ function initPlayerView(){
         }
       }else if(turn.phase==="card"&&turn.card){
         const isKD=turn.cardType==="kennisduel";
+        const isChance=turn.cardType==="chance";
         const cat=CAT[turn.card.id];
-        main+=`<div class="cardface${isKD?" kd":""}" style="margin-top:10px">${isKD?`<div class="kd-illo"><span>🧠</span></div>`:(cat?`<div class="illo" style="background-image:url('assets/${cat}.jpg')"></div>`:"")}<div class="badge${isKD?" kdbadge":""}">${isKD?L.drawKennisduel:(turn.cardType==="shock"?L.drawShock:(turn.cardType==="chance"?L.drawChance:L.drawTask))}</div>${turn.card.duel?`<div class="badge" style="background:#EAF0FF;color:#1F5AFF;margin-inline-start:6px">${L.duelBadge}</div>`:""}<h3>${esc(turn.card.t)}</h3><p>${esc(turn.card.x)}</p>${isKD&&turn.kdRival?`<p class="hint" style="color:#5b3aa8">${L.kdVersus(esc(turn.kdRival.name))}</p>`:""}`;
+        let pcardImg="";
+        if(isKD)pcardImg=`<div class="illo kdimg" style="background-image:url('assets/${imgFor(turn.card.id,"kennisduel")}.jpg')"></div>`;
+        else if(isChance)pcardImg=`<div class="illo" style="background-image:url('assets/${imgFor(turn.card.id,turn.card.good===false?"kans-slecht":"kans-goed")}.jpg')"></div>`;
+        else if(cat)pcardImg=`<div class="illo" style="background-image:url('assets/${imgFor(turn.card.id,cat)}.jpg')"></div>`;
+        main+=`<div class="cardface${isKD?" kd":""}" style="margin-top:10px">${pcardImg}<div class="badge${isKD?" kdbadge":""}">${isKD?L.drawKennisduel:(turn.cardType==="shock"?L.drawShock:(isChance?L.drawChance:L.drawTask))}</div>${turn.card.duel?`<div class="badge" style="background:#EAF0FF;color:#1F5AFF;margin-inline-start:6px">${L.duelBadge}</div>`:""}<h3>${esc(turn.card.t)}</h3><p>${esc(turn.card.x)}</p>${isKD&&turn.kdRival?`<p class="hint" style="color:#5b3aa8">${L.kdVersus(esc(turn.kdRival.name))}</p>`:""}`;
         if(turn.cardType==="chance"){
           main+=`<p class="hint">${turn.card.coins>0?"+":""}${turn.card.coins} ${L.coinsLbl.toLowerCase()}</p>`;
           if(turn.duelTarget){
