@@ -1323,9 +1323,10 @@ function renderScores(){
 /* ============ legend & help ============ */
 function renderLegendAndHelp(){
   const L=T[state.lang];
-  $("setupLegend").innerHTML=`<div class="legend" style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:14px;font-size:13px;color:var(--muted)">
+  const legendHtml=`<div class="legend" style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:14px;font-size:13px;color:var(--muted)">
     <span>🏁 ${L.legStart}</span><span>🏠 ${L.legTask}</span><span>🍀 ${L.legChance}</span><span>🧠 ${L.legKennisduel}</span><span>💥 ${L.legShock}</span></div>`;
-  $("helpPanel").innerHTML=`<h3 style="margin-top:0">${L.helpTitle}</h3>${L.helpBody}`;
+  $("setupLegend").innerHTML=legendHtml;
+  $("helpPanel").innerHTML=`<h3 style="margin-top:0">${L.helpTitle}</h3>${L.helpBody}<h4 style="margin-bottom:8px">${L.legend}</h4>${legendHtml}`;
 }
 
 /* ============ NET (Firebase sync) ============ */
