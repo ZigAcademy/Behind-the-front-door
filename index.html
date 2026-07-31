@@ -183,6 +183,7 @@
     <div class="roundbar" id="roundBar"></div>
     <div class="hint" id="roundHint"></div>
     <div class="banner hide" id="sectorBanner" style="border-color:#FF9000;background:#fff6ec"></div>
+    <div class="banner hide" id="leadBanner" style="border-color:#FF9000;background:#fff6ec;text-align:center;font-size:16px"></div>
     <div class="panel hide" id="helpPanel" style="margin-bottom:14px"></div>
 
     <section id="view-setup" class="panel hide">
@@ -353,7 +354,15 @@ const CHANCE_NL=[
  {id:"K14",good:false,t:"Naheffing",x:"Een onverwachte naheffing komt binnen.",coins:-2,fx:{}},
  {id:"K18",good:false,t:"Ziekteverzuim piekt",x:"Griep raast door het team; dossiers stapelen zich op.",coins:0,fx:{comp:-1}},
  {id:"K19",good:false,t:"Klacht bij de Huurcommissie",x:"Een huurder stapt naar de Huurcommissie over servicekosten.",coins:-1,fx:{comp:-1}},
- {id:"K20",good:false,t:"Sleutel kwijt",x:"Een sleutelkluisje wordt opengebroken; sloten moeten vervangen worden.",coins:-1,fx:{sat:-1}}
+ {id:"K20",good:false,t:"Sleutel kwijt",x:"Een sleutelkluisje wordt opengebroken; sloten moeten vervangen worden.",coins:-1,fx:{sat:-1}},
+ {id:"D1",good:true,duel:true,t:"Huurder stapt over",x:"Een ontevreden huurder van de koploper stapt over naar jouw corporatie.",coins:1,fx:{},targetCoins:-1,targetFx:{sat:-1}},
+ {id:"D2",good:true,duel:true,t:"Talent kiest voor jou",x:"Een veelbelovende projectleider kiest voor jullie in plaats van voor de koploper.",coins:1,fx:{comp:1},targetCoins:0,targetFx:{comp:-1}},
+ {id:"D3",good:true,duel:true,t:"Innovatieprijs gewonnen",x:"Jullie winnen een regionale prijs, ten koste van het imago van de koploper.",coins:0,fx:{sat:2},targetCoins:0,targetFx:{sat:-1}},
+ {id:"D4",good:true,duel:true,t:"Subsidie binnengehaald",x:"Jullie halen een schaarse subsidie binnen die de koploper ook wilde.",coins:2,fx:{},targetCoins:-1,targetFx:{}},
+ {id:"D5",good:false,duel:true,t:"Concurrent haalt jouw huurder over",x:"Een andere corporatie overtuigt een van jullie huurders om over te stappen.",coins:-1,fx:{sat:-1},targetCoins:1,targetFx:{}},
+ {id:"D6",good:false,duel:true,t:"Ongunstige vergelijking in de media",x:"Een artikel vergelijkt jullie ongunstig met de koploper.",coins:0,fx:{sat:-1},targetCoins:0,targetFx:{sat:1}},
+ {id:"D7",good:true,duel:true,t:"Convenant als eerste getekend",x:"Jullie tekenen als eerste een gunstig convenant met de gemeente.",coins:1,fx:{comp:1},targetCoins:-1,targetFx:{}},
+ {id:"D8",good:false,duel:true,t:"Personeel vertrekt naar de koploper",x:"Een ervaren medewerker vertrekt naar de koploper.",coins:-1,fx:{},targetCoins:1,targetFx:{comp:1}}
 ];
 const CHANCE_EN=[
  {id:"K1",good:true,t:"Quick re-let",x:"A home is re-let remarkably fast.",coins:2,fx:{}},
@@ -375,7 +384,15 @@ const CHANCE_EN=[
  {id:"K14",good:false,t:"Extra tax bill",x:"An unexpected levy arrives.",coins:-2,fx:{}},
  {id:"K18",good:false,t:"Sick leave spikes",x:"Flu sweeps the team; case files pile up.",coins:0,fx:{comp:-1}},
  {id:"K19",good:false,t:"Rent tribunal complaint",x:"A tenant takes you to the rent tribunal over service costs.",coins:-1,fx:{comp:-1}},
- {id:"K20",good:false,t:"Lost key box",x:"A key safe is broken into; locks must be replaced.",coins:-1,fx:{sat:-1}}
+ {id:"K20",good:false,t:"Lost key box",x:"A key safe is broken into; locks must be replaced.",coins:-1,fx:{sat:-1}},
+ {id:"D1",good:true,duel:true,t:"Tenant switches over",x:"A dissatisfied tenant of the front-runner switches to your corporation.",coins:1,fx:{},targetCoins:-1,targetFx:{sat:-1}},
+ {id:"D2",good:true,duel:true,t:"Talent picks you",x:"A promising project lead chooses your organisation over the front-runner.",coins:1,fx:{comp:1},targetCoins:0,targetFx:{comp:-1}},
+ {id:"D3",good:true,duel:true,t:"Innovation award won",x:"You win a regional award, at the expense of the front-runner's image.",coins:0,fx:{sat:2},targetCoins:0,targetFx:{sat:-1}},
+ {id:"D4",good:true,duel:true,t:"Subsidy secured",x:"You secure a scarce subsidy the front-runner also wanted.",coins:2,fx:{},targetCoins:-1,targetFx:{}},
+ {id:"D5",good:false,duel:true,t:"Rival wins over your tenant",x:"Another corporation convinces one of your tenants to switch.",coins:-1,fx:{sat:-1},targetCoins:1,targetFx:{}},
+ {id:"D6",good:false,duel:true,t:"Unfavourable media comparison",x:"An article compares you unfavourably with the front-runner.",coins:0,fx:{sat:-1},targetCoins:0,targetFx:{sat:1}},
+ {id:"D7",good:true,duel:true,t:"Covenant signed first",x:"You're first to sign a favourable covenant with the municipality.",coins:1,fx:{comp:1},targetCoins:-1,targetFx:{}},
+ {id:"D8",good:false,duel:true,t:"Staff leaves for the front-runner",x:"An experienced staff member leaves for the front-runner.",coins:-1,fx:{},targetCoins:1,targetFx:{comp:1}}
 ];
 const SECTOR_NL=[
  {id:"SE1",t:"Rentestijging",x:"De marktrente stijgt; lenen wordt sectorbreed duurder.",coins:-1,fx:{}},
@@ -428,6 +445,8 @@ const T={
   choiceSent:"✓ Keuze verzonden — wordt verwerkt op het hoofdscherm…",waitForYourTeam:"Wacht tot iemand in jouw team een keuze maakt…",
   passedStart:"🏁 Rondje voltooid! +5 munten huurinkomsten.",collectedStart:"🏁 Aangekomen op Start! +5 munten huurinkomsten.",
   chanceAutoGood:"Meevaller!",chanceAutoBad:"Tegenvaller.",
+  duelBadge:"⚔️ Concurrentie-kaart",duelAffects:(n)=>`Dit treft ook: <b>${n}</b>`,duelHitBy:(n)=>`🎯 Geraakt door ${n}`,
+  newLeader:(n)=>`🔥 ${n} neemt de leiding!`,dismiss:"OK",
   scoresH:"Eindstand",scoresP:"Bekijk de resultaten en bespreek de belangrijkste keuzes na.",againBtn:"Nieuw spel",
   sectorBanner:(t,x)=>`<b>🌐 Sectorgebeurtenis — ${t}</b><br>${x}`,sectorBtnTip:"Los een gebeurtenis los die alle teams raakt",
   legend:"Legenda vakjes",legStart:"Start/Finish — inkomsten bij passeren",legTask:"Opdracht — kies uit 3 opties",legChance:"Kans — automatisch effect",legShock:"Shock — grote onverwachte gebeurtenis",
@@ -452,6 +471,8 @@ const T={
   choiceSent:"✓ Choice sent — being processed on the main screen…",waitForYourTeam:"Waiting for someone on your team to choose…",
   passedStart:"🏁 Lap complete! +5 coins in rent income.",collectedStart:"🏁 Arrived at Start! +5 coins in rent income.",
   chanceAutoGood:"Lucky break!",chanceAutoBad:"Setback.",
+  duelBadge:"⚔️ Rivalry card",duelAffects:(n)=>`This also affects: <b>${n}</b>`,duelHitBy:(n)=>`🎯 Hit by ${n}`,
+  newLeader:(n)=>`🔥 ${n} takes the lead!`,dismiss:"OK",
   scoresH:"Final standings",scoresP:"Review the results and debrief the key choices.",againBtn:"New game",
   sectorBanner:(t,x)=>`<b>🌐 Sector event — ${t}</b><br>${x}`,sectorBtnTip:"Trigger an event that affects all teams",
   legend:"Tile legend",legStart:"Start/Finish — income when passing",legTask:"Task — choose from 3 options",legChance:"Chance — automatic effect",legShock:"Shock — major unforeseen event",
@@ -496,6 +517,7 @@ function freshState(){
     activeTeamIdx:0,
     turn:{phase:"idle",dice:null,walkTo:null,cardType:null,card:null,pendingCard:null,chosenIdx:null,lapGain:0,token:null},
     usedSectorIds:[],lastSectorBanner:null,
+    lastLeaderId:null,leadChangeBanner:null,
     soundOn:true,fxOn:true,
     players:{},
     createdAt:Date.now()
@@ -523,8 +545,33 @@ function startGame(){
   _lastPawnPos={};
   state.turn={phase:"idle",dice:null,walkTo:null,cardType:null,card:null,pendingCard:null,chosenIdx:null,lapGain:0,token:uid()};
   state.appStage="play";
+  state.lastLeaderId=state.teams[0]?state.teams[0].id:null;
+  state.leadChangeBanner=null;
   NET.clearAction();
   render();saveLocal();NET.publish();
+}
+
+/* Finds the team that would be affected by a "duel" chance card: the team
+   currently in the lead among all OTHER teams (i.e. your biggest rival - the
+   current overall leader if that's not you, or your closest competitor if it is). */
+function resolveDuelTarget(drawingTeam){
+  const others=state.teams.filter(t=>t.id!==drawingTeam.id);
+  if(!others.length)return null;
+  let target=others[0];
+  others.forEach(t=>{if(t.coins>target.coins)target=t;});
+  return target;
+}
+
+/* Detects when the #1 ranked team changes (by coins) and surfaces a transient
+   celebratory banner - purely presentational, reinforces the competitive feel. */
+function checkLeaderChange(){
+  if(!state.teams.length)return;
+  let leader=state.teams[0];
+  state.teams.forEach(t=>{if(t.coins>leader.coins)leader=t;});
+  if(state.lastLeaderId!=null&&state.lastLeaderId!==leader.id){
+    state.leadChangeBanner={teamId:leader.id,teamName:leader.name,color:leader.color,at:Date.now()};
+  }
+  state.lastLeaderId=leader.id;
 }
 
 function rollDice(){
@@ -590,6 +637,15 @@ function drawCard(){
   if(type==="chance"){
     applyCardEffect(team,card.fx,card.coins);
     team.history.push({turn:team.turnsTaken+1,type:"chance",id:card.id,title:card.t,coins:card.coins});
+    state.turn.duelTarget=null;
+    if(card.duel){
+      const target=resolveDuelTarget(team);
+      if(target){
+        applyCardEffect(target,card.targetFx||{},card.targetCoins||0);
+        target.history.push({turn:"🎯",type:"duel-target",id:card.id,title:card.t,sourceTeam:team.name,coins:card.targetCoins||0});
+        state.turn.duelTarget={id:target.id,name:target.name,color:target.color,coins:card.targetCoins||0};
+      }
+    }
   }
   state.turn.phase="card";
   NET.clearAction();
@@ -615,6 +671,7 @@ function drawChanceFor(team){
 function applyCardEffect(team,fx,coins){
   team.coins=Math.max(0,team.coins+(coins||0));
   if(fx)Object.keys(fx).forEach(k=>{team.met[k]=(team.met[k]||0)+fx[k];});
+  checkLeaderChange();
 }
 
 function resolveChoice(optIdx){
@@ -715,6 +772,16 @@ function render(){
   }else{
     $("sectorBanner").classList.add("hide");
   }
+
+  if(state.leadChangeBanner){
+    $("leadBanner").classList.remove("hide");
+    $("leadBanner").style.background=state.leadChangeBanner.color?`linear-gradient(135deg, ${state.leadChangeBanner.color}22, #fff6ec)`:"#fff6ec";
+    $("leadBanner").innerHTML=`<b>${T[state.lang].newLeader(esc(state.leadChangeBanner.teamName))}</b>`+
+      `<div style="margin-top:6px"><button class="btn ghost sm" id="dismissLead">${T[state.lang].dismiss}</button></div>`;
+    const dl=$("dismissLead");if(dl)dl.onclick=()=>{state.leadChangeBanner=null;render();saveLocal();NET.publish();};
+  }else{
+    $("leadBanner").classList.add("hide");
+  }
 }
 
 function renderRoundBar(){
@@ -795,9 +862,12 @@ function renderStage(){
     const type=state.turn.cardType,card=state.turn.card;
     if(type==="chance"){
       const bad=card.good===false;
+      const duel=state.turn.duelTarget;
       html=`<div class="cardface"><div class="badge" style="background:${bad?'#fde2dc':'#e5f7ee'};color:${bad?'#a4321f':'#137a44'}">${bad?L.chanceAutoBad:L.chanceAutoGood}</div>
+        ${card.duel?`<div class="badge" style="background:#EAF0FF;color:#1F5AFF;margin-inline-start:6px">${L.duelBadge}</div>`:""}
         <h3>${esc(card.t)}</h3><p>${esc(card.x)}</p>
         <p class="hint">${card.coins>0?"+":""}${card.coins} ${L.coinsLbl.toLowerCase()}</p>
+        ${duel?`<p class="hint" style="color:#a4321f">${L.duelAffects(esc(duel.name))} (${duel.coins>0?"+":""}${duel.coins} ${L.coinsLbl.toLowerCase()})</p>`:""}
         <p class="hint" style="margin-bottom:4px">${L.ackChanceFallback}</p>
         <button class="btn soft" id="ackCardBtn">${L.confirmChoice}</button></div>`;
     }else{
@@ -876,7 +946,11 @@ function renderScores(){
     <span class="rs">${t.coins}</span></div>`).join("");
   html+=`<div class="debrief">`+state.teams.map(t=>`
     <div class="dbteam"><div class="dbh">${esc(t.name)}</div>`+
-    t.history.map(h=>`<div class="dbrow"><div class="dbttl"><span class="dbr">${h.turn}</span>${esc(h.title)}</div>${h.option?`<div class="dbopt">${esc(h.option)}</div>`:""}<div class="dbeff">${h.coins>0?"+":""}${h.coins} ${L.coinsLbl.toLowerCase()}</div></div>`).join("")
+    t.history.map(h=>{
+      const isDuelHit=h.type==="duel-target";
+      const titleLine=isDuelHit?`${esc(h.title)} — <span style="color:#a4321f">${L.duelHitBy(esc(h.sourceTeam))}</span>`:esc(h.title);
+      return `<div class="dbrow"><div class="dbttl"><span class="dbr" style="${isDuelHit?'background:#E4572E':''}">${h.turn}</span>${titleLine}</div>${h.option?`<div class="dbopt">${esc(h.option)}</div>`:""}<div class="dbeff">${h.coins>0?"+":""}${h.coins} ${L.coinsLbl.toLowerCase()}</div></div>`;
+    }).join("")
     +`</div>`).join("")+`</div>`;
   $("scoreWrap").innerHTML=html;
 }
@@ -1090,9 +1164,12 @@ function initPlayerView(){
         }
       }else if(turn.phase==="card"&&turn.card){
         const cat=CAT[turn.card.id];
-        main+=`<div class="cardface" style="margin-top:10px">${cat?`<div class="illo" style="background-image:url('assets/${cat}.jpg')"></div>`:""}<div class="badge">${turn.cardType==="shock"?L.drawShock:(turn.cardType==="chance"?L.drawChance:L.drawTask)}</div><h3>${esc(turn.card.t)}</h3><p>${esc(turn.card.x)}</p>`;
+        main+=`<div class="cardface" style="margin-top:10px">${cat?`<div class="illo" style="background-image:url('assets/${cat}.jpg')"></div>`:""}<div class="badge">${turn.cardType==="shock"?L.drawShock:(turn.cardType==="chance"?L.drawChance:L.drawTask)}</div>${turn.card.duel?`<div class="badge" style="background:#EAF0FF;color:#1F5AFF;margin-inline-start:6px">${L.duelBadge}</div>`:""}<h3>${esc(turn.card.t)}</h3><p>${esc(turn.card.x)}</p>`;
         if(turn.cardType==="chance"){
           main+=`<p class="hint">${turn.card.coins>0?"+":""}${turn.card.coins} ${L.coinsLbl.toLowerCase()}</p>`;
+          if(turn.duelTarget){
+            main+=`<p class="hint" style="color:#a4321f">${L.duelAffects(esc(turn.duelTarget.name))} (${turn.duelTarget.coins>0?"+":""}${turn.duelTarget.coins} ${L.coinsLbl.toLowerCase()})</p>`;
+          }
           if(mine){
             const sent=wasSent(turn,"ackChance");
             main+=`<button class="btn warn" id="playerAckBtn" ${sent?"disabled":""}>${sent?L.choiceSent:L.confirmChoice}</button>`;
