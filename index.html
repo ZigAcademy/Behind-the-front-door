@@ -420,6 +420,9 @@ const T={
   startGame:"Spel starten →",boardH:"Speelbord",standH:"Stand",
   rollBtn:"🎲 Gooi de dobbelsteen",yourTurnBanner:(n)=>`${n} is aan zet`,
   walking:"Pion loopt naar het vakje…",landed:(tile)=>`Geland op vakje ${tile}`,
+  waitRoll:(n)=>`Wacht tot ${n} zelf de dobbelsteen gooit op hun eigen scherm…`,rollFallback:"Of gooi hier als host (back-up):",
+  drawCardBtn:"🎴 Trek een kaart",waitDrawCard:(n)=>`${n} staat op dit vakje — wacht tot zij zelf een kaart trekken…`,drawCardFallback:"Of trek hier als host (back-up):",
+  ackChanceFallback:"Of bevestig hier als host (back-up):",nextTurnFallback:"Of ga hier verder als host (back-up):",
   drawTask:"Trek een opdrachtkaart",drawChance:"Trek een kanskaart",drawShock:"⚠️ Onvoorziene gebeurtenis!",
   chooseOpt:"Kies een aanpak:",confirmChoice:"Bevestigen",continueBtn:"Volgende beurt →",
   choiceSent:"✓ Keuze verzonden — wordt verwerkt op het hoofdscherm…",waitForYourTeam:"Wacht tot iemand in jouw team een keuze maakt…",
@@ -441,6 +444,9 @@ const T={
   startGame:"Start game →",boardH:"Game board",standH:"Standings",
   rollBtn:"🎲 Roll the dice",yourTurnBanner:(n)=>`${n} is up`,
   walking:"Pawn is walking to the tile…",landed:(tile)=>`Landed on tile ${tile}`,
+  waitRoll:(n)=>`Waiting for ${n} to roll the dice on their own screen…`,rollFallback:"Or roll here as host (backup):",
+  drawCardBtn:"🎴 Draw a card",waitDrawCard:(n)=>`${n} is on this tile — waiting for them to draw a card…`,drawCardFallback:"Or draw here as host (backup):",
+  ackChanceFallback:"Or confirm here as host (backup):",nextTurnFallback:"Or continue here as host (backup):",
   drawTask:"Draw a task card",drawChance:"Draw a chance card",drawShock:"⚠️ Unforeseen event!",
   chooseOpt:"Choose an approach:",confirmChoice:"Confirm",continueBtn:"Next turn →",
   choiceSent:"✓ Choice sent — being processed on the main screen…",waitForYourTeam:"Waiting for someone on your team to choose…",
@@ -488,7 +494,7 @@ function freshState(){
     teams:[0,1].map(i=>freshTeam(i)),
     durationMode:"medium",customTurns:8,turnsPerTeam:8,
     activeTeamIdx:0,
-    turn:{phase:"idle",dice:null,walkTo:null,cardType:null,card:null,chosenIdx:null,lapGain:0,token:null},
+    turn:{phase:"idle",dice:null,walkTo:null,cardType:null,card:null,pendingCard:null,chosenIdx:null,lapGain:0,token:null},
     usedSectorIds:[],lastSectorBanner:null,
     soundOn:true,fxOn:true,
     players:{},
@@ -502,14 +508,22 @@ function loadLocal(){try{const r=localStorage.getItem("btfd_v2_state");if(r)retu
 function activeTeam(){return state.teams[state.activeTeamIdx];}
 function tileTypeAt(pos){return TILE_TYPES[pos%RING_LEN];}
 
-/* ============ turn engine ============ */
+/* ============ turn engine ============
+   Each turn keeps ONE token (state.turn.token), set once at the start of the
+   turn (nextTurn/startGame) and unchanged through idle->rolling->walking->
+   landed->card->resolved. Player-submitted actions (roll/drawCard/choice/
+   ackChance/nextTurn) must match this token AND the active team AND the
+   expected phase before being applied - this keeps a stale/late action from
+   a previous turn from ever firing, while letting either the active team's
+   own device OR the facilitator's screen (fallback) drive every step. */
 function startGame(){
   state.turnsPerTeam=computeTurnsPerTeam();
   state.teams.forEach(tm=>{tm.coins=10;tm.met={sat:0,fin:0,comp:0,dur:0};tm.boardPos=0;tm.turnsTaken=0;tm.history=[];tm.seenTask=[];tm.seenChance=[];tm.seenShock=false;tm.laps=0;});
   state.activeTeamIdx=0;
   _lastPawnPos={};
-  state.turn={phase:"idle",dice:null,walkTo:null,cardType:null,card:null,chosenIdx:null,lapGain:0,token:null};
+  state.turn={phase:"idle",dice:null,walkTo:null,cardType:null,card:null,pendingCard:null,chosenIdx:null,lapGain:0,token:uid()};
   state.appStage="play";
+  NET.clearAction();
   render();saveLocal();NET.publish();
 }
 
@@ -519,7 +533,10 @@ function rollDice(){
   const dice=1+rnd(6);
   const from=team.boardPos;
   const to=from+dice;
-  state.turn={phase:"rolling",dice,walkTo:to,cardType:null,card:null,chosenIdx:null,lapGain:0,token:null};
+  state.turn.phase="rolling";
+  state.turn.dice=dice;
+  state.turn.walkTo=to;
+  NET.clearAction();
   render();saveLocal();NET.publish();
   setTimeout(()=>{state.turn.phase="walking";stepWalk(from,to);},650);
 }
@@ -539,41 +556,43 @@ function stepWalk(from,to){
   setTimeout(()=>stepWalk(from,to),380);
 }
 
+/* Landing determines (and pre-selects) the card, but does NOT reveal it yet -
+   the active team draws it themselves via drawCard() for the reveal moment. */
 function landingAction(){
   const team=activeTeam();
   const pos=team.boardPos%RING_LEN;
   let type=tileTypeAt(pos);
   if(type==="shock"&&team.seenShock)type="task";
   state.turn.cardType=type;
+  state.turn.card=null;
+  state.turn.pendingCard=null;
   if(type==="start"){
     state.turn.phase="resolved";
-    state.turn.card=null;
     render();saveLocal();NET.publish();
     return;
   }
+  if(type==="chance")state.turn.pendingCard=drawChanceFor(team);
+  else if(type==="shock")state.turn.pendingCard=contentFor().shock.S;
+  else state.turn.pendingCard=drawTaskFor(team);
+  state.turn.phase="landed";
+  render();saveLocal();NET.publish();
+}
+
+function drawCard(){
+  if(state.turn.phase!=="landed")return;
+  const team=activeTeam();
+  const type=state.turn.cardType;
+  const card=state.turn.pendingCard;
+  if(!card)return;
+  state.turn.card=card;
+  state.turn.pendingCard=null;
+  if(type==="shock")team.seenShock=true;
   if(type==="chance"){
-    const card=drawChanceFor(team);
-    state.turn.card=card;
-    state.turn.token=uid();
     applyCardEffect(team,card.fx,card.coins);
     team.history.push({turn:team.turnsTaken+1,type:"chance",id:card.id,title:card.t,coins:card.coins});
-    state.turn.phase="card";
-    render();saveLocal();NET.publish();
-    return;
   }
-  if(type==="shock"){
-    const card=contentFor().shock.S;
-    team.seenShock=true;
-    state.turn.card=card;
-    state.turn.token=uid();
-    state.turn.phase="card";
-    render();saveLocal();NET.publish();
-    return;
-  }
-  const card=drawTaskFor(team);
-  state.turn.card=card;
-  state.turn.token=uid();
   state.turn.phase="card";
+  NET.clearAction();
   render();saveLocal();NET.publish();
 }
 
@@ -616,14 +635,16 @@ function resolveChoice(optIdx){
 function ackAutoCard(){
   if(state.turn.phase!=="card")return;
   state.turn.phase="resolved";
+  NET.clearAction();
   render();saveLocal();NET.publish();
 }
 
 function nextTurn(){
+  if(state.turn.phase!=="resolved")return;
   const team=activeTeam();
   team.turnsTaken++;
   NET.clearAction();
-  state.turn={phase:"idle",dice:null,walkTo:null,cardType:null,card:null,chosenIdx:null,lapGain:0,token:null};
+  state.turn={phase:"idle",dice:null,walkTo:null,cardType:null,card:null,pendingCard:null,chosenIdx:null,lapGain:0,token:uid()};
   const allDone=state.teams.every(t=>t.turnsTaken>=state.turnsPerTeam);
   if(allDone){
     state.appStage="scores";
@@ -758,11 +779,18 @@ function renderStage(){
   let html="";
   if(ph==="idle"){
     html=`<div class="yourturn" style="background:${team.color}">${esc(L.yourTurnBanner(team.name))}</div>
-      <div style="text-align:center"><button class="btn warn big" id="rollBtn">${L.rollBtn}</button></div>`;
+      <div style="text-align:center"><p class="hint">${esc(L.waitRoll(team.name))}</p>
+      <p class="hint" style="margin-bottom:4px">${L.rollFallback}</p>
+      <button class="btn soft" id="rollBtn">${L.rollBtn}</button></div>`;
   }else if(ph==="rolling"){
     html=`<div style="text-align:center"><div class="dice rolling">🎲</div><div class="hint">${esc(team.name)}…</div></div>`;
   }else if(ph==="walking"){
     html=`<div style="text-align:center"><div class="dice">${state.turn.dice}</div><div class="hint">${L.walking}</div></div>`;
+  }else if(ph==="landed"){
+    html=`<div style="text-align:center"><div class="ti" style="font-size:40px">${SP_ICON[state.turn.cardType]||""}</div>
+      <p class="hint">${esc(L.waitDrawCard(team.name))}</p>
+      <p class="hint" style="margin-bottom:4px">${L.drawCardFallback}</p>
+      <button class="btn soft" id="drawCardBtn">${L.drawCardBtn}</button></div>`;
   }else if(ph==="card"){
     const type=state.turn.cardType,card=state.turn.card;
     if(type==="chance"){
@@ -770,7 +798,8 @@ function renderStage(){
       html=`<div class="cardface"><div class="badge" style="background:${bad?'#fde2dc':'#e5f7ee'};color:${bad?'#a4321f':'#137a44'}">${bad?L.chanceAutoBad:L.chanceAutoGood}</div>
         <h3>${esc(card.t)}</h3><p>${esc(card.x)}</p>
         <p class="hint">${card.coins>0?"+":""}${card.coins} ${L.coinsLbl.toLowerCase()}</p>
-        <button class="btn warn" id="ackCardBtn">${L.confirmChoice}</button></div>`;
+        <p class="hint" style="margin-bottom:4px">${L.ackChanceFallback}</p>
+        <button class="btn soft" id="ackCardBtn">${L.confirmChoice}</button></div>`;
     }else{
       const cat=CAT[card.id];
       html=`<div class="cardface">${cat?`<div class="illo" style="background-image:url('assets/${cat}.jpg')"></div>`:""}<div class="badge">${type==="shock"?L.drawShock:L.drawTask}</div>
@@ -789,10 +818,12 @@ function renderStage(){
     let detail="";
     if(card&&state.turn.chosenIdx!=null){const o=card.o[state.turn.chosenIdx];detail=`<p class="hint"><b>${esc(o.l)}</b> — ${o.coins>0?"+":""}${o.coins} ${L.coinsLbl.toLowerCase()}</p>`;}
     html=`<div style="text-align:center">${msg?`<p class="hint">${msg}</p>`:""}${detail}
-      <button class="btn warn" id="nextTurnBtn">${L.continueBtn}</button></div>`;
+      <p class="hint" style="margin-bottom:4px">${L.nextTurnFallback}</p>
+      <button class="btn soft" id="nextTurnBtn">${L.continueBtn}</button></div>`;
   }
   el.innerHTML=html;
   const rb=$("rollBtn");if(rb)rb.onclick=()=>rollDice();
+  const dcb=$("drawCardBtn");if(dcb)dcb.onclick=()=>drawCard();
   const ack=$("ackCardBtn");if(ack)ack.onclick=()=>ackAutoCard();
   const nb=$("nextTurnBtn");if(nb)nb.onclick=()=>nextTurn();
   el.querySelectorAll(".optbtn").forEach(b=>b.onclick=()=>resolveChoice(parseInt(b.dataset.idx,10)));
@@ -908,9 +939,9 @@ const NET={
     const id=uid();
     return this.db.ref("rooms/"+room+"/joins/"+id).set({name,team,at:Date.now()}).then(()=>id).catch(()=>id);
   },
-  submitChoice(room,teamId,token,optIdx){
+  submitAction(room,payload){
     if(!this.db||!room)return Promise.resolve();
-    return this.db.ref("rooms/"+room+"/action").set({team:teamId,token,optIdx,at:Date.now()}).catch(()=>{});
+    return this.db.ref("rooms/"+room+"/action").set(Object.assign({at:Date.now()},payload)).catch(()=>{});
   }
 };
 
@@ -938,16 +969,29 @@ function wireFacilitator(){
   $("againBtn").onclick=()=>$("resetGame").onclick();
 }
 
-/* Applies a player-submitted card choice (received via Firebase) to the live game,
-   guarded by a per-card token so stale/late actions from a previous card are ignored. */
+/* Applies a player-submitted turn action (roll / drawCard / choice / ackChance /
+   nextTurn) received via Firebase to the live game. Every action must match the
+   CURRENT turn's token and the active team, and land in the exact phase it
+   belongs to - this lets the active team's own device drive the turn (rolling,
+   drawing, choosing, advancing) while the facilitator's screen still works as
+   a fallback for any of these steps. Anything that doesn't match is discarded. */
 function handleIncomingAction(action){
-  if(!state||!action)return;
+  if(!state||!action||state.appStage!=="play")return;
   const team=activeTeam();
-  const valid=state.appStage==="play"&&state.turn.phase==="card"&&state.turn.cardType!=="chance"&&
-    state.turn.token&&state.turn.token===action.token&&String(team.id)===String(action.team)&&
-    state.turn.card&&state.turn.card.o&&action.optIdx!=null&&state.turn.card.o[action.optIdx];
-  if(valid){
+  const sameTeam=String(team.id)===String(action.team);
+  const sameToken=state.turn.token&&state.turn.token===action.token;
+  if(!sameTeam||!sameToken){NET.clearAction();return;}
+  if(action.type==="roll"&&state.turn.phase==="idle"){
+    rollDice();
+  }else if(action.type==="drawCard"&&state.turn.phase==="landed"){
+    drawCard();
+  }else if(action.type==="choice"&&state.turn.phase==="card"&&state.turn.cardType!=="chance"&&
+      state.turn.card&&state.turn.card.o&&action.optIdx!=null&&state.turn.card.o[action.optIdx]){
     resolveChoice(action.optIdx);
+  }else if(action.type==="ackChance"&&state.turn.phase==="card"&&state.turn.cardType==="chance"){
+    ackAutoCard();
+  }else if(action.type==="nextTurn"&&state.turn.phase==="resolved"){
+    nextTurn();
   }else{
     NET.clearAction();
   }
@@ -963,7 +1007,9 @@ function initPlayerView(){
   $("jfH").textContent=T.nl.jfH;$("jfSub").textContent=T.nl.jfSub;$("jfRoomL").textContent=T.nl.jfRoomL;
   $("jfNameL").textContent=T.nl.jfNameL;$("jfTeamL").textContent=T.nl.jfTeamL;$("joinBtn").textContent=T.nl.joinBtn;
   $("joinTips").innerHTML=`<li>${T.nl.jfSub}</li>`;
-  let joinedRoom=null,playerLang="nl",knownTeams=null,lastSubmittedToken=null;
+  let joinedRoom=null,playerLang="nl",knownTeams=null,lastSubmittedKey=null;
+  function markSent(turn,actionType){lastSubmittedKey=turn.token+":"+actionType;}
+  function wasSent(turn,actionType){return lastSubmittedKey===turn.token+":"+actionType;}
   NET.init();
 
   function populateTeamOptions(teams){
@@ -1026,20 +1072,36 @@ function initPlayerView(){
     let main="";
     if(snap.appStage==="play"&&active){
       main+=`<div class="yourturn" style="background:${active.color};font-size:16px">${mine?"🎯 ":""}${esc(L.yourTurnBanner(active.name))}</div>`;
-      if(turn.phase==="rolling"){
+      if(turn.phase==="idle"){
+        if(mine){
+          const sent=wasSent(turn,"roll");
+          main+=`<div style="text-align:center"><button class="btn warn big" id="playerRollBtn" ${sent?"disabled":""}>${sent?L.choiceSent:L.rollBtn}</button></div>`;
+        }
+      }else if(turn.phase==="rolling"){
         main+=`<div style="text-align:center"><div class="dice rolling">🎲</div></div>`;
       }else if(turn.phase==="walking"){
         main+=`<div style="text-align:center"><div class="dice">${turn.dice||"🎲"}</div><p class="hint">${L.walking}</p></div>`;
+      }else if(turn.phase==="landed"){
+        if(mine){
+          const sent=wasSent(turn,"drawCard");
+          main+=`<div style="text-align:center"><div class="ti" style="font-size:40px">${SP_ICON[turn.cardType]||""}</div><button class="btn warn big" id="playerDrawBtn" ${sent?"disabled":""}>${sent?L.choiceSent:L.drawCardBtn}</button></div>`;
+        }else{
+          main+=`<div style="text-align:center"><div class="ti" style="font-size:40px">${SP_ICON[turn.cardType]||""}</div><p class="hint">${L.waitForYourTeam}</p></div>`;
+        }
       }else if(turn.phase==="card"&&turn.card){
         const cat=CAT[turn.card.id];
-        const alreadySent=lastSubmittedToken&&lastSubmittedToken===turn.token;
         main+=`<div class="cardface" style="margin-top:10px">${cat?`<div class="illo" style="background-image:url('assets/${cat}.jpg')"></div>`:""}<div class="badge">${turn.cardType==="shock"?L.drawShock:(turn.cardType==="chance"?L.drawChance:L.drawTask)}</div><h3>${esc(turn.card.t)}</h3><p>${esc(turn.card.x)}</p>`;
         if(turn.cardType==="chance"){
           main+=`<p class="hint">${turn.card.coins>0?"+":""}${turn.card.coins} ${L.coinsLbl.toLowerCase()}</p>`;
+          if(mine){
+            const sent=wasSent(turn,"ackChance");
+            main+=`<button class="btn warn" id="playerAckBtn" ${sent?"disabled":""}>${sent?L.choiceSent:L.confirmChoice}</button>`;
+          }
         }else if(turn.card.o){
           if(mine){
-            main+=`<p class="hint" style="margin-bottom:6px">${alreadySent?L.choiceSent:L.chooseOpt}</p><div class="opts">`+
-              turn.card.o.map((o,idx)=>`<button class="btn soft optbtn playerOpt" data-idx="${idx}"${alreadySent?" disabled":""}>${esc(o.l)}<br><span class="hint">${esc(o.e)}</span></button>`).join("")+
+            const sent=wasSent(turn,"choice");
+            main+=`<p class="hint" style="margin-bottom:6px">${sent?L.choiceSent:L.chooseOpt}</p><div class="opts">`+
+              turn.card.o.map((o,idx)=>`<button class="btn soft optbtn playerOpt" data-idx="${idx}"${sent?" disabled":""}>${esc(o.l)}<br><span class="hint">${esc(o.e)}</span></button>`).join("")+
               `</div>`;
           }else{
             main+=`<p class="hint" style="margin-bottom:6px">${L.waitForYourTeam}</p><div class="opts">`+turn.card.o.map(o=>`<div class="btn soft optbtn" style="opacity:.7">${esc(o.l)}<br><span class="hint">${esc(o.e)}</span></div>`).join("")+`</div>`;
@@ -1055,6 +1117,10 @@ function initPlayerView(){
           detail=`<p class="hint" style="text-align:center;margin-top:10px">${L.passedStart}</p>`;
         }
         main+=detail;
+        if(mine){
+          const sent=wasSent(turn,"nextTurn");
+          main+=`<div style="text-align:center;margin-top:8px"><button class="btn soft" id="playerNextBtn" ${sent?"disabled":""}>${sent?L.choiceSent:L.continueBtn}</button></div>`;
+        }
       }
     }
     if(snap.appStage==="scores"){
@@ -1076,15 +1142,28 @@ function initPlayerView(){
 
     $("joinWaiting").innerHTML=`<div class="pdash-head">${head}</div><div class="pdash-grid"><div class="pdash-main">${main}</div>${side?`<div class="pdash-side">${side}</div>`:""}</div>`;
 
-    if(mine&&turn.phase==="card"&&turn.cardType!=="chance"&&turn.card&&turn.card.o){
+    if(!mine)return;
+    const rollBtn=$("playerRollBtn");
+    if(rollBtn)rollBtn.onclick=()=>{markSent(turn,"roll");NET.submitAction(joinedRoom,{type:"roll",team,token:turn.token});renderPlayerDashboard(snap,team);};
+    const drawBtn=$("playerDrawBtn");
+    if(drawBtn)drawBtn.onclick=()=>{markSent(turn,"drawCard");NET.submitAction(joinedRoom,{type:"drawCard",team,token:turn.token});renderPlayerDashboard(snap,team);};
+    const ackBtn=$("playerAckBtn");
+    if(ackBtn)ackBtn.onclick=()=>{markSent(turn,"ackChance");NET.submitAction(joinedRoom,{type:"ackChance",team,token:turn.token});renderPlayerDashboard(snap,team);};
+    const nextBtn=$("playerNextBtn");
+    if(nextBtn)nextBtn.onclick=()=>{markSent(turn,"nextTurn");NET.submitAction(joinedRoom,{type:"nextTurn",team,token:turn.token});renderPlayerDashboard(snap,team);};
+    if(turn.phase==="card"&&turn.cardType!=="chance"&&turn.card&&turn.card.o){
       $("joinWaiting").querySelectorAll(".playerOpt").forEach(btn=>{
         btn.onclick=()=>{
           const idx=parseInt(btn.dataset.idx,10);
-          lastSubmittedToken=turn.token;
-          NET.submitChoice(joinedRoom,team,turn.token,idx);
+          markSent(turn,"choice");
+          NET.submitAction(joinedRoom,{type:"choice",team,token:turn.token,optIdx:idx});
           renderPlayerDashboard(snap,team);
         };
       });
+    }
+    function findFirst(sel){
+      const list=$("joinWaiting").querySelectorAll(sel);
+      return list&&list.length?list[0]:null;
     }
   }
 }
