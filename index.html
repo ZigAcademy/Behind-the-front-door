@@ -952,6 +952,7 @@ function drawChanceFor(team){
   return contentFor().chance[id];
 }
 function drawKDFor(team){
+  if(!team.seenKD)team.seenKD=[];
   const all=kdIds();
   let avail=all.filter(id=>!team.seenKD.includes(id));
   if(avail.length===0){team.seenKD=[];avail=all.slice();}
