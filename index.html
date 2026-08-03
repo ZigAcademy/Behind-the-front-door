@@ -128,15 +128,23 @@
   @keyframes diceroll{0%{transform:rotate(0) scale(1)}12%{transform:rotate(-28deg) scale(1.18)}26%{transform:rotate(24deg) scale(1.24)}40%{transform:rotate(-20deg) scale(1.16)}55%{transform:rotate(14deg) scale(1.1)}70%{transform:rotate(-9deg) scale(1.05)}85%{transform:rotate(4deg) scale(1.02)}100%{transform:rotate(0) scale(1)}}
   @media (max-width:860px){.pw2{width:32px;height:42px}.dice{width:62px;height:62px;font-size:32px}}
   .playgrid{display:grid;grid-template-columns:1fr;gap:18px;align-items:start}
-  #standCompact{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;max-height:none;overflow:visible}
-  #standCompact .srow2{padding:16px 18px;border-radius:16px}
-  #standCompact .srow2 .pos{font-size:20px;width:26px}
-  #standCompact .srow2 .dot2{width:16px;height:16px}
-  #standCompact .srow2 .nm{font-size:17px}
-  #standCompact .srow2 .sc{font-size:26px}
-  #standCompact .srow2 .sr-bot{font-size:14px;margin-top:9px}
-  #standCompact .srow2 .mets{gap:9px}
-  #standCompact .meticon{width:28px;height:28px;margin-inline-end:6px;vertical-align:-7px}
+  .stageframe{width:100%}
+  body.fsmode .wrap{max-width:100%}
+  body.fsmode .stageframe{aspect-ratio:16/9;width:100%;max-width:calc((100vh - 210px) * 16 / 9);max-height:calc(100vh - 210px);margin:0 auto;display:flex;align-items:center;justify-content:center;overflow:hidden}
+  body.fsmode .stageframe .ringwrap{height:100%;width:auto;aspect-ratio:1/1;max-width:100%}
+  body.fsmode .ringgrid{height:100%}
+  body.fsmode #standPanel{max-height:24vh;overflow:auto}
+  body.fsmode .join-card.playmode{max-width:960px}
+  #standCompact,.pdash-side .stand2{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;max-height:none;overflow:visible}
+  #standCompact .srow2,.pdash-side .srow2{padding:16px 18px;border-radius:16px}
+  #standCompact .srow2 .pos,.pdash-side .srow2 .pos{font-size:20px;width:26px}
+  #standCompact .srow2 .dot2,.pdash-side .srow2 .dot2{width:16px;height:16px}
+  #standCompact .srow2 .nm,.pdash-side .srow2 .nm{font-size:17px}
+  #standCompact .srow2 .sc,.pdash-side .srow2 .sc{font-size:26px}
+  #standCompact .srow2 .sr-bot,.pdash-side .srow2 .sr-bot{font-size:14px;margin-top:9px}
+  #standCompact .srow2 .mets,.pdash-side .srow2 .mets{gap:9px}
+  #standCompact .meticon,.pdash-side .meticon{width:28px;height:28px;margin-inline-end:6px;vertical-align:-7px}
+  .pdash-side .stand-legend{margin-top:12px;padding-top:12px}
   .stand-legend{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
   .stand-legend .lgi{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);font-weight:700}
   .stand-legend .lgi img{width:20px;height:20px;object-fit:contain}
@@ -258,6 +266,7 @@
     <button class="btn ghost sm" id="helpToggle">Uitleg</button>
     <button class="btn ghost sm" id="soundToggle" title="Geluid">Geluid aan</button>
     <button class="btn ghost sm" id="fxToggle" title="Effecten">Effecten aan</button>
+    <button class="btn ghost sm" id="fullscreenToggle">Volledig scherm</button>
     <button class="btn ghost sm" id="langToggle">EN</button>
     <button class="btn ghost sm" id="copyJoin">Join-link</button>
     <button class="btn soft sm" id="resetGame">Nieuw spel</button>
@@ -310,16 +319,18 @@
 
     <section id="view-play" class="playgrid hide">
       <div>
-        <div class="panel">
+        <div class="panel" id="boardPanel">
           <h2 id="boardH" style="text-align:center;margin-top:0"></h2>
-          <div class="ringwrap" id="ringWrap">
-            <div class="ringgrid" id="boardPath"></div>
-            <div class="pawnlayer" id="pawnLayer"></div>
-            <div class="ringcenter" id="ringCenter"><div class="stage" id="stage"></div></div>
+          <div class="stageframe" id="stageFrame">
+            <div class="ringwrap" id="ringWrap">
+              <div class="ringgrid" id="boardPath"></div>
+              <div class="pawnlayer" id="pawnLayer"></div>
+              <div class="ringcenter" id="ringCenter"><div class="stage" id="stage"></div></div>
+            </div>
           </div>
         </div>
       </div>
-      <div class="panel">
+      <div class="panel" id="standPanel">
         <h2 id="standH" style="font-size:14px;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);margin:0 0 12px">Stand</h2>
         <div class="stand2" id="standCompact"></div>
         <div class="stand-legend" id="standLegend"></div>
@@ -770,7 +781,7 @@ const SHOCK_IDS_NL=SHOCK_NL.map(c=>c.id),SHOCK_IDS_EN=SHOCK_EN.map(c=>c.id);
 const KD_IDS_NL=KD_NL.map(c=>c.id),KD_IDS_EN=KD_EN.map(c=>c.id);
 const CHANCE_IDS_NL=CHANCE_NL.map(c=>c.id),CHANCE_IDS_EN=CHANCE_EN.map(c=>c.id);
 const SECTOR_IDS=SECTOR_NL.map(s=>s.id);
-const TEAM_COLORS=["#1F5AFF","#FF9000","#2FBF71","#8B5CF6","#E4572E","#0EA5B5"];
+const TEAM_COLORS=["#1F5AFF","#FF9000","#2FBF71","#8B5CF6","#D6336C","#0EA5B5"];
 const PAWN_IMG_BY_COLOR={"#1F5AFF":"pion-blauw","#FF9000":"pion-oranje","#2FBF71":"pion-groen","#8B5CF6":"pion-paars","#E4572E":"pion-rood","#0EA5B5":"pion-turquoise"};
 function pawnImgFor(color){return PAWN_IMG_BY_COLOR[color]||"pion-blauw";}
 /* ---- board: fixed 28-tile ring, every tile matters ---- */
@@ -832,7 +843,7 @@ const T={
   timerLbl:"Tijdslimiet per beurt",timerOff:"Uit",timer30:"30 seconden",timer60:"60 seconden",timer90:"90 seconden",timesUp:"Tijd is om!",
   guessPrompt:"Wat kiest het actieve team, denk je? Gok mee voor een bonusmunt:",guessSent:"Gok verstuurd, wachten op de uitkomst…",guessCorrectMsg:"Goed gegokt! +1 munt bonus.",guessWrongMsg:"Helaas, verkeerd gegokt.",guessBonusLbl:"gokbonus",guessHit:"Goed! +1",guessMiss:"Mis",
   estimate:(turns,mins,teams)=>`Elk team krijgt <b>${turns} beurten</b> · totale speeltijd ≈ <b>${mins} minuten</b> voor ${teams} team${teams>1?"s":""}.`,
-  startGame:"Spel starten →",boardH:"Speelbord",standH:"Stand",
+  startGame:"Spel starten →",boardH:"Speelbord",standH:"Stand",fsEnter:"Volledig scherm",fsExit:"Scherm herstellen",
   rollBtn:"Gooi de dobbelsteen",yourTurnBanner:(n)=>`${n} is aan zet`,
   walking:"Pion loopt naar het vakje…",landed:(tile)=>`Geland op vakje ${tile}`,
   waitRoll:(n)=>`${n}, ga naar je eigen scherm en gooi die dobbelsteen!`,rollFallback:"Liever de host die gooit? Ga je gang:",
@@ -874,7 +885,7 @@ const T={
   timerLbl:"Time limit per turn",timerOff:"Off",timer30:"30 seconds",timer60:"60 seconds",timer90:"90 seconds",timesUp:"Time's up!",
   guessPrompt:"What will the active team choose, you think? Guess along for a bonus coin:",guessSent:"Guess sent, waiting for the outcome…",guessCorrectMsg:"Good guess! +1 bonus coin.",guessWrongMsg:"No luck, wrong guess.",guessBonusLbl:"guess bonus",guessHit:"Right! +1",guessMiss:"Miss",
   estimate:(turns,mins,teams)=>`Each team gets <b>${turns} turns</b> · total playtime ≈ <b>${mins} minutes</b> for ${teams} team${teams>1?"s":""}.`,
-  startGame:"Start game →",boardH:"Game board",standH:"Standings",
+  startGame:"Start game →",boardH:"Game board",standH:"Standings",fsEnter:"Fullscreen",fsExit:"Exit fullscreen",
   rollBtn:"Roll the dice",yourTurnBanner:(n)=>`${n} is up`,
   walking:"Pawn is walking to the tile…",landed:(tile)=>`Landed on tile ${tile}`,
   waitRoll:(n)=>`${n}, head to your own screen and roll that dice!`,rollFallback:"Prefer the host to roll? Go for it:",
@@ -966,6 +977,18 @@ function effectChipsHtml(lang,coins,fx,mx){
   return chips.length?`<div class="effectrow">${chips.join("")}</div>`:"";
 }
 function rnd(n){return Math.floor(Math.random()*n);}
+function toggleFullscreen(){
+  if(!document.fullscreenElement){(document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen())||Promise.resolve();}
+  else{document.exitFullscreen&&document.exitFullscreen();}
+}
+document.addEventListener("fullscreenchange",()=>{
+  const active=!!document.fullscreenElement;
+  document.body.classList.toggle("fsmode",active);
+  const hostBtn=document.getElementById("fullscreenToggle");
+  if(hostBtn&&typeof state!=="undefined"&&state)hostBtn.textContent=active?T[state.lang].fsExit:T[state.lang].fsEnter;
+  const playerBtn=document.getElementById("fullscreenTogglePlayer");
+  if(playerBtn)playerBtn.textContent=active?(playerBtn.dataset.lang==="en"?T.en.fsExit:T.nl.fsExit):(playerBtn.dataset.lang==="en"?T.en.fsEnter:T.nl.fsEnter);
+});
 function clamp(v,lo,hi){return Math.max(lo,Math.min(hi,v));}
 function uid(){return Math.random().toString(36).slice(2,9);}
 function roomCode(){let s="";const A="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";for(let i=0;i<4;i++)s+=A[rnd(A.length)];return s;}
@@ -1293,6 +1316,7 @@ function render(){
   $("resetGame").textContent=T[state.lang].newGame;
   $("helpToggle").textContent=T[state.lang].help;
   $("sectorBtn").textContent=T[state.lang].sector;
+  $("fullscreenToggle").textContent=document.fullscreenElement?T[state.lang].fsExit:T[state.lang].fsEnter;
   $("sectorBtn").title=T[state.lang].sectorBtnTip;
   $("footNL").textContent=T[state.lang].footNL;
   $("langToggle").textContent=state.lang==="nl"?"EN":"NL";
@@ -1680,6 +1704,7 @@ function wireFacilitator(){
   $("langToggle").onclick=()=>{state.lang=state.lang==="nl"?"en":"nl";renderLegendAndHelp();render();saveLocal();NET.publish();};
   $("soundToggle").onclick=()=>{state.soundOn=!state.soundOn;$("soundToggle").textContent=state.soundOn?"Geluid aan":"Geluid uit";saveLocal();};
   $("fxToggle").onclick=()=>{state.fxOn=!state.fxOn;$("fxToggle").textContent=state.fxOn?"Effecten aan":"Effecten uit";saveLocal();};
+  $("fullscreenToggle").onclick=()=>toggleFullscreen();
   $("helpToggle").onclick=()=>{$("helpPanel").classList.toggle("hide");};
   $("sectorBtn").onclick=()=>triggerSectorEvent();
   $("copyJoin").onclick=()=>{
@@ -1795,7 +1820,7 @@ function initPlayerView(){
     const active=snap.teams[snap.activeTeamIdx];
     const mine=active&&String(active.id)===String(team);
     const turn=snap.turn||{phase:"idle"};
-    let head=`<h1 style="font-size:20px">${esc(L.brand)}</h1>`;
+    let head=`<div style="display:flex;align-items:center;justify-content:space-between;gap:8px"><h1 style="font-size:20px;margin:0">${esc(L.brand)}</h1><button class="btn ghost sm" id="fullscreenTogglePlayer" data-lang="${playerLang}">${document.fullscreenElement?L.fsExit:L.fsEnter}</button></div>`;
     if(me)head+=`<p class="s">${esc(me.name)} · ${me.coins} ${L.coinsLbl.toLowerCase()} · ${me.turnsTaken}/${snap.turnsPerTeam}</p>`;
     if(snap.appStage==="setup"||snap.appStage==="intro"){
       head+=`<p class="s">${esc(L.jwWait)}</p>`;
@@ -1901,16 +1926,18 @@ function initPlayerView(){
     let side="";
     if(snap.appStage==="play"){
       const sorted=snap.teams.slice().sort((a,b)=>b.coins-a.coins);
+      const legendHtml=`<div class="stand-legend">`+Object.keys(MET[playerLang]).map(k=>`<span class="lgi"><img src="assets/${MET_ICON[k]}.png">${MET[playerLang][k]}</span>`).join("")+`</div>`;
       side=`<h3>${L.standH}</h3><div class="stand2">`+sorted.map(t=>{
         const metsHtml=Object.keys(MET[playerLang]).map(k=>`<span${t.met[k]<0?' class="low"':''} title="${MET[playerLang][k]}"><img class="meticon" src="assets/${MET_ICON[k]}.png">${t.met[k]>0?"+":""}${t.met[k]}</span>`).join(" ");
         return `<div class="srow2${active&&t.id===active.id?" up":""}">
           <div class="sr-top"><span class="dot2" style="background:${t.color}"></span><span class="nm">${esc(t.name)}</span><span class="sc">${t.coins}</span></div>
           <div class="sr-bot"><span class="mets">${metsHtml}</span><span class="cn">${t.turnsTaken}/${snap.turnsPerTeam}</span></div>
         </div>`;
-      }).join("")+`</div>`;
+      }).join("")+`</div>`+legendHtml;
     }
 
     $("joinWaiting").innerHTML=`<div class="pdash-head">${head}</div><div class="pdash-grid"><div class="pdash-main">${main}</div>${side?`<div class="pdash-side">${side}</div>`:""}</div>`;
+    const fsBtnP=$("fullscreenTogglePlayer");if(fsBtnP)fsBtnP.onclick=()=>toggleFullscreen();
 
     if(!mine&&turn.phase==="card"&&me){
       $("joinWaiting").querySelectorAll(".guessOpt").forEach(btn=>{
