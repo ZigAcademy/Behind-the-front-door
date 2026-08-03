@@ -119,10 +119,14 @@
   .srow2 .sc{font-weight:900;font-size:15px;flex:0 0 auto}
   .srow2 .sr-bot{display:flex;justify-content:space-between;align-items:center;margin-top:5px;font-size:10.5px;color:var(--muted);flex-wrap:wrap;gap:4px}
   .srow2 .mets{display:flex;gap:6px;flex-wrap:wrap}
+  .meticon{width:13px;height:13px;vertical-align:-2px;margin-inline-end:3px;object-fit:contain}
   .srow2 .mets .low{color:var(--warn);font-weight:800}
   .srow2 .cn{font-weight:800;color:#7a4100;white-space:nowrap}
   .durrow{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px}
   @media (max-width:520px){.durrow{grid-template-columns:1fr}}
+  .podiumhero{text-align:center;margin-bottom:22px}
+  .podiumimg{width:min(260px,70%);aspect-ratio:1/1;margin:0 auto 12px;background-size:contain;background-position:center;background-repeat:no-repeat}
+  .podiumcaption{font-size:19px}
   .rank{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--line);border-radius:13px;margin-bottom:10px;background:var(--card);box-shadow:var(--shadow-sm)}
   .rank .pos{font-size:22px;font-weight:900;color:var(--blue);width:34px;text-align:center}.rank.first{border-color:var(--orange);background:var(--softwarm)}
   .rank .rn{font-weight:800;font-size:16px}.rank .rs{margin-inline-start:auto;font-size:22px;font-weight:900}.rank .rd{font-size:12px;color:var(--muted)}
@@ -311,8 +315,9 @@ window.FIREBASE_CONFIG = {
 <script>
 "use strict";
 /* ============ data ============ */
-const MET={nl:{sat:"😊 Tevredenheid",fin:"💶 Financieel",comp:"📋 Compliance",dur:"🌱 Duurzaamheid"},en:{sat:"😊 Satisfaction",fin:"💶 Financial",comp:"📋 Compliance",dur:"🌱 Sustainability"}};
-const CAT={A:"onderhoud",B:"wooncrisis",C:"sociaal",D:"duurzaam",E:"onderhoud",J1:"onderhoud",J2:"digitaal",J3:"leefbaarheid",J4:"toewijzing",J5:"financien",J6:"sociaal",J7:"financien",J8:"toewijzing",J9:"duurzaam",J10:"digitaal",J11:"zorg",J12:"toewijzing",C1:"duurzaam",C2:"digitaal",C3:"duurzaam",C4:"onderhoud",C5:"financien",C6:"financien",S:"shock",N1:"onderhoud",N2:"wooncrisis",N3:"participatie",N4:"duurzaam",N5:"digitaal",N6:"financien",N7:"veiligheid",N8:"toewijzing",N9:"sociaal",N10:"duurzaam",N11:"digitaal",N12:"financien",N13:"veiligheid",N14:"toewijzing",N15:"zorg",N16:"duurzaam",N17:"digitaal",N18:"financien",N19:"veiligheid",N20:"wooncrisis",N21:"sociaal",N22:"digitaal",KD1:"kennisduel",KD2:"kennisduel",KD3:"kennisduel",KD4:"kennisduel",KD5:"kennisduel",KD6:"kennisduel",KD7:"kennisduel",KD8:"kennisduel",KD9:"kennisduel",KD10:"kennisduel",KD11:"kennisduel",KD12:"kennisduel",KD13:"kennisduel",KD14:"kennisduel",KD15:"kennisduel",KD16:"kennisduel"};
+const MET={nl:{sat:"Tevredenheid",fin:"Financieel",comp:"Compliance",dur:"Duurzaamheid"},en:{sat:"Satisfaction",fin:"Financial",comp:"Compliance",dur:"Sustainability"}};
+const MET_ICON={sat:"icoon-tevredenheid",fin:"icoon-financieel",comp:"icoon-compliance",dur:"icoon-duurzaamheid"};
+const CAT={A:"onderhoud",B:"wooncrisis",C:"sociaal",D:"duurzaam",E:"onderhoud",J1:"onderhoud",J2:"digitaal",J3:"leefbaarheid",J4:"toewijzing",J5:"financien",J6:"sociaal",J7:"financien",J8:"toewijzing",J9:"duurzaam",J10:"digitaal",J11:"zorg",J12:"toewijzing",C1:"duurzaam",C2:"digitaal",C3:"duurzaam",C4:"onderhoud",C5:"financien",C6:"financien",S:"shock",S2:"shock",S3:"shock",N1:"onderhoud",N2:"wooncrisis",N3:"participatie",N4:"duurzaam",N5:"digitaal",N6:"financien",N7:"veiligheid",N8:"toewijzing",N9:"sociaal",N10:"duurzaam",N11:"digitaal",N12:"financien",N13:"veiligheid",N14:"toewijzing",N15:"zorg",N16:"duurzaam",N17:"digitaal",N18:"financien",N19:"veiligheid",N20:"wooncrisis",N21:"sociaal",N22:"digitaal",KD1:"kennisduel",KD2:"kennisduel",KD3:"kennisduel",KD4:"kennisduel",KD5:"kennisduel",KD6:"kennisduel",KD7:"kennisduel",KD8:"kennisduel",KD9:"kennisduel",KD10:"kennisduel",KD11:"kennisduel",KD12:"kennisduel",KD13:"kennisduel",KD14:"kennisduel",KD15:"kennisduel",KD16:"kennisduel"};
 const IMG_VARIANTS={
   onderhoud:["onderhoud","onderhoud-2","onderhoud-3","onderhoud-4"],
   toewijzing:["toewijzing","toewijzing-2","toewijzing-3","toewijzing-4"],
@@ -436,8 +441,16 @@ const TASK_EN=[
  {id:"N21",t:"The whistleblower",x:"An employee reports internally that a manager is systematically mislabelling maintenance budget to hit targets. Investigating may damage team trust; ignoring it may escalate further.",o:[{l:"A · Start an independent investigation",e:"Clean, tension in the team.",coins:-2,fx:{comp:2,sat:-1}},{l:"B · An informal internal conversation",e:"Fast, less thorough.",coins:-1,fx:{comp:0}},{l:"C · Wave off the report",e:"Calm now, risk later.",coins:0,fx:{comp:-2}}]},
  {id:"N22",t:"The predictive algorithm",x:"The municipality asks you to share housing data for an algorithm meant to predict 'vulnerable neighbourhoods'. The goal is good, but the risk of stigmatising residents is real.",o:[{l:"A · Cooperate fully, share the data",e:"Helpful, a privacy risk.",coins:-1,fx:{comp:1,sat:-1}},{l:"B · Share only anonymised, aggregated data",e:"A balance of cooperation and privacy.",coins:-1,fx:{comp:1}},{l:"C · Don't cooperate",e:"Privacy first, municipality disappointed.",coins:0,fx:{comp:-1,sat:1}}]}
 ];
-const SHOCK_NL={id:"S",t:"Constructieve gebreken",x:"Bij een periodieke inspectie blijken de galerijen van een jaren-60-flat constructief onveilig. Dertig woningen hebben per direct herstel nodig. Uitstel is geen optie zonder de veiligheid van bewoners op het spel te zetten.",o:[{l:"A · Direct herstellen",e:"Uit eigen middelen.",coins:-4,fx:{}},{l:"B · Geborgde lening (WSW)",e:"Kost nu 2 munten.",coins:-2,fx:{comp:1}},{l:"C · Gefaseerd",e:"Galerijen deels afsluiten.",coins:-2,fx:{sat:-2,comp:-2}}]};
-const SHOCK_EN={id:"S",t:"Structural defects",x:"A periodic inspection reveals the galleries of a 1960s block are structurally unsafe. Thirty homes need immediate repair. Delay is not an option without risking residents' safety.",o:[{l:"A · Repair now",e:"From own funds.",coins:-4,fx:{}},{l:"B · Guaranteed loan (WSW)",e:"Costs 2 coins now.",coins:-2,fx:{comp:1}},{l:"C · Phased",e:"Partly close galleries.",coins:-2,fx:{sat:-2,comp:-2}}]};
+const SHOCK_NL=[
+ {id:"S",t:"Constructieve gebreken",img:"shock-1",x:"Bij een periodieke inspectie blijken de galerijen van een jaren-60-flat constructief onveilig. Dertig woningen hebben per direct herstel nodig. Uitstel is geen optie zonder de veiligheid van bewoners op het spel te zetten.",o:[{l:"A · Direct herstellen",e:"Uit eigen middelen.",coins:-4,fx:{}},{l:"B · Geborgde lening (WSW)",e:"Kost nu 2 munten.",coins:-2,fx:{comp:1}},{l:"C · Gefaseerd",e:"Galerijen deels afsluiten.",coins:-2,fx:{sat:-2,comp:-2}}]},
+ {id:"S2",t:"Wateroverlast in het trappenhuis",img:"shock-waterlekkage-trappenhuis",x:"Midden in de nacht barst een hoofdleiding in de kelder van een complex met veertig woningen. Het trappenhuis staat blank en het water blijft stijgen. Bewoners kunnen niet via de voordeur naar buiten.",o:[{l:"A · Noodploeg direct oproepen",e:"Snel gestopt, dure nachttarieven.",coins:-4,fx:{sat:1}},{l:"B · Hoofdkraan dicht, wachten tot ochtend",e:"Goedkoper, water blijft een nacht staan.",coins:-1,fx:{sat:-2}},{l:"C · Bewoners vragen zelf te hozen",e:"Gratis, kans op schimmel en vervolgschade.",coins:0,fx:{sat:-3,comp:-1}}]},
+ {id:"S3",t:"Scheur in het balkon",img:"shock-balkon-scheur",x:"Een bewoner belt in paniek: er was 's nachts een luide knal en er loopt nu een brede scheur door de balkonvloer. Een inspecteur ter plaatse durft niet te garanderen dat het balkon het houdt.",o:[{l:"A · Balkon per direct afsluiten en meteen laten herstellen",e:"Veilig, snel ingepland herstel is duur.",coins:-3,fx:{comp:1}},{l:"B · Alleen afzetten, herstel inplannen bij de volgende ronde",e:"Voorzichtig, bewoner zit weken zonder balkon.",coins:-1,fx:{sat:-1}},{l:"C · Bewoner vragen zelf voorzichtig te zijn, later beoordelen",e:"Geen kosten nu, onverantwoord risico.",coins:0,fx:{comp:-2,sat:-1}}]}
+];
+const SHOCK_EN=[
+ {id:"S",t:"Structural defects",img:"shock-1",x:"A periodic inspection reveals the galleries of a 1960s block are structurally unsafe. Thirty homes need immediate repair. Delay is not an option without risking residents' safety.",o:[{l:"A · Repair now",e:"From own funds.",coins:-4,fx:{}},{l:"B · Guaranteed loan (WSW)",e:"Costs 2 coins now.",coins:-2,fx:{comp:1}},{l:"C · Phased",e:"Partly close galleries.",coins:-2,fx:{sat:-2,comp:-2}}]},
+ {id:"S2",t:"Water damage in the stairwell",img:"shock-waterlekkage-trappenhuis",x:"In the middle of the night a main pipe bursts in the basement of a forty-home complex. The stairwell is flooded and the water keeps rising. Residents can't get out through the front door.",o:[{l:"A · Call an emergency crew immediately",e:"Stopped fast, expensive night rates.",coins:-4,fx:{sat:1}},{l:"B · Shut off the main valve, wait until morning",e:"Cheaper, water sits overnight.",coins:-1,fx:{sat:-2}},{l:"C · Ask residents to bail it out themselves",e:"Free, risk of mould and further damage.",coins:0,fx:{sat:-3,comp:-1}}]},
+ {id:"S3",t:"Crack in the balcony",img:"shock-balkon-scheur",x:"A resident calls in a panic: there was a loud bang overnight and now a wide crack runs across the balcony floor. An inspector on site won't guarantee the balcony will hold.",o:[{l:"A · Close it off immediately and repair right away",e:"Safe, fast-tracked repair is costly.",coins:-3,fx:{comp:1}},{l:"B · Just cordon it off, schedule repair next round",e:"Cautious, resident goes weeks without a balcony.",coins:-1,fx:{sat:-1}},{l:"C · Ask the resident to be careful, assess later",e:"No cost now, an irresponsible risk.",coins:0,fx:{comp:-2,sat:-1}}]}
+];
 const CHANCE_NL=[
  {id:"K1",good:true,t:"Snelle verhuur",x:"Een woning is razendsnel opnieuw verhuurd.",coins:2,fx:{}},
  {id:"K2",good:true,t:"Subsidie eerder binnen",x:"Een subsidie wordt eerder uitgekeerd.",coins:1,fx:{dur:1}},
@@ -683,8 +696,9 @@ const KD_EN=[
   {l:"D · The energy label only counts for new build",coins:-1,fx:{},e:"Not correct — it applies to all homes."}]}
 ];
 function idx(a){return Object.fromEntries(a.map(o=>[o.id,o]));}
-const CONTENT={nl:{task:idx(TASK_NL),shock:{S:SHOCK_NL},chance:idx(CHANCE_NL),sector:idx(SECTOR_NL),kd:idx(KD_NL)},en:{task:idx(TASK_EN),shock:{S:SHOCK_EN},chance:idx(CHANCE_EN),sector:idx(SECTOR_EN),kd:idx(KD_EN)}};
+const CONTENT={nl:{task:idx(TASK_NL),shock:idx(SHOCK_NL),chance:idx(CHANCE_NL),sector:idx(SECTOR_NL),kd:idx(KD_NL)},en:{task:idx(TASK_EN),shock:idx(SHOCK_EN),chance:idx(CHANCE_EN),sector:idx(SECTOR_EN),kd:idx(KD_EN)}};
 const TASK_IDS_NL=TASK_NL.map(c=>c.id),TASK_IDS_EN=TASK_EN.map(c=>c.id);
+const SHOCK_IDS_NL=SHOCK_NL.map(c=>c.id),SHOCK_IDS_EN=SHOCK_EN.map(c=>c.id);
 const KD_IDS_NL=KD_NL.map(c=>c.id),KD_IDS_EN=KD_EN.map(c=>c.id);
 const CHANCE_IDS_NL=CHANCE_NL.map(c=>c.id),CHANCE_IDS_EN=CHANCE_EN.map(c=>c.id);
 const SECTOR_IDS=SECTOR_NL.map(s=>s.id);
@@ -757,6 +771,7 @@ const T={
   duelBadge:"⚔️ Concurrentie-kaart",duelAffects:(n)=>`Dit treft ook: <b>${n}</b>`,duelHitBy:(n)=>`🎯 Geraakt door ${n}`,
   newLeader:(n)=>`🔥 ${n} neemt de leiding!`,dismiss:"OK",
   scoresH:"Eindstand",scoresP:"Bekijk de resultaten en bespreek de belangrijkste keuzes na.",againBtn:"Nieuw spel",
+  winnerHeadline:(n,c)=>`🏆 <b>${n}</b> wint met <b>${c} munten</b>!`,
   sectorBanner:(t,x)=>`<b>🌐 Sectorgebeurtenis — ${t}</b><br>${x}`,sectorBtnTip:"Los een gebeurtenis los die alle teams raakt",
   legend:"Legenda vakjes",legStart:"Start/Finish — inkomsten bij passeren",legTask:"Opdracht — kies uit 3 opties",legChance:"Kans — automatisch effect",legShock:"Shock — grote onverwachte gebeurtenis",
   helpTitle:"Hoe werkt het?",helpBody:"<ol><li>Elk team gooit op zijn beurt één dobbelsteen en de pion loopt stap voor stap naar het nieuwe vakje.</li><li>Het vakje bepaalt wat je krijgt: een <b>opdracht</b> (kies uit 3 opties), een <b>kans</b> (automatisch effect), een <b>kennisduel</b> (meerkeuzevraag over de sector — bij een goed antwoord tik je munten af bij je rivaal) of de <b>shock</b> (bijzondere gebeurtenis).</li><li>Elke ronde langs Start levert het team huurinkomsten op.</li><li>Na het ingestelde aantal beurten per team volgt de eindstand.</li></ol>",
@@ -794,6 +809,7 @@ const T={
   duelBadge:"⚔️ Rivalry card",duelAffects:(n)=>`This also affects: <b>${n}</b>`,duelHitBy:(n)=>`🎯 Hit by ${n}`,
   newLeader:(n)=>`🔥 ${n} takes the lead!`,dismiss:"OK",
   scoresH:"Final standings",scoresP:"Review the results and debrief the key choices.",againBtn:"New game",
+  winnerHeadline:(n,c)=>`🏆 <b>${n}</b> wins with <b>${c} coins</b>!`,
   sectorBanner:(t,x)=>`<b>🌐 Sector event — ${t}</b><br>${x}`,sectorBtnTip:"Trigger an event that affects all teams",
   legend:"Tile legend",legStart:"Start/Finish — income when passing",legTask:"Task — choose from 3 options",legChance:"Chance — automatic effect",legShock:"Shock — major unforeseen event",
   helpTitle:"How does it work?",helpBody:"<ol><li>Each team rolls one die on its turn and the pawn walks step by step to the new tile.</li><li>The tile decides what you get: a <b>task</b> (choose from 3 options), a <b>chance</b> (automatic effect), a <b>knowledge duel</b> (multiple-choice question about the sector — a correct answer steals coins from your rival) or the <b>shock</b> (special event).</li><li>Each lap past Start earns the team rent income.</li><li>After the configured number of turns per team, the final standings appear.</li></ol>",
@@ -854,6 +870,7 @@ function uid(){return Math.random().toString(36).slice(2,9);}
 function roomCode(){let s="";const A="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";for(let i=0;i<4;i++)s+=A[rnd(A.length)];return s;}
 function pick(arr){return arr[rnd(arr.length)];}
 function taskIds(){return state.lang==="nl"?TASK_IDS_NL.slice():TASK_IDS_EN.slice();}
+function shockIds(){return state.lang==="nl"?SHOCK_IDS_NL.slice():SHOCK_IDS_EN.slice();}
 function chanceIds(){return state.lang==="nl"?CHANCE_IDS_NL.slice():CHANCE_IDS_EN.slice();}
 function kdIds(){return state.lang==="nl"?KD_IDS_NL.slice():KD_IDS_EN.slice();}
 function contentFor(){return CONTENT[state.lang];}
@@ -871,7 +888,7 @@ let state=null;
 function freshTeam(i){
   return {id:i+1,name:(state&&state.lang==="en"?"Team ":"Team ")+(i+1),color:TEAM_COLORS[i%TEAM_COLORS.length],
     coins:10,met:{sat:0,fin:0,comp:0,dur:0},boardPos:0,turnsTaken:0,history:[],
-    seenTask:[],seenChance:[],seenKD:[],seenShock:false,laps:0};
+    seenTask:[],seenChance:[],seenKD:[],seenShock:[],laps:0};
 }
 function freshState(){
   const s={
@@ -904,7 +921,7 @@ function tileTypeAt(pos){return TILE_TYPES[pos%RING_LEN];}
    own device OR the facilitator's screen (fallback) drive every step. */
 function startGame(){
   state.turnsPerTeam=computeTurnsPerTeam();
-  state.teams.forEach(tm=>{tm.coins=10;tm.met={sat:0,fin:0,comp:0,dur:0};tm.boardPos=0;tm.turnsTaken=0;tm.history=[];tm.seenTask=[];tm.seenChance=[];tm.seenKD=[];tm.seenShock=false;tm.laps=0;});
+  state.teams.forEach(tm=>{tm.coins=10;tm.met={sat:0,fin:0,comp:0,dur:0};tm.boardPos=0;tm.turnsTaken=0;tm.history=[];tm.seenTask=[];tm.seenChance=[];tm.seenKD=[];tm.seenShock=[];tm.laps=0;});
   state.activeTeamIdx=0;
   _lastPawnPos={};
   state.turn={phase:"idle",dice:null,walkTo:null,cardType:null,card:null,pendingCard:null,chosenIdx:null,lapGain:0,token:uid()};
@@ -974,7 +991,6 @@ function landingAction(){
   const team=activeTeam();
   const pos=team.boardPos%RING_LEN;
   let type=tileTypeAt(pos);
-  if(type==="shock"&&team.seenShock)type="task";
   state.turn.cardType=type;
   state.turn.card=null;
   state.turn.pendingCard=null;
@@ -985,7 +1001,7 @@ function landingAction(){
     return;
   }
   if(type==="chance")state.turn.pendingCard=drawChanceFor(team);
-  else if(type==="shock")state.turn.pendingCard=contentFor().shock.S;
+  else if(type==="shock")state.turn.pendingCard=drawShockFor(team);
   else if(type==="kennisduel"){
     state.turn.pendingCard=drawKDFor(team);
     const rival=resolveDuelTarget(team);
@@ -1004,7 +1020,6 @@ function drawCard(){
   if(!card)return;
   state.turn.card=card;
   state.turn.pendingCard=null;
-  if(type==="shock")team.seenShock=true;
   if(type==="chance"){
     applyCardEffect(team,card.fx,card.coins);
     team.history.push({turn:team.turnsTaken+1,type:"chance",id:card.id,title:card.t,coins:card.coins});
@@ -1030,6 +1045,15 @@ function drawTaskFor(team){
   const id=pick(avail);
   team.seenTask.push(id);
   return contentFor().task[id];
+}
+function drawShockFor(team){
+  if(!team.seenShock)team.seenShock=[];
+  const all=shockIds();
+  let avail=all.filter(id=>!team.seenShock.includes(id));
+  if(avail.length===0){team.seenShock=[];avail=all.slice();}
+  const id=pick(avail);
+  team.seenShock.push(id);
+  return contentFor().shock[id];
 }
 function drawChanceFor(team){
   const all=chanceIds();
@@ -1286,7 +1310,7 @@ function renderStage(){
         `</div></div>`;
     }else{
       const cat=CAT[card.id];
-      const timg=cat?imgFor(card.id,cat):null;
+      const timg=card.img?card.img:(cat?imgFor(card.id,cat):null);
       html=`<div class="cardface">${timg?`<div class="illo" style="background-image:url('assets/${timg}.jpg')"></div>`:""}<div class="badge">${type==="shock"?L.drawShock:L.drawTask}</div>
         <h3>${esc(card.t)}</h3><p>${esc(card.x)}</p>
         <p class="hint" style="margin-bottom:6px">${L.chooseOpt}</p>
@@ -1332,7 +1356,7 @@ function renderCompactStand(){
   const sorted=state.teams.slice().sort((a,b)=>b.coins-a.coins);
   const hitId=(state.turn&&(state.turn.kdResult||state.turn.duelTarget)&&(state.turn.phase==="card"||state.turn.phase==="resolved"))?(state.turn.kdResult||state.turn.duelTarget).id:null;
   wrap.innerHTML=sorted.map(t=>{
-    const metsHtml=Object.keys(MET[state.lang]).map(k=>`<span${t.met[k]<0?' class="low"':''}>${MET[state.lang][k].split(" ")[0]}${t.met[k]>0?"+":""}${t.met[k]}</span>`).join(" ");
+    const metsHtml=Object.keys(MET[state.lang]).map(k=>`<span${t.met[k]<0?' class="low"':''} title="${MET[state.lang][k]}"><img class="meticon" src="assets/${MET_ICON[k]}.png">${t.met[k]>0?"+":""}${t.met[k]}</span>`).join(" ");
     return `<div class="srow2${t.id===activeTeam().id&&state.appStage==="play"?" up":""}${t.id===hitId?" hit":""}">
       <div class="sr-top"><span class="pos">${sorted.indexOf(t)+1}</span><span class="dot2" style="background:${t.color}"></span><span class="nm">${esc(t.name)}</span><span class="sc">${t.coins}</span></div>
       <div class="sr-bot"><span class="mets">${metsHtml}</span><span class="cn">${t.turnsTaken}/${state.turnsPerTeam}</span></div>
@@ -1379,8 +1403,9 @@ function renderScores(){
   const L=T[state.lang];
   $("scoresH").textContent=L.scoresH;$("scoresP").textContent=L.scoresP;$("againBtn").textContent=L.againBtn;
   const sorted=state.teams.slice().sort((a,b)=>b.coins-a.coins);
-  let html=sorted.map((t,i)=>`<div class="rank${i===0?" first":""}"><span class="pos">${i+1}</span>
-    <div><div class="rn">${esc(t.name)}</div><div class="rd">${Object.keys(MET[state.lang]).map(k=>`${MET[state.lang][k].split(" ")[0]} ${t.met[k]>0?"+":""}${t.met[k]}`).join(" · ")}</div></div>
+  let html=`<div class="podiumhero"><div class="podiumimg" style="background-image:url('assets/podium-winnaar.jpg')"></div><div class="podiumcaption">${L.winnerHeadline(esc(sorted[0].name),sorted[0].coins)}</div></div>`;
+  html+=sorted.map((t,i)=>`<div class="rank${i===0?" first":""}"><span class="pos">${i+1}</span>
+    <div><div class="rn">${esc(t.name)}</div><div class="rd">${Object.keys(MET[state.lang]).map(k=>`<img class="meticon" src="assets/${MET_ICON[k]}.png" title="${MET[state.lang][k]}"> ${t.met[k]>0?"+":""}${t.met[k]}`).join(" &nbsp;·&nbsp; ")}</div></div>
     <span class="rs">${t.coins}</span></div>`).join("");
   html+=`<div class="debrief">`+state.teams.map(t=>`
     <div class="dbteam"><div class="dbh">${esc(t.name)}</div>`+
@@ -1612,6 +1637,7 @@ function initPlayerView(){
         let pcardImg="";
         if(isKD)pcardImg=`<div class="illo kdimg" style="background-image:url('assets/${imgFor(turn.card.id,"kennisduel")}.jpg')"></div>`;
         else if(isChance)pcardImg=`<div class="illo" style="background-image:url('assets/${imgFor(turn.card.id,turn.card.good===false?"kans-slecht":"kans-goed")}.jpg')"></div>`;
+        else if(turn.card.img)pcardImg=`<div class="illo" style="background-image:url('assets/${turn.card.img}.jpg')"></div>`;
         else if(cat)pcardImg=`<div class="illo" style="background-image:url('assets/${imgFor(turn.card.id,cat)}.jpg')"></div>`;
         main+=`<div class="cardface${isKD?" kd":""}" style="margin-top:10px">${pcardImg}<div class="badge${isKD?" kdbadge":""}">${isKD?L.drawKennisduel:(turn.cardType==="shock"?L.drawShock:(isChance?L.drawChance:L.drawTask))}</div>${turn.card.duel?`<div class="badge" style="background:#EAF0FF;color:#1F5AFF;margin-inline-start:6px">${L.duelBadge}</div>`:""}<h3>${esc(turn.card.t)}</h3><p>${esc(turn.card.x)}</p>${isKD&&turn.kdRival?`<p class="hint" style="color:#5b3aa8">${L.kdVersus(esc(turn.kdRival.name))}</p>`:""}`;
         if(turn.cardType==="chance"){
@@ -1663,7 +1689,7 @@ function initPlayerView(){
     if(snap.appStage==="play"){
       const sorted=snap.teams.slice().sort((a,b)=>b.coins-a.coins);
       side=`<h3>${L.standH}</h3><div class="stand2">`+sorted.map(t=>{
-        const metsHtml=Object.keys(MET[playerLang]).map(k=>`<span${t.met[k]<0?' class="low"':''}>${MET[playerLang][k].split(" ")[0]}${t.met[k]>0?"+":""}${t.met[k]}</span>`).join(" ");
+        const metsHtml=Object.keys(MET[playerLang]).map(k=>`<span${t.met[k]<0?' class="low"':''} title="${MET[playerLang][k]}"><img class="meticon" src="assets/${MET_ICON[k]}.png">${t.met[k]>0?"+":""}${t.met[k]}</span>`).join(" ");
         return `<div class="srow2${active&&t.id===active.id?" up":""}">
           <div class="sr-top"><span class="dot2" style="background:${t.color}"></span><span class="nm">${esc(t.name)}</span><span class="sc">${t.coins}</span></div>
           <div class="sr-bot"><span class="mets">${metsHtml}</span><span class="cn">${t.turnsTaken}/${snap.turnsPerTeam}</span></div>
