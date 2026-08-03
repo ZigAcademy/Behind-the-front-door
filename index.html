@@ -55,7 +55,10 @@
   .minichance{margin-top:7px;border-radius:9px;padding:6px 8px;font-size:11.5px;border:1px solid}
   .minichance.good{background:#e9f9f0;border-color:#8fddb4;color:#137a44}.minichance.bad{background:#fdeee9;border-color:#f2b3a1;color:#b3391b}
   @media (prefers-color-scheme:dark){.minichance.good{background:#12301f;border-color:#1f5a3a}.minichance.bad{background:#331912;border-color:#5a2a1c}}
-  .stage{min-height:380px;display:flex;flex-direction:column;margin:auto 0;width:100%}
+  .stage{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:90;background:var(--card);border-radius:20px;box-shadow:0 30px 70px rgba(0,0,0,.4);padding:20px 24px;width:92vw;max-width:640px;max-height:85vh;overflow:auto;display:flex;flex-direction:column;animation:popin .35s cubic-bezier(.2,.9,.3,1.2) both}
+  @keyframes popin{0%{opacity:0;transform:translate(-50%,-50%) scale(.92)}100%{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+  .stagebackdrop{position:fixed;inset:0;background:rgba(10,16,26,.55);backdrop-filter:blur(2px);z-index:80}
+  @media (max-width:640px){.stage{width:94vw;max-height:88vh;padding:16px 18px}}
   .announce{text-align:center;padding:16px 14px;border-radius:16px;color:#fff;font-weight:900;font-size:22px;letter-spacing:.3px;margin-bottom:12px;box-shadow:var(--shadow);animation:announce .75s cubic-bezier(.2,.9,.3,1.2) both}
   .announce .sub{font-size:13px;font-weight:700;opacity:.92;margin-top:3px}
   @keyframes announce{0%{opacity:0;transform:scale(.6) translateY(18px)}45%{opacity:1;transform:scale(1.05)}72%{transform:scale(.98)}100%{transform:scale(1)}}
@@ -112,7 +115,7 @@
   .tile.chance{border-color:#FF9000}
   .tile.task{border-color:#1F5AFF}
   .tile.here{outline:3px solid var(--orange);outline-offset:-2px}
-  .ringcenter{position:absolute;left:12.5%;top:12.5%;width:75%;height:75%;background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:14px;overflow:auto;z-index:2;display:flex;flex-direction:column}
+  .ringcenter{position:absolute;left:12.5%;top:12.5%;width:75%;height:75%;background:var(--card) center/cover no-repeat url('assets/bord-achtergrond-nacht.jpg');border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);z-index:2}
   .pawnlayer{position:absolute;inset:0;pointer-events:none;z-index:6;display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr);gap:5px}
   .pawncell{display:flex;align-items:flex-end;justify-content:center;flex-wrap:nowrap;padding:2px;overflow:visible}
   .pw2{width:52px;height:68px;background-size:contain;background-repeat:no-repeat;background-position:center bottom;filter:drop-shadow(1px 0 0 rgba(255,255,255,.95)) drop-shadow(-1px 0 0 rgba(255,255,255,.95)) drop-shadow(0 1px 0 rgba(255,255,255,.95)) drop-shadow(0 -1px 0 rgba(255,255,255,.95)) drop-shadow(2px 0 0 rgba(21,35,48,.55)) drop-shadow(-2px 0 0 rgba(21,35,48,.55)) drop-shadow(0 2px 0 rgba(21,35,48,.55)) drop-shadow(0 -2px 0 rgba(21,35,48,.55)) drop-shadow(0 4px 6px rgba(0,0,0,.45));position:relative;flex:0 0 auto;transform-origin:center bottom}
@@ -326,10 +329,12 @@
             <div class="ringwrap" id="ringWrap">
               <div class="ringgrid" id="boardPath"></div>
               <div class="pawnlayer" id="pawnLayer"></div>
-              <div class="ringcenter" id="ringCenter"><div class="stage" id="stage"></div></div>
+              <div class="ringcenter" id="ringCenter"></div>
             </div>
           </div>
         </div>
+        <div class="stagebackdrop hide" id="stageBackdrop"></div>
+        <div class="stage hide" id="stage"></div>
       </div>
       <div class="panel" id="standPanel">
         <h2 id="standH" style="font-size:14px;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);margin:0 0 12px">Stand</h2>
@@ -1423,7 +1428,8 @@ function renderStage(){
   const L=T[state.lang];
   const team=activeTeam();
   const ph=state.turn.phase;
-  if(state.appStage!=="play"){el.innerHTML="";return;}
+  const backdrop=$("stageBackdrop");
+  if(state.appStage!=="play"){el.innerHTML="";el.classList.add("hide");if(backdrop)backdrop.classList.add("hide");return;}
   let html="";
   if(ph==="idle"){
     html=`<div class="yourturn" style="background:${team.color}">${esc(L.yourTurnBanner(team.name))}</div>
@@ -1506,6 +1512,8 @@ function renderStage(){
       <button class="btn soft pulseglow" id="nextTurnBtn">${L.continueBtn}</button></div>`;
   }
   el.innerHTML=html;
+  el.classList.remove("hide");
+  if(backdrop)backdrop.classList.remove("hide");
   const rb=$("rollBtn");if(rb)rb.onclick=()=>rollDice();
   const dcb=$("drawCardBtn");if(dcb)dcb.onclick=()=>drawCard();
   const ack=$("ackCardBtn");if(ack)ack.onclick=()=>ackAutoCard();
