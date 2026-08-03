@@ -206,6 +206,17 @@
     <div class="banner hide" id="leadBanner" style="border-color:#FF9000;background:#fff6ec;text-align:center;font-size:16px"></div>
     <div class="panel hide" id="helpPanel" style="margin-bottom:14px"></div>
 
+    <section id="view-intro" class="panel hide">
+      <div class="cover" style="background-image:url('assets/gameboard.jpg')"></div>
+      <h2 id="introTitle" style="margin-top:0"></h2>
+      <p class="hint" id="introAbout"></p>
+      <h3 id="introRulesTitle" style="margin-bottom:8px"></h3>
+      <div id="introRules"></div>
+      <h3 id="introWinTitle" style="margin-bottom:8px"></h3>
+      <p class="hint" id="introWin"></p>
+      <button class="btn warn" id="introStartBtn"></button>
+    </section>
+
     <section id="view-setup" class="panel hide">
       <div class="cover" style="background-image:url('assets/gameboard.jpg')"></div>
       <div id="setupLegend"></div>
@@ -717,6 +728,16 @@ const TURNS_MIN=4,TURNS_MAX=16;
 /* ============ translations ============ */
 const T={
  nl:{brand:"Behind the Front Door",room:"Kamer",joinLink:"Join-link",newGame:"Nieuw spel",help:"❔ Uitleg",sector:"🌐 Sector",
+  introTitle:"Welkom bij Behind the Front Door 👋",
+  introAbout:"Een bordspel waarin jullie team, net als een echte woningcorporatie, elke beurt een lastige keuze maakt over onderhoud, betaalbaarheid, verduurzaming, leefbaarheid en digitalisering — met altijd een addertje onder het gras.",
+  introRulesTitle:"Spelregels",
+  introRules:["Elk team gooit om de beurt met de dobbelsteen; de pion loopt stap voor stap naar het nieuwe vakje.",
+    "Op het vakje wacht een <b>opdracht</b> (kies uit 3 opties), een <b>kans</b> (automatisch effect), een <b>kennisduel</b> (sectorkennis — verover munten van een rivaal) of een <b>shock</b> (grote onvoorziene gebeurtenis).",
+    "Denk goed na: bijna geen enkele keuze is vanzelfsprekend goed. Elke optie raakt bewoners, munten, onderhoud of duurzaamheid net iets anders.",
+    "Elke ronde langs Start levert het team huurinkomsten op."],
+  introWinTitle:"Hoe win je?",
+  introWin:"Na het ingestelde aantal beurten per team stopt het spel en wint het team met de meeste munten. Let op: de teams met de beste balans tussen bewonerstevredenheid, onderhoud en duurzaamheid komen vaak het sterkst uit de nabespreking.",
+  introStartBtn:"Volgende: teams instellen →",
   setupH:"Teams instellen",setupP:"Voeg teams toe, kies de speelduur en start het spel. Spelers scannen de join-link of vullen de kamercode in.",
   addTeam:"+ Team toevoegen",teamName:"Teamnaam",removeTeam:"Verwijderen",
   durLbl:"Speelduur",custLbl:"Beurten per team",durShort:"Kort · ~45 min",durMedium:"Gemiddeld · ~70 min",durLong:"Lang · ~100 min",durCustom:"Zelf instellen",
@@ -744,6 +765,16 @@ const T={
   netLive:"Live verbonden",netOff:"Offline (lokaal)",footNL:"Zig Grow · Behind the Front Door",
   roundHint:(done,total)=>`Voortgang: ${done} van ${total} beurten gespeeld`,metricsLbl:"Meters",coinsLbl:"Munten"},
  en:{brand:"Behind the Front Door",room:"Room",joinLink:"Join link",newGame:"New game",help:"❔ Guide",sector:"🌐 Sector",
+  introTitle:"Welcome to Behind the Front Door 👋",
+  introAbout:"A board game where your team, just like a real housing corporation, faces a tough call every turn — on maintenance, affordability, sustainability, liveability and digitalisation — always with a catch.",
+  introRulesTitle:"How to play",
+  introRules:["Each team takes turns rolling the dice; the pawn walks step by step to the new tile.",
+    "The tile decides what's waiting: a <b>task</b> (choose from 3 options), a <b>chance</b> (automatic effect), a <b>knowledge duel</b> (sector knowledge — steal coins from a rival) or a <b>shock</b> (major unforeseen event).",
+    "Think it through: almost no choice is obviously right. Every option affects residents, coins, maintenance or sustainability a little differently.",
+    "Each lap past Start earns the team rent income."],
+  introWinTitle:"How do you win?",
+  introWin:"After the configured number of turns per team, the game ends and the team with the most coins wins. Watch out: teams with the best balance between resident satisfaction, maintenance and sustainability tend to come out strongest in the debrief.",
+  introStartBtn:"Next: set up teams →",
   setupH:"Set up teams",setupP:"Add teams, choose the play duration and start the game. Players scan the join link or enter the room code.",
   addTeam:"+ Add team",teamName:"Team name",removeTeam:"Remove",
   durLbl:"Play duration",custLbl:"Turns per team",durShort:"Short · ~45 min",durMedium:"Medium · ~70 min",durLong:"Long · ~100 min",durCustom:"Custom",
@@ -844,7 +875,7 @@ function freshTeam(i){
 }
 function freshState(){
   const s={
-    lang:"nl",room:roomCode(),appStage:"setup",
+    lang:"nl",room:roomCode(),appStage:"intro",
     teams:[0,1].map(i=>freshTeam(i)),
     durationMode:"medium",customTurns:8,turnsPerTeam:8,
     activeTeamIdx:0,
@@ -1115,11 +1146,12 @@ function render(){
   $("netStatus").className="netchip "+(NET.connected?"live":"off");
   $("netStatus").textContent=NET.connected?T[state.lang].netLive:T[state.lang].netOff;
 
-  ["view-setup","view-play","view-scores"].forEach(v=>$(v.replace("view-","")===v?v:v));
+  $("view-intro").classList.toggle("hide",state.appStage!=="intro");
   $("view-setup").classList.toggle("hide",state.appStage!=="setup");
   $("view-play").classList.toggle("hide",state.appStage!=="play");
   $("view-scores").classList.toggle("hide",state.appStage!=="scores");
 
+  if(state.appStage==="intro")renderIntro();
   if(state.appStage==="setup")renderSetup();
   if(state.appStage==="play"){renderBoardPath();renderPawns();renderStage();renderCompactStand();renderRoundBar();}
   if(state.appStage==="scores")renderScores();
@@ -1308,6 +1340,16 @@ function renderCompactStand(){
   }).join("");
 }
 
+function renderIntro(){
+  const L=T[state.lang];
+  $("introTitle").textContent=L.introTitle;
+  $("introAbout").textContent=L.introAbout;
+  $("introRulesTitle").textContent=L.introRulesTitle;
+  $("introRules").innerHTML=`<ol>${L.introRules.map(r=>`<li>${r}</li>`).join("")}</ol>`;
+  $("introWinTitle").textContent=L.introWinTitle;
+  $("introWin").textContent=L.introWin;
+  $("introStartBtn").textContent=L.introStartBtn;
+}
 function renderSetup(){
   const L=T[state.lang];
   $("setupH").textContent=L.setupH;$("setupP").textContent=L.setupP;$("addTeam").textContent=L.addTeam;
@@ -1418,6 +1460,7 @@ const NET={
 
 /* ============ event wiring (facilitator) ============ */
 function wireFacilitator(){
+  $("introStartBtn").onclick=()=>{state.appStage="setup";render();saveLocal();NET.publish();};
   $("addTeam").onclick=()=>{if(state.teams.length>=6)return;state.teams.push(freshTeam(state.teams.length));renderSetup();saveLocal();};
   $("durationSelect").onchange=e=>{state.durationMode=e.target.value;renderSetup();saveLocal();};
   $("customTurns").oninput=e=>{state.customTurns=clamp(parseInt(e.target.value,10)||8,TURNS_MIN,TURNS_MAX);updateEstimate();saveLocal();};
@@ -1536,11 +1579,14 @@ function initPlayerView(){
     const turn=snap.turn||{phase:"idle"};
     let head=`<h1 style="font-size:20px">${esc(L.brand)}</h1>`;
     if(me)head+=`<p class="s">${esc(me.name)} · ${me.coins} ${L.coinsLbl.toLowerCase()} · ${me.turnsTaken}/${snap.turnsPerTeam}</p>`;
-    if(snap.appStage==="setup"){
+    if(snap.appStage==="setup"||snap.appStage==="intro"){
       head+=`<p class="s">${esc(L.jwWait)}</p>`;
     }
 
     let main="";
+    if(snap.appStage==="intro"){
+      main+=`<div style="text-align:start"><h2 style="margin-top:0">${esc(L.introTitle)}</h2><p class="hint">${esc(L.introAbout)}</p><h3 style="margin-bottom:8px">${esc(L.introRulesTitle)}</h3><ol>${L.introRules.map(r=>`<li>${r}</li>`).join("")}</ol><h3 style="margin-bottom:8px">${esc(L.introWinTitle)}</h3><p class="hint">${esc(L.introWin)}</p></div>`;
+    }
     if(snap.appStage==="play"&&active){
       main+=`<div class="yourturn" style="background:${active.color};font-size:16px">${mine?"🎯 ":""}${esc(L.yourTurnBanner(active.name))}</div>`;
       if(turn.phase==="idle"){
