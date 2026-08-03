@@ -17,13 +17,12 @@
   .wrap{max-width:1200px;margin:0 auto;padding:0 18px 70px}
   button{font-family:inherit}.logo{height:30px;width:auto;display:block}
   header.top{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--card) 88%,transparent);backdrop-filter:saturate(1.4) blur(8px);border-bottom:1px solid var(--line)}
-  .top-in{max-width:1200px;margin:0 auto;padding:10px 18px;display:flex;flex-direction:column;gap:8px}
-  .top-row1{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-  .top-row2{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+  .top-in{max-width:1200px;margin:0 auto;padding:10px 18px;display:flex;align-items:center;gap:9px;flex-wrap:nowrap;overflow-x:auto}
   .brandline{display:flex;align-items:center;gap:13px;min-width:0}.brandline h1{font-size:17px;margin:0;font-weight:800;letter-spacing:-.2px;white-space:nowrap}.brandline .sub{color:var(--muted);font-size:12px;white-space:nowrap}
   .spacer{flex:1 1 auto}
   .join-chip{display:flex;align-items:center;gap:8px;background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:6px 10px;font-size:13px}.join-chip b{font-family:Consolas,monospace;letter-spacing:2px;color:var(--blue)}
   .netchip{font-size:12px;font-weight:800;padding:6px 10px;border-radius:9px;white-space:nowrap}.netchip.live{background:#e5f7ee;color:#137a44}.netchip.off{background:#fff1e0;color:#b3391b}
+  .netdot{display:inline-block;width:11px;height:11px;border-radius:50%;flex:none;cursor:help}.netdot.live{background:#2FBF71;box-shadow:0 0 0 3px rgba(47,191,113,.25)}.netdot.off{background:#FF9000;box-shadow:0 0 0 3px rgba(255,144,0,.22)}
   .btn{border:0;border-radius:11px;padding:9px 15px;font-size:14px;font-weight:700;cursor:pointer;background:var(--blue);color:#fff;box-shadow:0 2px 0 rgba(0,0,0,.06);transition:transform .05s,filter .15s}
   .btn.pulseglow{animation:ctaglow 1.7s ease-out infinite}
   .btn.pulseglow:disabled{animation:none}
@@ -261,21 +260,17 @@
 
 <div id="facilitator">
   <header class="top"><div class="top-in">
-    <div class="top-row1">
-      <div class="brandline" id="brand"></div><div class="spacer"></div>
-      <div class="join-chip"><span id="roomLbl">Kamer</span>&nbsp;<b id="roomCode">----</b></div>
-      <span id="netStatus" class="netchip off"></span>
-    </div>
-    <div class="top-row2">
-      <button class="btn ghost sm" id="sectorBtn">Sector</button>
-      <button class="btn ghost sm" id="helpToggle">Uitleg</button>
-      <button class="btn ghost sm" id="soundToggle" title="Geluid">Geluid aan</button>
-      <button class="btn ghost sm" id="fxToggle" title="Effecten">Effecten aan</button>
-      <button class="btn ghost sm" id="fullscreenToggle">Volledig scherm</button>
-      <button class="btn ghost sm" id="langToggle">EN</button>
-      <button class="btn ghost sm" id="copyJoin">Join-link</button>
-      <button class="btn soft sm" id="resetGame">Nieuw spel</button>
-    </div>
+    <div class="brandline" id="brand"></div><div class="spacer"></div>
+    <div class="join-chip"><span id="roomLbl">Kamer</span>&nbsp;<b id="roomCode">----</b></div>
+    <span id="netStatus" class="netdot off" title=""></span>
+    <button class="btn ghost sm" id="sectorBtn">Sector</button>
+    <button class="btn ghost sm" id="helpToggle">Uitleg</button>
+    <button class="btn ghost sm" id="soundToggle" title="Geluid">Geluid aan</button>
+    <button class="btn ghost sm" id="fxToggle" title="Effecten">Effecten aan</button>
+    <button class="btn ghost sm" id="fullscreenToggle">Volledig scherm</button>
+    <button class="btn ghost sm" id="langToggle">EN</button>
+    <button class="btn ghost sm" id="copyJoin">Join-link</button>
+    <button class="btn soft sm" id="resetGame">Nieuw spel</button>
   </div></header>
   <div class="wrap">
     <div class="roundbar" id="roundBar"></div>
@@ -872,7 +867,7 @@ const T={
   helpTitle:"Hoe werkt het?",helpBody:"<ol><li>Elk team gooit op zijn beurt één dobbelsteen en de pion loopt stap voor stap naar het nieuwe vakje.</li><li>Het vakje bepaalt wat je krijgt: een <b>opdracht</b> (kies uit 3 opties), een <b>kans</b> (automatisch effect), een <b>kennisduel</b> (meerkeuzevraag over de sector — bij een goed antwoord tik je munten af bij je rivaal) of de <b>shock</b> (bijzondere gebeurtenis).</li><li>Elke ronde langs Start levert het team huurinkomsten op.</li><li>De host kan via de <b>Sector</b>-knop op elk moment een sectorbrede gebeurtenis loslaten die alle teams tegelijk raakt — gebruik dit bewust om het spel spannender te maken.</li><li>Na het ingestelde aantal beurten per team volgt de eindstand.</li></ol>",
   jfH:"Doe mee",jfSub:"Vul de kamercode in en kies je team.",jfRoomL:"Kamercode",jfNameL:"Jouw naam",jfTeamL:"Team",joinBtn:"Meedoen →",
   jwH:"Je bent binnen!",jwWait:"Hou 'm in de gaten — zodra jullie aan de beurt zijn, gebeurt het hier live!",jwRoomL:"kamer",
-  netLive:"Live verbonden",netOff:"Offline (lokaal)",footNL:"Zig Grow · Behind the Front Door",
+  netLive:"Live verbonden",netOff:"Offline (lokaal)",netLiveTip:"Live verbonden — wijzigingen worden direct gedeeld met alle spelers.",netOffTip:"Offline (lokaal) — dit spel wordt niet gedeeld, alleen zichtbaar op dit scherm.",footNL:"Zig Grow · Behind the Front Door",
   roundHint:(done,total)=>`Voortgang: ${done} van ${total} beurten gespeeld`,metricsLbl:"Meters",coinsLbl:"Munten"},
  en:{brand:"Behind the Front Door",room:"Room",joinLink:"Join link",newGame:"New game",help:"Guide",sector:"Sector",
   introTitle:"Welcome to Behind the Front Door",
@@ -914,7 +909,7 @@ const T={
   helpTitle:"How does it work?",helpBody:"<ol><li>Each team rolls one die on its turn and the pawn walks step by step to the new tile.</li><li>The tile decides what you get: a <b>task</b> (choose from 3 options), a <b>chance</b> (automatic effect), a <b>knowledge duel</b> (multiple-choice question about the sector — a correct answer steals coins from your rival) or the <b>shock</b> (special event).</li><li>Each lap past Start earns the team rent income.</li><li>The host can trigger a sector-wide event at any moment via the <b>Sector</b> button, affecting all teams at once — use it deliberately to raise the stakes.</li><li>After the configured number of turns per team, the final standings appear.</li></ol>",
   jfH:"Join in",jfSub:"Enter the room code and pick your team.",jfRoomL:"Room code",jfNameL:"Your name",jfTeamL:"Team",joinBtn:"Join →",
   jwH:"You're in!",jwWait:"Keep an eye on this screen — the moment it's your turn, it happens right here!",jwRoomL:"room",
-  netLive:"Live connected",netOff:"Offline (local)",footNL:"Zig Grow · Behind the Front Door",
+  netLive:"Live connected",netOff:"Offline (local)",netLiveTip:"Live connected — changes are shared with all players instantly.",netOffTip:"Offline (local) — this game is not shared, only visible on this screen.",footNL:"Zig Grow · Behind the Front Door",
   roundHint:(done,total)=>`Progress: ${done} of ${total} turns played`,metricsLbl:"Meters",coinsLbl:"Coins"}
 };
 /* ============ helpers ============ */
@@ -1326,8 +1321,8 @@ function render(){
   $("sectorBtn").title=T[state.lang].sectorBtnTip;
   $("footNL").textContent=T[state.lang].footNL;
   $("langToggle").textContent=state.lang==="nl"?"EN":"NL";
-  $("netStatus").className="netchip "+(NET.connected?"live":"off");
-  $("netStatus").textContent=NET.connected?T[state.lang].netLive:T[state.lang].netOff;
+  $("netStatus").className="netdot "+(NET.connected?"live":"off");
+  $("netStatus").title=NET.connected?T[state.lang].netLiveTip:T[state.lang].netOffTip;
 
   $("view-intro").classList.toggle("hide",state.appStage!=="intro");
   $("view-setup").classList.toggle("hide",state.appStage!=="setup");
