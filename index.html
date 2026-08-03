@@ -23,6 +23,12 @@
   .join-chip{display:flex;align-items:center;gap:8px;background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:6px 10px;font-size:13px}.join-chip b{font-family:Consolas,monospace;letter-spacing:2px;color:var(--blue)}
   .netchip{font-size:12px;font-weight:800;padding:6px 10px;border-radius:9px;white-space:nowrap}.netchip.live{background:#e5f7ee;color:#137a44}.netchip.off{background:#fff1e0;color:#b3391b}
   .btn{border:0;border-radius:11px;padding:9px 15px;font-size:14px;font-weight:700;cursor:pointer;background:var(--blue);color:#fff;box-shadow:0 2px 0 rgba(0,0,0,.06);transition:transform .05s,filter .15s}
+  .btn.pulseglow{animation:ctaglow 1.7s ease-out infinite}
+  .btn.pulseglow:disabled{animation:none}
+  @keyframes ctaglow{0%{box-shadow:0 2px 0 rgba(0,0,0,.06),0 0 0 0 rgba(31,90,255,.55)}70%{box-shadow:0 2px 0 rgba(0,0,0,.06),0 0 0 13px rgba(31,90,255,0)}100%{box-shadow:0 2px 0 rgba(0,0,0,.06),0 0 0 0 rgba(31,90,255,0)}}
+  .btn.warn.pulseglow{animation:ctaglowwarn 1.7s ease-out infinite}
+  .btn.warn.pulseglow:disabled{animation:none}
+  @keyframes ctaglowwarn{0%{box-shadow:0 2px 0 rgba(0,0,0,.06),0 0 0 0 rgba(255,144,0,.55)}70%{box-shadow:0 2px 0 rgba(0,0,0,.06),0 0 0 13px rgba(255,144,0,0)}100%{box-shadow:0 2px 0 rgba(0,0,0,.06),0 0 0 0 rgba(255,144,0,0)}}
   .btn:hover{filter:brightness(1.06)}.btn:active{transform:translateY(1px)}
   .btn.ghost{background:transparent;color:var(--blue);border:1.5px solid var(--blue);box-shadow:none}
   .btn.soft{background:var(--soft);color:var(--ink);border:1px solid var(--line);box-shadow:none}.btn.warn{background:var(--orange)}
@@ -86,7 +92,8 @@
   .legswatch.chance{background:#FF9000}
   .legswatch.shock{background:#E4572E}
   .legswatch.kennisduel{background:#8B5CF6}
-  .spbadge{display:inline-block;font-size:15px;font-weight:900;letter-spacing:.4px;text-transform:uppercase;color:#fff;border-radius:10px;padding:8px 16px}
+  .spbadge{display:inline-block;font-size:15px;font-weight:900;letter-spacing:.4px;text-transform:uppercase;color:#fff;border-radius:10px;padding:8px 16px;animation:badgebeat 2s ease-in-out infinite}
+  @keyframes badgebeat{0%,44%,100%{transform:scale(1)}14%{transform:scale(1.16)}28%{transform:scale(1)}38%{transform:scale(1.1)}}
   .spbadge.task{background:#1F5AFF}
   .spbadge.chance{background:#FF9000}
   .spbadge.shock{background:#E4572E}
@@ -1396,7 +1403,7 @@ function renderStage(){
   if(ph==="idle"){
     html=`<div class="yourturn" style="background:${team.color}">${esc(L.yourTurnBanner(team.name))}</div>
       <div style="text-align:center"><p class="hint">${esc(L.waitRoll(team.name))}</p>
-      <button class="btn soft" id="rollBtn">${L.rollBtn}</button></div>`;
+      <button class="btn soft pulseglow" id="rollBtn">${L.rollBtn}</button></div>`;
   }else if(ph==="rolling"){
     html=`<div style="text-align:center"><div class="dice rolling">${DICE_SVG}</div><div class="hint">${esc(team.name)}…</div></div>`;
   }else if(ph==="walking"){
@@ -1404,7 +1411,7 @@ function renderStage(){
   }else if(ph==="landed"){
     html=`<div style="text-align:center">${spBadgeHtml(state.turn.cardType,L)}
       <p class="hint">${esc(L.waitDrawCard(team.name))}</p>
-      <button class="btn soft" id="drawCardBtn">${L.drawCardBtn}</button></div>`;
+      <button class="btn soft pulseglow" id="drawCardBtn">${L.drawCardBtn}</button></div>`;
   }else if(ph==="card"){
     const type=state.turn.cardType,card=state.turn.card;
     const timerBox=(state.turnTimerSec>0&&type!=="chance")?`<div style="text-align:center"><div class="turntimer" id="turnTimerBox"><span class="ttdot"></span><span id="turnTimerTxt">${state.turnTimerSec}s</span></div></div>`:"";
@@ -1417,7 +1424,7 @@ function renderStage(){
         <h3>${esc(card.t)}</h3><p>${esc(card.x)}</p>
         <p class="hint">${card.coins>0?"+":""}${card.coins} ${L.coinsLbl.toLowerCase()}</p>
         ${duel?`<p class="hint" style="color:#a4321f">${L.duelAffects(esc(duel.name))} (${duel.coins>0?"+":""}${duel.coins} ${L.coinsLbl.toLowerCase()})</p>`:""}
-        <button class="btn soft" id="ackCardBtn">${L.confirmChoice}</button></div>`;
+        <button class="btn soft pulseglow" id="ackCardBtn">${L.confirmChoice}</button></div>`;
     }else if(type==="kennisduel"){
       const rival=state.turn.kdRival;
       const kimg=imgFor(card.id,"kennisduel");
@@ -1468,7 +1475,7 @@ function renderStage(){
     const gr=state.turn.guessResults;
     const guessBox=(gr&&gr.length)?`<div class="guessbox">`+gr.map(g=>`<span class="guesschip ${g.correct?'good':'bad'}" style="border-color:${g.color}">${esc(g.name)} ${g.correct?L.guessHit:L.guessMiss}</span>`).join("")+`</div>`:"";
     html=`<div style="text-align:center">${msg?`<p class="hint">${msg}</p>`:""}${detail}${guessBox}
-      <button class="btn soft" id="nextTurnBtn">${L.continueBtn}</button></div>`;
+      <button class="btn soft pulseglow" id="nextTurnBtn">${L.continueBtn}</button></div>`;
   }
   el.innerHTML=html;
   const rb=$("rollBtn");if(rb)rb.onclick=()=>rollDice();
@@ -1803,7 +1810,7 @@ function initPlayerView(){
       if(turn.phase==="idle"){
         if(mine){
           const sent=wasSent(turn,"roll");
-          main+=`<div style="text-align:center"><button class="btn warn big" id="playerRollBtn" ${sent?"disabled":""}>${sent?L.choiceSent:L.rollBtn}</button></div>`;
+          main+=`<div style="text-align:center"><button class="btn warn big pulseglow" id="playerRollBtn" ${sent?"disabled":""}>${sent?L.choiceSent:L.rollBtn}</button></div>`;
         }
       }else if(turn.phase==="rolling"){
         main+=`<div style="text-align:center"><div class="dice rolling">${DICE_SVG}</div></div>`;
@@ -1812,7 +1819,7 @@ function initPlayerView(){
       }else if(turn.phase==="landed"){
         if(mine){
           const sent=wasSent(turn,"drawCard");
-          main+=`<div style="text-align:center">${spBadgeHtml(turn.cardType,L)}<br><br><button class="btn warn big" id="playerDrawBtn" ${sent?"disabled":""}>${sent?L.choiceSent:L.drawCardBtn}</button></div>`;
+          main+=`<div style="text-align:center">${spBadgeHtml(turn.cardType,L)}<br><br><button class="btn warn big pulseglow" id="playerDrawBtn" ${sent?"disabled":""}>${sent?L.choiceSent:L.drawCardBtn}</button></div>`;
         }else{
           main+=`<div style="text-align:center">${spBadgeHtml(turn.cardType,L)}<p class="hint" style="margin-top:10px">${L.waitForYourTeam}</p></div>`;
         }
@@ -1833,7 +1840,7 @@ function initPlayerView(){
           }
           if(mine){
             const sent=wasSent(turn,"ackChance");
-            main+=`<button class="btn warn" id="playerAckBtn" ${sent?"disabled":""}>${sent?L.choiceSent:L.confirmChoice}</button>`;
+            main+=`<button class="btn warn pulseglow" id="playerAckBtn" ${sent?"disabled":""}>${sent?L.choiceSent:L.confirmChoice}</button>`;
           }
         }else if(turn.card.o){
           if(mine){
@@ -1881,7 +1888,7 @@ function initPlayerView(){
         }
         if(mine){
           const sent=wasSent(turn,"nextTurn");
-          main+=`<div style="text-align:center;margin-top:8px"><button class="btn soft" id="playerNextBtn" ${sent?"disabled":""}>${sent?L.choiceSent:L.continueBtn}</button></div>`;
+          main+=`<div style="text-align:center;margin-top:8px"><button class="btn soft pulseglow" id="playerNextBtn" ${sent?"disabled":""}>${sent?L.choiceSent:L.continueBtn}</button></div>`;
         }
       }
     }
