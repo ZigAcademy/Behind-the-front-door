@@ -93,8 +93,7 @@
   .tile.here{outline:3px solid var(--orange);outline-offset:-2px}
   .ringcenter{position:absolute;left:12.5%;top:12.5%;width:75%;height:75%;background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:14px;overflow:auto;z-index:2;display:flex;flex-direction:column;justify-content:center}
   .pawnlayer{position:absolute;inset:0;pointer-events:none;z-index:6;display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr);gap:5px}
-  .pawncell{display:flex;align-items:flex-end;justify-content:center;gap:2px;flex-wrap:nowrap;padding:2px;overflow:visible}
-  .pw2wrap{display:inline-flex;transform-origin:center bottom}
+  .pawncell{display:flex;align-items:flex-end;justify-content:center;flex-wrap:nowrap;padding:2px;overflow:visible}
   .pw2{width:52px;height:68px;background-size:contain;background-repeat:no-repeat;background-position:center bottom;filter:drop-shadow(0 4px 6px rgba(0,0,0,.45));position:relative;flex:0 0 auto;transform-origin:center bottom}
   .pw2.hop{animation:pawnhop .42s cubic-bezier(.4,0,.3,1)}
   @keyframes pawnhop{
@@ -725,9 +724,9 @@ const T={
   startGame:"Spel starten →",boardH:"Speelbord",standH:"Stand",
   rollBtn:"🎲 Gooi de dobbelsteen",yourTurnBanner:(n)=>`${n} is aan zet`,
   walking:"Pion loopt naar het vakje…",landed:(tile)=>`Geland op vakje ${tile}`,
-  waitRoll:(n)=>`Wacht tot ${n} zelf de dobbelsteen gooit op hun eigen scherm…`,rollFallback:"Of gooi hier als host (back-up):",
-  drawCardBtn:"🎴 Trek een kaart",waitDrawCard:(n)=>`${n} staat op dit vakje — wacht tot zij zelf een kaart trekken…`,drawCardFallback:"Of trek hier als host (back-up):",
-  ackChanceFallback:"Of bevestig hier als host (back-up):",nextTurnFallback:"Of ga hier verder als host (back-up):",
+  waitRoll:(n)=>`Wacht tot ${n} zelf de dobbelsteen gooit op hun eigen scherm…`,rollFallback:"Of gooi hier als host:",
+  drawCardBtn:"🎴 Trek een kaart",waitDrawCard:(n)=>`${n} staat op dit vakje — wacht tot zij zelf een kaart trekken…`,drawCardFallback:"Of trek hier als host:",
+  ackChanceFallback:"Of bevestig hier als host:",nextTurnFallback:"Of ga hier verder als host:",
   drawTask:"Trek een opdrachtkaart",drawChance:"Trek een kanskaart",drawShock:"⚠️ Onvoorziene gebeurtenis!",drawKennisduel:"🧠 Kennisduel",
   kdVersus:(n)=>`⚔️ Bij een goed antwoord tik je munten af bij <b>${n}</b>`,kdCorrect:"✅ Goed antwoord!",kdWrong:"❌ Helaas, niet correct.",legKennisduel:"Kennisduel — sectorkennis, verover munten van je rivaal",
   chooseOpt:"Kies een aanpak:",confirmChoice:"Bevestigen",continueBtn:"Volgende beurt →",
@@ -752,9 +751,9 @@ const T={
   startGame:"Start game →",boardH:"Game board",standH:"Standings",
   rollBtn:"🎲 Roll the dice",yourTurnBanner:(n)=>`${n} is up`,
   walking:"Pawn is walking to the tile…",landed:(tile)=>`Landed on tile ${tile}`,
-  waitRoll:(n)=>`Waiting for ${n} to roll the dice on their own screen…`,rollFallback:"Or roll here as host (backup):",
-  drawCardBtn:"🎴 Draw a card",waitDrawCard:(n)=>`${n} is on this tile — waiting for them to draw a card…`,drawCardFallback:"Or draw here as host (backup):",
-  ackChanceFallback:"Or confirm here as host (backup):",nextTurnFallback:"Or continue here as host (backup):",
+  waitRoll:(n)=>`Waiting for ${n} to roll the dice on their own screen…`,rollFallback:"Or roll here as host:",
+  drawCardBtn:"🎴 Draw a card",waitDrawCard:(n)=>`${n} is on this tile — waiting for them to draw a card…`,drawCardFallback:"Or draw here as host:",
+  ackChanceFallback:"Or confirm here as host:",nextTurnFallback:"Or continue here as host:",
   drawTask:"Draw a task card",drawChance:"Draw a chance card",drawShock:"⚠️ Unforeseen event!",drawKennisduel:"🧠 Knowledge duel",
   kdVersus:(n)=>`⚔️ A correct answer steals coins from <b>${n}</b>`,kdCorrect:"✅ Correct answer!",kdWrong:"❌ Not correct, unfortunately.",legKennisduel:"Knowledge duel — sector knowledge, steal coins from your rival",
   chooseOpt:"Choose an approach:",confirmChoice:"Confirm",continueBtn:"Next turn →",
@@ -1189,23 +1188,19 @@ function renderPawns(){
     const idx=parseInt(idxStr,10);
     const pos=RING_LAYOUT[idx];
     const teamsHere=grouped[idx];
-    // Als er meerdere pionnen op hetzelfde vakje staan, verklein ze zodat ze
-    // samen binnen de breedte van het vakje passen (ipv over de rand/volgende
-    // vakjes heen te "spillen").
-    const n=teamsHere.length;
-    const pawnW=52,gapPx=2,tileW=pitch.colStep-6;
-    const scale=n>1?Math.max(0.4,Math.min(1,(tileW-(n-1)*gapPx)/(n*pawnW))):1;
-    const pawnsHtml=teamsHere.map(team=>{
+    // Meerdere pionnen op hetzelfde vakje blijven op volle grootte en overlappen
+    // elkaar gewoon (ipv te verkleinen), zodat ze binnen het vakje blijven.
+    const pawnsHtml=teamsHere.map((team,pIdx)=>{
       const prevRaw=_lastPawnPos[team.id];
       const moved=prevRaw!==undefined&&prevRaw!==team.boardPos;
-      let styleVars="";
+      let styleVars=pIdx>0?"margin-left:-26px;":"";
       if(moved){
         const prevIdx=((prevRaw%RING_LEN)+RING_LEN)%RING_LEN;
         const prevPos=RING_LAYOUT[prevIdx];
         const dx=(prevPos.col-pos.col)*pitch.colStep,dy=(prevPos.row-pos.row)*pitch.rowStep;
-        styleVars=`--fx:${dx}px;--fy:${dy}px;`;
+        styleVars+=`--fx:${dx}px;--fy:${dy}px;`;
       }
-      return `<div class="pw2wrap" style="transform:scale(${scale})"><div class="pw2${moved?" hop":""}" style="background-image:url('assets/${pawnImgFor(team.color)}.png');${styleVars}" title="${esc(team.name)}"></div></div>`;
+      return `<div class="pw2${moved?" hop":""}" style="background-image:url('assets/${pawnImgFor(team.color)}.png');${styleVars}" title="${esc(team.name)}"></div>`;
     }).join("");
     html+=`<div class="pawncell" style="grid-row:${pos.row};grid-column:${pos.col}">${pawnsHtml}</div>`;
   });
