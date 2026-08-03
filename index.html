@@ -31,6 +31,8 @@
   .roundbar .rpill{background:var(--navy);color:#fff;border-radius:999px;padding:7px 15px;font-weight:800;font-size:14px}
   .roundbar .rpill .n{color:var(--orange);margin-inline-end:6px}
   .hint{color:var(--muted);font-size:13.5px;margin:2px 2px 16px}
+  #stage .hint,.pdash-main .hint{font-size:15.5px;line-height:1.4}
+  #stage .hint b,.pdash-main .hint b{font-size:16.5px;color:var(--ink)}
   #roundHint{color:#c6d1e6}
   .panel{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:18px}
   .panel h2{margin:0 0 12px;font-size:14px;text-transform:uppercase;letter-spacing:.7px;color:var(--muted)}
@@ -134,13 +136,13 @@
   .metdelta{display:inline-flex;align-items:center;gap:5px;font-weight:700}
   .metdelta img{width:18px;height:18px;object-fit:contain;vertical-align:-4px}
   .whybox{max-width:460px;margin:8px auto 0;text-align:start;background:var(--soft);border-radius:12px;padding:10px 14px}
-  .whybox b{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.3px;color:var(--blue);margin-bottom:4px}
-  .whybox p{margin:0;font-size:14px;line-height:1.4}
+  .whybox b{display:block;font-size:13.5px;text-transform:uppercase;letter-spacing:.3px;color:var(--blue);margin-bottom:5px}
+  .whybox p{margin:0;font-size:17px;line-height:1.45;font-weight:600}
   .effectrow{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin:12px 0}
   .effectchip{display:inline-flex;flex-direction:column;align-items:flex-start;gap:5px;border-radius:16px;padding:11px 16px;background:var(--soft);color:var(--ink);box-shadow:var(--shadow-sm);max-width:250px;text-align:start}
-  .effectchip .echead{display:flex;align-items:center;gap:8px;font-size:17px;font-weight:800;white-space:nowrap}
+  .effectchip .echead{display:flex;align-items:center;gap:8px;font-size:19px;font-weight:800;white-space:nowrap}
   .effectchip img{width:28px;height:28px;object-fit:contain}
-  .effectchip .ereason{font-size:13.5px;font-weight:600;line-height:1.35;opacity:.9}
+  .effectchip .ereason{font-size:15.5px;font-weight:600;line-height:1.4;opacity:.95}
   .effectchip.coin{background:linear-gradient(180deg,#ffe392,#f3b73f);color:#7a4100;border:1px solid #e7b768}
   .effectchip.pos{background:#e5f7ee;color:#137a44;border:1px solid #8fddb4}
   .effectchip.neg{background:#fdeee9;color:#a4321f;border:1px solid #f2b3a1}
@@ -206,7 +208,7 @@
   @keyframes kdpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
   .badge.kdbadge{background:#5b3aa8;color:#fff}
   .kdopt{border:1.5px solid #d9c9f7}
-  .kdverdict{font-weight:900;font-size:16px;padding:7px 13px;border-radius:10px;margin-bottom:6px;display:inline-block}
+  .kdverdict{font-weight:900;font-size:19px;padding:8px 15px;border-radius:10px;margin-bottom:8px;display:inline-block}
   .kdverdict.good{background:#e9f9f0;color:#137a44}
   .kdverdict.bad{background:#fdeee9;color:#a4321f}
   @media (prefers-color-scheme:dark){.kdverdict.good{background:#12301f}.kdverdict.bad{background:#331912}}
@@ -217,20 +219,21 @@
   @keyframes tilepop{0%{transform:scale(1)}40%{transform:scale(1.14)}100%{transform:scale(1)}}
   .yourturn,.announce{position:relative;overflow:hidden}
 
-  .cardface h3{margin:0 0 8px;font-size:19px;letter-spacing:-.2px;text-align:center}
-  .cardface p{font-size:14px;margin:0 0 8px}
-  .badge{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;background:var(--soft);color:var(--blue);border-radius:7px;padding:3px 9px;margin-bottom:8px}
+  .cardface h3{margin:0 0 10px;font-size:23px;letter-spacing:-.2px;text-align:center;color:var(--blue)}
+  .cardface p{font-size:17px;margin:0 0 10px;line-height:1.45;font-weight:500}
+  .badge{display:inline-block;font-size:12.5px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;background:var(--soft);color:var(--blue);border-radius:7px;padding:4px 11px;margin-bottom:10px}
   .opts{display:flex;flex-direction:column;gap:8px;margin-top:6px}
-  .optbtn{text-align:start;padding:11px 14px;line-height:1.35;width:100%}
-  .turntimer{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:800;letter-spacing:.3px;background:var(--soft);color:var(--blue);border-radius:20px;padding:5px 13px;margin:0 auto 10px;text-transform:uppercase}
+  .optbtn{text-align:start;padding:13px 16px;line-height:1.45;width:100%;font-size:16px}
+  .optbtn b{font-size:17px;color:var(--blue)}
+  .turntimer{display:inline-flex;align-items:center;gap:7px;font-size:13.5px;font-weight:800;letter-spacing:.3px;background:var(--soft);color:var(--blue);border-radius:20px;padding:6px 15px;margin:0 auto 10px;text-transform:uppercase}
   .turntimer .ttdot{width:8px;height:8px;border-radius:50%;background:var(--blue);flex:none}
   .turntimer.low{background:#fde2dc;color:#a4321f}
   .turntimer.low .ttdot{background:#a4321f;animation:pulse .6s infinite}
   .spbox{max-width:460px;margin:10px auto 0;text-align:start;background:var(--soft);border-radius:12px;padding:10px 14px}
-  .spbox b{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.3px;color:var(--blue);margin-bottom:4px}
-  .spbox p{margin:0;font-size:13px;line-height:1.4}
+  .spbox b{display:block;font-size:13.5px;text-transform:uppercase;letter-spacing:.3px;color:var(--blue);margin-bottom:5px}
+  .spbox p{margin:0;font-size:16px;line-height:1.45;font-weight:500}
   .guessbox{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:10px}
-  .guesschip{font-size:12px;font-weight:700;border:1.5px solid;border-radius:20px;padding:4px 11px;background:var(--card)}
+  .guesschip{font-size:13.5px;font-weight:700;border:1.5px solid;border-radius:20px;padding:5px 13px;background:var(--card)}
   .guesschip.good{color:#137a44}
   .guesschip.bad{color:#a4321f;opacity:.75}
   .guessOpt{position:relative}
@@ -1393,7 +1396,6 @@ function renderStage(){
   if(ph==="idle"){
     html=`<div class="yourturn" style="background:${team.color}">${esc(L.yourTurnBanner(team.name))}</div>
       <div style="text-align:center"><p class="hint">${esc(L.waitRoll(team.name))}</p>
-      <p class="hint" style="margin-bottom:4px">${L.rollFallback}</p>
       <button class="btn soft" id="rollBtn">${L.rollBtn}</button></div>`;
   }else if(ph==="rolling"){
     html=`<div style="text-align:center"><div class="dice rolling">${DICE_SVG}</div><div class="hint">${esc(team.name)}…</div></div>`;
@@ -1402,7 +1404,6 @@ function renderStage(){
   }else if(ph==="landed"){
     html=`<div style="text-align:center">${spBadgeHtml(state.turn.cardType,L)}
       <p class="hint">${esc(L.waitDrawCard(team.name))}</p>
-      <p class="hint" style="margin-bottom:4px">${L.drawCardFallback}</p>
       <button class="btn soft" id="drawCardBtn">${L.drawCardBtn}</button></div>`;
   }else if(ph==="card"){
     const type=state.turn.cardType,card=state.turn.card;
@@ -1416,7 +1417,6 @@ function renderStage(){
         <h3>${esc(card.t)}</h3><p>${esc(card.x)}</p>
         <p class="hint">${card.coins>0?"+":""}${card.coins} ${L.coinsLbl.toLowerCase()}</p>
         ${duel?`<p class="hint" style="color:#a4321f">${L.duelAffects(esc(duel.name))} (${duel.coins>0?"+":""}${duel.coins} ${L.coinsLbl.toLowerCase()})</p>`:""}
-        <p class="hint" style="margin-bottom:4px">${L.ackChanceFallback}</p>
         <button class="btn soft" id="ackCardBtn">${L.confirmChoice}</button></div>`;
     }else if(type==="kennisduel"){
       const rival=state.turn.kdRival;
@@ -1468,7 +1468,6 @@ function renderStage(){
     const gr=state.turn.guessResults;
     const guessBox=(gr&&gr.length)?`<div class="guessbox">`+gr.map(g=>`<span class="guesschip ${g.correct?'good':'bad'}" style="border-color:${g.color}">${esc(g.name)} ${g.correct?L.guessHit:L.guessMiss}</span>`).join("")+`</div>`:"";
     html=`<div style="text-align:center">${msg?`<p class="hint">${msg}</p>`:""}${detail}${guessBox}
-      <p class="hint" style="margin-bottom:4px">${L.nextTurnFallback}</p>
       <button class="btn soft" id="nextTurnBtn">${L.continueBtn}</button></div>`;
   }
   el.innerHTML=html;
