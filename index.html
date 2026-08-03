@@ -832,7 +832,7 @@ const AVG_MIN_PER_TURN=2.5;
 const TURNS_MIN=4,TURNS_MAX=16;
 /* ============ translations ============ */
 const T={
- nl:{brand:"Behind the Front Door",room:"Kamer",joinLink:"Join-link",newGame:"Nieuw spel",help:"Uitleg",sector:"Sector",
+ nl:{brand:"Behind the Front Door",room:"Kamer",joinLink:"Join-link",newGame:"Nieuw spel",help:"Uitleg",sector:"Sector",soundOnLbl:"Geluid aan",soundOffLbl:"Geluid uit",fxOnLbl:"Effecten aan",fxOffLbl:"Effecten uit",
   introTitle:"Welkom bij Behind the Front Door",
   introAbout:"Een bordspel waarin jullie team, net als een echte woningcorporatie, elke beurt een lastige keuze maakt over onderhoud, betaalbaarheid, verduurzaming, leefbaarheid en digitalisering — met altijd een addertje onder het gras.",
   introRulesTitle:"Spelregels",
@@ -874,7 +874,7 @@ const T={
   jwH:"Je bent binnen!",jwWait:"Hou 'm in de gaten — zodra jullie aan de beurt zijn, gebeurt het hier live!",jwRoomL:"kamer",
   netLive:"Live verbonden",netOff:"Offline (lokaal)",netLiveTip:"Live verbonden — wijzigingen worden direct gedeeld met alle spelers.",netOffTip:"Offline (lokaal) — dit spel wordt niet gedeeld, alleen zichtbaar op dit scherm.",footNL:"Zig Grow · Behind the Front Door",
   roundHint:(done,total)=>`Voortgang: ${done} van ${total} beurten gespeeld`,metricsLbl:"Meters",coinsLbl:"Munten"},
- en:{brand:"Behind the Front Door",room:"Room",joinLink:"Join link",newGame:"New game",help:"Guide",sector:"Sector",
+ en:{brand:"Behind the Front Door",room:"Room",joinLink:"Join link",newGame:"New game",help:"Guide",sector:"Sector",soundOnLbl:"Sound on",soundOffLbl:"Sound off",fxOnLbl:"Effects on",fxOffLbl:"Effects off",
   introTitle:"Welcome to Behind the Front Door",
   introAbout:"A board game where your team, just like a real housing corporation, faces a tough call every turn — on maintenance, affordability, sustainability, liveability and digitalisation — always with a catch.",
   introRulesTitle:"How to play",
@@ -1050,6 +1050,7 @@ function tileTypeAt(pos){return TILE_TYPES[pos%RING_LEN];}
    a previous turn from ever firing, while letting either the active team's
    own device OR the facilitator's screen (fallback) drive every step. */
 function startGame(){
+  state.soundOn=true;state.fxOn=true;
   state.turnsPerTeam=computeTurnsPerTeam();
   state.teams.forEach(tm=>{tm.coins=10;tm.met={sat:0,fin:0,comp:0,dur:0};tm.boardPos=0;tm.turnsTaken=0;tm.history=[];tm.seenTask=[];tm.seenChance=[];tm.seenKD=[];tm.seenShock=[];tm.laps=0;});
   state.activeTeamIdx=0;
@@ -1324,6 +1325,8 @@ function render(){
   $("sectorBtn").textContent=T[state.lang].sector;
   $("fullscreenToggle").textContent=document.fullscreenElement?T[state.lang].fsExit:T[state.lang].fsEnter;
   $("sectorBtn").title=T[state.lang].sectorBtnTip;
+  $("soundToggle").textContent=state.soundOn?T[state.lang].soundOnLbl:T[state.lang].soundOffLbl;
+  $("fxToggle").textContent=state.fxOn?T[state.lang].fxOnLbl:T[state.lang].fxOffLbl;
   $("footNL").textContent=T[state.lang].footNL;
   $("langToggle").textContent=state.lang==="nl"?"EN":"NL";
   $("netStatus").className="netdot "+(NET.connected?"live":"off");
@@ -1714,8 +1717,8 @@ function wireFacilitator(){
   $("customTurns").oninput=e=>{state.customTurns=clamp(parseInt(e.target.value,10)||8,TURNS_MIN,TURNS_MAX);updateEstimate();saveLocal();};
   $("startGame").onclick=()=>startGame();
   $("langToggle").onclick=()=>{state.lang=state.lang==="nl"?"en":"nl";renderLegendAndHelp();render();saveLocal();NET.publish();};
-  $("soundToggle").onclick=()=>{state.soundOn=!state.soundOn;$("soundToggle").textContent=state.soundOn?"Geluid aan":"Geluid uit";saveLocal();};
-  $("fxToggle").onclick=()=>{state.fxOn=!state.fxOn;$("fxToggle").textContent=state.fxOn?"Effecten aan":"Effecten uit";saveLocal();};
+  $("soundToggle").onclick=()=>{state.soundOn=!state.soundOn;$("soundToggle").textContent=state.soundOn?T[state.lang].soundOnLbl:T[state.lang].soundOffLbl;saveLocal();};
+  $("fxToggle").onclick=()=>{state.fxOn=!state.fxOn;$("fxToggle").textContent=state.fxOn?T[state.lang].fxOnLbl:T[state.lang].fxOffLbl;saveLocal();};
   $("fullscreenToggle").onclick=()=>toggleFullscreen();
   $("helpToggle").onclick=()=>{$("helpPanel").classList.toggle("hide");};
   $("sectorBtn").onclick=()=>triggerSectorEvent();
