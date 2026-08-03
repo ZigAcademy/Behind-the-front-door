@@ -78,6 +78,17 @@
   .cover{aspect-ratio:2.4/1;width:100%;max-width:640px;margin:0 auto 14px;border-radius:16px;background:#fbfaf6 center/cover no-repeat;box-shadow:var(--shadow),0 0 0 1px rgba(255,255,255,.5) inset}
   .legend{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 4px}
   .legend .lg{display:flex;align-items:center;gap:6px;background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:6px 11px;font-size:12.5px;font-weight:700;white-space:nowrap}
+  .legswatch{display:inline-block;width:12px;height:12px;border-radius:4px;margin-inline-end:6px;vertical-align:-1px}
+  .legswatch.start{background:var(--navy)}
+  .legswatch.task{background:#1F5AFF}
+  .legswatch.chance{background:#FF9000}
+  .legswatch.shock{background:#E4572E}
+  .legswatch.kennisduel{background:#8B5CF6}
+  .spbadge{display:inline-block;font-size:15px;font-weight:900;letter-spacing:.4px;text-transform:uppercase;color:#fff;border-radius:10px;padding:8px 16px}
+  .spbadge.task{background:#1F5AFF}
+  .spbadge.chance{background:#FF9000}
+  .spbadge.shock{background:#E4572E}
+  .spbadge.kennisduel{background:#8B5CF6}
   .steplist{list-style:none;margin:8px 0 2px;padding:0}
   .steplist li{font-size:13.5px;margin:6px 0;display:flex;gap:8px;align-items:flex-start}
   .tips{list-style:none;margin:0 0 18px;padding:0;text-align:start}
@@ -233,10 +244,10 @@
     <div class="brandline" id="brand"></div><div class="spacer"></div>
     <div class="join-chip"><span id="roomLbl">Kamer</span>&nbsp;<b id="roomCode">----</b></div>
     <span id="netStatus" class="netchip off"></span>
-    <button class="btn ghost sm" id="sectorBtn">🌐 Sector</button>
-    <button class="btn ghost sm" id="helpToggle">❔ Uitleg</button>
-    <button class="btn ghost sm" id="soundToggle" title="Geluid">🔊</button>
-    <button class="btn ghost sm" id="fxToggle" title="Effecten">👁</button>
+    <button class="btn ghost sm" id="sectorBtn">Sector</button>
+    <button class="btn ghost sm" id="helpToggle">Uitleg</button>
+    <button class="btn ghost sm" id="soundToggle" title="Geluid">Geluid aan</button>
+    <button class="btn ghost sm" id="fxToggle" title="Effecten">Effecten aan</button>
     <button class="btn ghost sm" id="langToggle">EN</button>
     <button class="btn ghost sm" id="copyJoin">Join-link</button>
     <button class="btn soft sm" id="resetGame">Nieuw spel</button>
@@ -329,7 +340,7 @@
       <div class="fldwrap"><label class="fld" id="jfTeamL" for="pTeam">Team</label><select id="pTeam"><option value="1">Team 1</option><option value="2">Team 2</option><option value="3">Team 3</option><option value="4">Team 4</option><option value="5">Team 5</option><option value="6">Team 6</option></select></div>
       <button class="btn warn big" id="joinBtn" style="width:100%">Meedoen →</button>
     </div>
-    <div id="joinWaiting" style="display:none"><h1 id="jwH">Je bent binnen! 🎉</h1><p class="s"><b id="joinWho"></b> — <span id="jwRoomL">kamer</span> <b id="joinRoomEcho"></b></p><p style="font-size:14px" id="jwWait"></p><div class="pnet off" id="jwBanner" style="text-align:start"></div></div>
+    <div id="joinWaiting" style="display:none"><h1 id="jwH">Je bent binnen!</h1><p class="s"><b id="joinWho"></b> — <span id="jwRoomL">kamer</span> <b id="joinRoomEcho"></b></p><p style="font-size:14px" id="jwWait"></p><div class="pnet off" id="jwBanner" style="text-align:start"></div></div>
   </div>
 </div>
 
@@ -782,14 +793,20 @@ function vakjeVariantFor(i,type){
   if(!arr.length) return type;
   return arr[TILE_CATS[i]%arr.length];
 }
-const SP_ICON={start:"🏁",task:"🏠",chance:"🍀",shock:"💥",kennisduel:"🧠"};
+/* Kleurrijke tekst-badge (geen emoji) die aangeeft welk kaarttype er getrokken
+   gaat worden, getoond in de korte "landed"-fase voordat de kaart zelf
+   omgedraaid wordt. */
+function spBadgeHtml(type,L){
+  const label=type==="shock"?L.drawShock:type==="chance"?L.drawChance:type==="kennisduel"?L.drawKennisduel:L.drawTask;
+  return `<span class="spbadge ${type}">${esc(label)}</span>`;
+}
 const DURATION_PRESETS={short:45,medium:70,long:100};
 const AVG_MIN_PER_TURN=2.5;
 const TURNS_MIN=4,TURNS_MAX=16;
 /* ============ translations ============ */
 const T={
- nl:{brand:"Behind the Front Door",room:"Kamer",joinLink:"Join-link",newGame:"Nieuw spel",help:"❔ Uitleg",sector:"🌐 Sector",
-  introTitle:"Welkom bij Behind the Front Door 👋",
+ nl:{brand:"Behind the Front Door",room:"Kamer",joinLink:"Join-link",newGame:"Nieuw spel",help:"Uitleg",sector:"Sector",
+  introTitle:"Welkom bij Behind the Front Door",
   introAbout:"Een bordspel waarin jullie team, net als een echte woningcorporatie, elke beurt een lastige keuze maakt over onderhoud, betaalbaarheid, verduurzaming, leefbaarheid en digitalisering — met altijd een addertje onder het gras.",
   introRulesTitle:"Spelregels",
   introRules:["Elk team gooit om de beurt met de dobbelsteen; de pion loopt stap voor stap naar het nieuwe vakje.",
@@ -802,36 +819,36 @@ const T={
   setupH:"Teams instellen",setupP:"Voeg teams toe, kies de speelduur en start het spel. Spelers scannen de join-link of vullen de kamercode in.",
   addTeam:"+ Team toevoegen",teamName:"Teamnaam",removeTeam:"Verwijderen",
   durLbl:"Speelduur",custLbl:"Beurten per team",durShort:"Kort · ~45 min",durMedium:"Gemiddeld · ~70 min",durLong:"Lang · ~100 min",durCustom:"Zelf instellen",
-  timerLbl:"Tijdslimiet per beurt",timerOff:"Uit",timer30:"30 seconden",timer60:"60 seconden",timer90:"90 seconden",timesUp:"⏰ Tijd is om!",
-  guessPrompt:"Wat kiest het actieve team, denk je? Gok mee voor een bonusmunt:",guessSent:"Gok verstuurd, wachten op de uitkomst…",guessCorrectMsg:"Goed gegokt! +1 munt bonus.",guessWrongMsg:"Helaas, verkeerd gegokt.",guessBonusLbl:"gokbonus",
+  timerLbl:"Tijdslimiet per beurt",timerOff:"Uit",timer30:"30 seconden",timer60:"60 seconden",timer90:"90 seconden",timesUp:"Tijd is om!",
+  guessPrompt:"Wat kiest het actieve team, denk je? Gok mee voor een bonusmunt:",guessSent:"Gok verstuurd, wachten op de uitkomst…",guessCorrectMsg:"Goed gegokt! +1 munt bonus.",guessWrongMsg:"Helaas, verkeerd gegokt.",guessBonusLbl:"gokbonus",guessHit:"Goed! +1",guessMiss:"Mis",
   estimate:(turns,mins,teams)=>`Elk team krijgt <b>${turns} beurten</b> · totale speeltijd ≈ <b>${mins} minuten</b> voor ${teams} team${teams>1?"s":""}.`,
   startGame:"Spel starten →",boardH:"Speelbord",standH:"Stand",
-  rollBtn:"🎲 Gooi de dobbelsteen",yourTurnBanner:(n)=>`${n} is aan zet`,
+  rollBtn:"Gooi de dobbelsteen",yourTurnBanner:(n)=>`${n} is aan zet`,
   walking:"Pion loopt naar het vakje…",landed:(tile)=>`Geland op vakje ${tile}`,
-  waitRoll:(n)=>`Wacht tot ${n} zelf de dobbelsteen gooit op hun eigen scherm…`,rollFallback:"Of gooi hier als host:",
-  drawCardBtn:"🎴 Trek een kaart",waitDrawCard:(n)=>`${n} staat op dit vakje — wacht tot zij zelf een kaart trekken…`,drawCardFallback:"Of trek hier als host:",
-  ackChanceFallback:"Of bevestig hier als host:",nextTurnFallback:"Of ga hier verder als host:",spTitle:"Waarom was dit lastig?",
+  waitRoll:(n)=>`${n}, grijp je telefoon en gooi die dobbelsteen!`,rollFallback:"Liever de host die gooit? Ga je gang:",
+  drawCardBtn:"Trek een kaart",waitDrawCard:(n)=>`${n}, deze kant op! Trek een kaart!`,drawCardFallback:"Host, trek 'm zelf? Ga je gang:",
+  ackChanceFallback:"Host, bevestig het hier:",nextTurnFallback:"Host, op naar de volgende beurt:",spTitle:"Waarom was dit lastig?",
   whyLbl:"Waarom deze uitkomst",effectLbl:"Effect op munten en punten",
-  drawTask:"Trek een opdrachtkaart",drawChance:"Trek een kanskaart",drawShock:"⚠️ Onvoorziene gebeurtenis!",drawKennisduel:"🧠 Kennisduel",
-  kdVersus:(n)=>`⚔️ Bij een goed antwoord tik je munten af bij <b>${n}</b>`,kdCorrect:"✅ Goed antwoord!",kdWrong:"❌ Helaas, niet correct.",legKennisduel:"Kennisduel — sectorkennis, verover munten van je rivaal",
+  drawTask:"Trek een opdrachtkaart",drawChance:"Trek een kanskaart",drawShock:"Onvoorziene gebeurtenis!",drawKennisduel:"Kennisduel",
+  kdVersus:(n)=>`Bij een goed antwoord tik je munten af bij <b>${n}</b>`,kdCorrect:"Goed antwoord!",kdWrong:"Helaas, niet correct.",legKennisduel:"Kennisduel — sectorkennis, verover munten van je rivaal",
   chooseOpt:"Kies een aanpak:",confirmChoice:"Bevestigen",continueBtn:"Volgende beurt →",
-  choiceSent:"✓ Keuze verzonden — wordt verwerkt op het hoofdscherm…",waitForYourTeam:"Wacht tot iemand in jouw team een keuze maakt…",
-  passedStart:"🏁 Rondje voltooid! +5 munten huurinkomsten.",collectedStart:"🏁 Aangekomen op Start! +5 munten huurinkomsten.",
+  choiceSent:"Keuze verzonden — wordt verwerkt op het hoofdscherm…",waitForYourTeam:"Kom op, jouw team — maak die keuze!",
+  passedStart:"Rondje voltooid! +5 munten huurinkomsten.",collectedStart:"Aangekomen op Start! +5 munten huurinkomsten.",
   chanceAutoGood:"Meevaller!",chanceAutoBad:"Tegenvaller.",
-  duelBadge:"⚔️ Concurrentie-kaart",duelAffects:(n)=>`Dit treft ook: <b>${n}</b>`,duelHitBy:(n)=>`🎯 Geraakt door ${n}`,
-  newLeader:(n)=>`🔥 ${n} neemt de leiding!`,dismiss:"OK",
+  duelBadge:"Concurrentie-kaart",duelAffects:(n)=>`Dit treft ook: <b>${n}</b>`,duelHitBy:(n)=>`Geraakt door ${n}`,
+  newLeader:(n)=>`${n} neemt de leiding!`,dismiss:"OK",
   scoresH:"Eindstand",scoresP:"Bekijk de resultaten en bespreek de belangrijkste keuzes na.",againBtn:"Nieuw spel",
-  winnerHeadline:(n,c)=>`🏆 <b>${n}</b> wint met <b>${c} punten</b>!`,
+  winnerHeadline:(n,c)=>`<b>${n}</b> wint met <b>${c} punten</b>!`,
   finalScoreLbl:"Eindscore",balansBonusLbl:"Balansbonus",balansHint:"1 punt per metric die op 0 of hoger staat, -1 punt per metric die negatief staat.",
-  sectorBanner:(t,x)=>`<b>🌐 Sectorgebeurtenis — ${t}</b><br>${x}`,sectorBtnTip:"Los een gebeurtenis los die alle teams raakt",
+  sectorBanner:(t,x)=>`<b>Sectorgebeurtenis — ${t}</b><br>${x}`,sectorBtnTip:"Los een gebeurtenis los die alle teams raakt",
   legend:"Legenda vakjes",legStart:"Start/Finish — inkomsten bij passeren",legTask:"Opdracht — kies uit 3 opties",legChance:"Kans — automatisch effect",legShock:"Shock — grote onverwachte gebeurtenis",
   helpTitle:"Hoe werkt het?",helpBody:"<ol><li>Elk team gooit op zijn beurt één dobbelsteen en de pion loopt stap voor stap naar het nieuwe vakje.</li><li>Het vakje bepaalt wat je krijgt: een <b>opdracht</b> (kies uit 3 opties), een <b>kans</b> (automatisch effect), een <b>kennisduel</b> (meerkeuzevraag over de sector — bij een goed antwoord tik je munten af bij je rivaal) of de <b>shock</b> (bijzondere gebeurtenis).</li><li>Elke ronde langs Start levert het team huurinkomsten op.</li><li>De host kan via de <b>Sector</b>-knop op elk moment een sectorbrede gebeurtenis loslaten die alle teams tegelijk raakt — gebruik dit bewust om het spel spannender te maken.</li><li>Na het ingestelde aantal beurten per team volgt de eindstand.</li></ol>",
   jfH:"Doe mee",jfSub:"Vul de kamercode in en kies je team.",jfRoomL:"Kamercode",jfNameL:"Jouw naam",jfTeamL:"Team",joinBtn:"Meedoen →",
-  jwH:"Je bent binnen! 🎉",jwWait:"Wacht tot je team aan de beurt is — dit scherm werkt live mee.",jwRoomL:"kamer",
+  jwH:"Je bent binnen!",jwWait:"Hou 'm in de gaten — zodra jullie aan de beurt zijn, gebeurt het hier live!",jwRoomL:"kamer",
   netLive:"Live verbonden",netOff:"Offline (lokaal)",footNL:"Zig Grow · Behind the Front Door",
   roundHint:(done,total)=>`Voortgang: ${done} van ${total} beurten gespeeld`,metricsLbl:"Meters",coinsLbl:"Munten"},
- en:{brand:"Behind the Front Door",room:"Room",joinLink:"Join link",newGame:"New game",help:"❔ Guide",sector:"🌐 Sector",
-  introTitle:"Welcome to Behind the Front Door 👋",
+ en:{brand:"Behind the Front Door",room:"Room",joinLink:"Join link",newGame:"New game",help:"Guide",sector:"Sector",
+  introTitle:"Welcome to Behind the Front Door",
   introAbout:"A board game where your team, just like a real housing corporation, faces a tough call every turn — on maintenance, affordability, sustainability, liveability and digitalisation — always with a catch.",
   introRulesTitle:"How to play",
   introRules:["Each team takes turns rolling the dice; the pawn walks step by step to the new tile.",
@@ -844,32 +861,32 @@ const T={
   setupH:"Set up teams",setupP:"Add teams, choose the play duration and start the game. Players scan the join link or enter the room code.",
   addTeam:"+ Add team",teamName:"Team name",removeTeam:"Remove",
   durLbl:"Play duration",custLbl:"Turns per team",durShort:"Short · ~45 min",durMedium:"Medium · ~70 min",durLong:"Long · ~100 min",durCustom:"Custom",
-  timerLbl:"Time limit per turn",timerOff:"Off",timer30:"30 seconds",timer60:"60 seconds",timer90:"90 seconds",timesUp:"⏰ Time's up!",
-  guessPrompt:"What will the active team choose, you think? Guess along for a bonus coin:",guessSent:"Guess sent, waiting for the outcome…",guessCorrectMsg:"Good guess! +1 bonus coin.",guessWrongMsg:"No luck, wrong guess.",guessBonusLbl:"guess bonus",
+  timerLbl:"Time limit per turn",timerOff:"Off",timer30:"30 seconds",timer60:"60 seconds",timer90:"90 seconds",timesUp:"Time's up!",
+  guessPrompt:"What will the active team choose, you think? Guess along for a bonus coin:",guessSent:"Guess sent, waiting for the outcome…",guessCorrectMsg:"Good guess! +1 bonus coin.",guessWrongMsg:"No luck, wrong guess.",guessBonusLbl:"guess bonus",guessHit:"Right! +1",guessMiss:"Miss",
   estimate:(turns,mins,teams)=>`Each team gets <b>${turns} turns</b> · total playtime ≈ <b>${mins} minutes</b> for ${teams} team${teams>1?"s":""}.`,
   startGame:"Start game →",boardH:"Game board",standH:"Standings",
-  rollBtn:"🎲 Roll the dice",yourTurnBanner:(n)=>`${n} is up`,
+  rollBtn:"Roll the dice",yourTurnBanner:(n)=>`${n} is up`,
   walking:"Pawn is walking to the tile…",landed:(tile)=>`Landed on tile ${tile}`,
-  waitRoll:(n)=>`Waiting for ${n} to roll the dice on their own screen…`,rollFallback:"Or roll here as host:",
-  drawCardBtn:"🎴 Draw a card",waitDrawCard:(n)=>`${n} is on this tile — waiting for them to draw a card…`,drawCardFallback:"Or draw here as host:",
-  ackChanceFallback:"Or confirm here as host:",nextTurnFallback:"Or continue here as host:",spTitle:"Why was this hard?",
+  waitRoll:(n)=>`${n}, grab your phone and roll that dice!`,rollFallback:"Prefer the host to roll? Go for it:",
+  drawCardBtn:"Draw a card",waitDrawCard:(n)=>`${n}, this way! Draw a card!`,drawCardFallback:"Host, draw it yourself? Go for it:",
+  ackChanceFallback:"Host, confirm it here:",nextTurnFallback:"Host, on to the next turn:",spTitle:"Why was this hard?",
   whyLbl:"Why this outcome",effectLbl:"Effect on coins and points",
-  drawTask:"Draw a task card",drawChance:"Draw a chance card",drawShock:"⚠️ Unforeseen event!",drawKennisduel:"🧠 Knowledge duel",
-  kdVersus:(n)=>`⚔️ A correct answer steals coins from <b>${n}</b>`,kdCorrect:"✅ Correct answer!",kdWrong:"❌ Not correct, unfortunately.",legKennisduel:"Knowledge duel — sector knowledge, steal coins from your rival",
+  drawTask:"Draw a task card",drawChance:"Draw a chance card",drawShock:"Unforeseen event!",drawKennisduel:"Knowledge duel",
+  kdVersus:(n)=>`A correct answer steals coins from <b>${n}</b>`,kdCorrect:"Correct answer!",kdWrong:"Not correct, unfortunately.",legKennisduel:"Knowledge duel — sector knowledge, steal coins from your rival",
   chooseOpt:"Choose an approach:",confirmChoice:"Confirm",continueBtn:"Next turn →",
-  choiceSent:"✓ Choice sent — being processed on the main screen…",waitForYourTeam:"Waiting for someone on your team to choose…",
-  passedStart:"🏁 Lap complete! +5 coins in rent income.",collectedStart:"🏁 Arrived at Start! +5 coins in rent income.",
+  choiceSent:"Choice sent — being processed on the main screen…",waitForYourTeam:"Come on, your team — make that call!",
+  passedStart:"Lap complete! +5 coins in rent income.",collectedStart:"Arrived at Start! +5 coins in rent income.",
   chanceAutoGood:"Lucky break!",chanceAutoBad:"Setback.",
-  duelBadge:"⚔️ Rivalry card",duelAffects:(n)=>`This also affects: <b>${n}</b>`,duelHitBy:(n)=>`🎯 Hit by ${n}`,
-  newLeader:(n)=>`🔥 ${n} takes the lead!`,dismiss:"OK",
+  duelBadge:"Rivalry card",duelAffects:(n)=>`This also affects: <b>${n}</b>`,duelHitBy:(n)=>`Hit by ${n}`,
+  newLeader:(n)=>`${n} takes the lead!`,dismiss:"OK",
   scoresH:"Final standings",scoresP:"Review the results and debrief the key choices.",againBtn:"New game",
-  winnerHeadline:(n,c)=>`🏆 <b>${n}</b> wins with <b>${c} points</b>!`,
+  winnerHeadline:(n,c)=>`<b>${n}</b> wins with <b>${c} points</b>!`,
   finalScoreLbl:"Final score",balansBonusLbl:"Balance bonus",balansHint:"1 point per metric at 0 or above, -1 point per metric that's negative.",
-  sectorBanner:(t,x)=>`<b>🌐 Sector event — ${t}</b><br>${x}`,sectorBtnTip:"Trigger an event that affects all teams",
+  sectorBanner:(t,x)=>`<b>Sector event — ${t}</b><br>${x}`,sectorBtnTip:"Trigger an event that affects all teams",
   legend:"Tile legend",legStart:"Start/Finish — income when passing",legTask:"Task — choose from 3 options",legChance:"Chance — automatic effect",legShock:"Shock — major unforeseen event",
   helpTitle:"How does it work?",helpBody:"<ol><li>Each team rolls one die on its turn and the pawn walks step by step to the new tile.</li><li>The tile decides what you get: a <b>task</b> (choose from 3 options), a <b>chance</b> (automatic effect), a <b>knowledge duel</b> (multiple-choice question about the sector — a correct answer steals coins from your rival) or the <b>shock</b> (special event).</li><li>Each lap past Start earns the team rent income.</li><li>The host can trigger a sector-wide event at any moment via the <b>Sector</b> button, affecting all teams at once — use it deliberately to raise the stakes.</li><li>After the configured number of turns per team, the final standings appear.</li></ol>",
   jfH:"Join in",jfSub:"Enter the room code and pick your team.",jfRoomL:"Room code",jfNameL:"Your name",jfTeamL:"Team",joinBtn:"Join →",
-  jwH:"You're in! 🎉",jwWait:"Wait until your team is up — this screen updates live.",jwRoomL:"room",
+  jwH:"You're in!",jwWait:"Keep an eye on this screen — the moment it's your turn, it happens right here!",jwRoomL:"room",
   netLive:"Live connected",netOff:"Offline (local)",footNL:"Zig Grow · Behind the Front Door",
   roundHint:(done,total)=>`Progress: ${done} of ${total} turns played`,metricsLbl:"Meters",coinsLbl:"Coins"}
 };
@@ -919,6 +936,9 @@ function celebrate(kind){
   else if(kind==="win")FX.burst(cx,cy,["#1F5AFF","#FF9000","#2FBF71","#8B5CF6","#E4572E"],140);
 }
 function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+/* Handgetekend dobbelsteen-icoon (geen emoji): een simpele vector-weergave van
+   een dobbelsteen met vijf ogen, gebruikt tijdens de "gooien"-animatie. */
+const DICE_SVG='<svg viewBox="0 0 24 24" width="34" height="34" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2.5" y="2.5" width="19" height="19" rx="5" stroke="currentColor" stroke-width="2"/><circle cx="8" cy="8" r="1.7" fill="currentColor"/><circle cx="16" cy="8" r="1.7" fill="currentColor"/><circle cx="12" cy="12" r="1.7" fill="currentColor"/><circle cx="8" cy="16" r="1.7" fill="currentColor"/><circle cx="16" cy="16" r="1.7" fill="currentColor"/></svg>';
 /* Bouwt een rij grote, duidelijke "effect-chips" (munten + metrics) voor het
    resolved-scherm - toont expliciet wat een gekozen optie oplevert of kost,
    met naam + icoon + getal per metric. Als er per metric een specifieke reden
@@ -926,7 +946,7 @@ function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;",
    zodat direct duidelijk is WAAROM juist die metric zo verandert. */
 function effectChipsHtml(lang,coins,fx,mx){
   const chips=[];
-  if(coins!=null)chips.push(`<span class="effectchip coin"><span class="echead">🪙 ${coins>0?"+":""}${coins} ${T[lang].coinsLbl.toLowerCase()}</span></span>`);
+  if(coins!=null)chips.push(`<span class="effectchip coin"><span class="echead"><img src="assets/icoon-financieel.png">${coins>0?"+":""}${coins} ${T[lang].coinsLbl.toLowerCase()}</span></span>`);
   Object.keys(MET[lang]).forEach(k=>{
     if(!fx||!fx[k])return;
     const v=fx[k];
@@ -1099,7 +1119,7 @@ function drawCard(){
       const target=resolveDuelTarget(team);
       if(target){
         applyCardEffect(target,card.targetFx||{},card.targetCoins||0);
-        target.history.push({turn:"🎯",type:"duel-target",id:card.id,title:card.t,sourceTeam:team.name,coins:card.targetCoins||0});
+        target.history.push({turn:"DUEL",type:"duel-target",id:card.id,title:card.t,sourceTeam:team.name,coins:card.targetCoins||0});
         state.turn.duelTarget={id:target.id,name:target.name,color:target.color,coins:card.targetCoins||0};
       }
     }
@@ -1178,7 +1198,7 @@ function resolveChoice(optIdx){
     const target=state.teams.find(t=>t.id===state.turn.kdRival.id);
     if(target){
       applyCardEffect(target,opt.targetFx||{},opt.targetCoins||0);
-      target.history.push({turn:"🧠",type:"kd-target",id:card.id,title:card.t,sourceTeam:team.name,coins:opt.targetCoins||0});
+      target.history.push({turn:"KD",type:"kd-target",id:card.id,title:card.t,sourceTeam:team.name,coins:opt.targetCoins||0});
       state.turn.kdResult={id:target.id,name:target.name,color:target.color,coins:opt.targetCoins||0};
       celebrate("kd");
     }
@@ -1376,11 +1396,11 @@ function renderStage(){
       <p class="hint" style="margin-bottom:4px">${L.rollFallback}</p>
       <button class="btn soft" id="rollBtn">${L.rollBtn}</button></div>`;
   }else if(ph==="rolling"){
-    html=`<div style="text-align:center"><div class="dice rolling">🎲</div><div class="hint">${esc(team.name)}…</div></div>`;
+    html=`<div style="text-align:center"><div class="dice rolling">${DICE_SVG}</div><div class="hint">${esc(team.name)}…</div></div>`;
   }else if(ph==="walking"){
     html=`<div style="text-align:center"><div class="dice">${state.turn.dice}</div><div class="hint">${L.walking}</div></div>`;
   }else if(ph==="landed"){
-    html=`<div style="text-align:center"><div class="ti" style="font-size:40px">${SP_ICON[state.turn.cardType]||""}</div>
+    html=`<div style="text-align:center">${spBadgeHtml(state.turn.cardType,L)}
       <p class="hint">${esc(L.waitDrawCard(team.name))}</p>
       <p class="hint" style="margin-bottom:4px">${L.drawCardFallback}</p>
       <button class="btn soft" id="drawCardBtn">${L.drawCardBtn}</button></div>`;
@@ -1446,7 +1466,7 @@ function renderStage(){
         (state.turn.duelTarget?`<p class="hint" style="color:#a4321f">${L.duelAffects(esc(state.turn.duelTarget.name))} (${state.turn.duelTarget.coins>0?"+":""}${state.turn.duelTarget.coins} ${L.coinsLbl.toLowerCase()})</p>`:"");
     }
     const gr=state.turn.guessResults;
-    const guessBox=(gr&&gr.length)?`<div class="guessbox">`+gr.map(g=>`<span class="guesschip ${g.correct?'good':'bad'}" style="border-color:${g.color}">${esc(g.name)} ${g.correct?"✓ +1":"✗"}</span>`).join("")+`</div>`:"";
+    const guessBox=(gr&&gr.length)?`<div class="guessbox">`+gr.map(g=>`<span class="guesschip ${g.correct?'good':'bad'}" style="border-color:${g.color}">${esc(g.name)} ${g.correct?L.guessHit:L.guessMiss}</span>`).join("")+`</div>`:"";
     html=`<div style="text-align:center">${msg?`<p class="hint">${msg}</p>`:""}${detail}${guessBox}
       <p class="hint" style="margin-bottom:4px">${L.nextTurnFallback}</p>
       <button class="btn soft" id="nextTurnBtn">${L.continueBtn}</button></div>`;
@@ -1542,7 +1562,7 @@ function renderSetup(){
     <div class="teamrow" style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
       <span class="dot2" style="width:14px;height:14px;border-radius:50%;background:${t.color};flex:0 0 auto"></span>
       <input type="text" value="${esc(t.name)}" data-i="${i}" class="teamNameInput" style="flex:1">
-      ${state.teams.length>2?`<button class="btn ghost sm removeTeamBtn" data-i="${i}">✕</button>`:""}
+      ${state.teams.length>2?`<button class="btn ghost sm removeTeamBtn" data-i="${i}">Verwijder</button>`:""}
     </div>`).join("");
   document.querySelectorAll(".teamNameInput").forEach(inp=>inp.oninput=()=>{state.teams[parseInt(inp.dataset.i,10)].name=inp.value;saveLocal();});
   document.querySelectorAll(".removeTeamBtn").forEach(b=>b.onclick=()=>{state.teams.splice(parseInt(b.dataset.i,10),1);renderSetup();updateEstimate();});
@@ -1571,7 +1591,7 @@ function renderScores(){
     t.history.map(h=>{
       const isDuelHit=h.type==="duel-target";
       const isGuess=h.type==="guess";
-      const titleLine=isDuelHit?`${esc(h.title)} — <span style="color:#a4321f">${L.duelHitBy(esc(h.sourceTeam))}</span>`:(isGuess?`🎯 ${esc(h.title)} — ${L.guessBonusLbl}`:esc(h.title));
+      const titleLine=isDuelHit?`${esc(h.title)} — <span style="color:#a4321f">${L.duelHitBy(esc(h.sourceTeam))}</span>`:(isGuess?`${esc(h.title)} — ${L.guessBonusLbl}`:esc(h.title));
       return `<div class="dbrow"><div class="dbttl"><span class="dbr" style="${isDuelHit?'background:#E4572E':(isGuess?'background:#8B5CF6':'')}">${h.turn}</span>${titleLine}</div>${h.option?`<div class="dbopt">${esc(h.option)}</div>`:""}<div class="dbeff">${h.coins>0?"+":""}${h.coins} ${L.coinsLbl.toLowerCase()}</div></div>`;
     }).join("")
     +`</div>`).join("")+`</div>`;
@@ -1581,7 +1601,7 @@ function renderScores(){
 function renderLegendAndHelp(){
   const L=T[state.lang];
   const legendHtml=`<div class="legend" style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:14px;font-size:13px;color:var(--muted)">
-    <span>🏁 ${L.legStart}</span><span>🏠 ${L.legTask}</span><span>🍀 ${L.legChance}</span><span>🧠 ${L.legKennisduel}</span><span>💥 ${L.legShock}</span></div>`;
+    <span><span class="legswatch start"></span>${L.legStart}</span><span><span class="legswatch task"></span>${L.legTask}</span><span><span class="legswatch chance"></span>${L.legChance}</span><span><span class="legswatch kennisduel"></span>${L.legKennisduel}</span><span><span class="legswatch shock"></span>${L.legShock}</span></div>`;
   $("setupLegend").innerHTML=legendHtml;
   $("helpPanel").innerHTML=`<h3 style="margin-top:0">${L.helpTitle}</h3>${L.helpBody}<h4 style="margin-bottom:8px">${L.legend}</h4>${legendHtml}`;
 }
@@ -1652,14 +1672,14 @@ function wireFacilitator(){
   $("customTurns").oninput=e=>{state.customTurns=clamp(parseInt(e.target.value,10)||8,TURNS_MIN,TURNS_MAX);updateEstimate();saveLocal();};
   $("startGame").onclick=()=>startGame();
   $("langToggle").onclick=()=>{state.lang=state.lang==="nl"?"en":"nl";renderLegendAndHelp();render();saveLocal();NET.publish();};
-  $("soundToggle").onclick=()=>{state.soundOn=!state.soundOn;$("soundToggle").textContent=state.soundOn?"🔊":"🔇";saveLocal();};
-  $("fxToggle").onclick=()=>{state.fxOn=!state.fxOn;$("fxToggle").textContent=state.fxOn?"👁":"🚫";saveLocal();};
+  $("soundToggle").onclick=()=>{state.soundOn=!state.soundOn;$("soundToggle").textContent=state.soundOn?"Geluid aan":"Geluid uit";saveLocal();};
+  $("fxToggle").onclick=()=>{state.fxOn=!state.fxOn;$("fxToggle").textContent=state.fxOn?"Effecten aan":"Effecten uit";saveLocal();};
   $("helpToggle").onclick=()=>{$("helpPanel").classList.toggle("hide");};
   $("sectorBtn").onclick=()=>triggerSectorEvent();
   $("copyJoin").onclick=()=>{
     const url=location.origin+location.pathname+"?room="+state.room+"&player=1";
     if(navigator.clipboard)navigator.clipboard.writeText(url).catch(()=>{});
-    $("copyJoin").textContent="✓ "+T[state.lang].joinLink;
+    $("copyJoin").textContent=state.lang==="nl"?"Gekopieerd!":"Copied!";
     setTimeout(()=>{$("copyJoin").textContent=T[state.lang].joinLink;},1400);
   };
   $("resetGame").onclick=()=>{
@@ -1780,22 +1800,22 @@ function initPlayerView(){
       main+=`<div style="text-align:start"><h2 style="margin-top:0">${esc(L.introTitle)}</h2><p class="hint">${esc(L.introAbout)}</p><h3 style="margin-bottom:8px">${esc(L.introRulesTitle)}</h3><ol>${L.introRules.map(r=>`<li>${r}</li>`).join("")}</ol><h3 style="margin-bottom:8px">${esc(L.introWinTitle)}</h3><p class="hint">${esc(L.introWin)}</p></div>`;
     }
     if(snap.appStage==="play"&&active){
-      main+=`<div class="yourturn" style="background:${active.color};font-size:16px">${mine?"🎯 ":""}${esc(L.yourTurnBanner(active.name))}</div>`;
+      main+=`<div class="yourturn" style="background:${active.color};font-size:16px">${esc(L.yourTurnBanner(active.name))}</div>`;
       if(turn.phase==="idle"){
         if(mine){
           const sent=wasSent(turn,"roll");
           main+=`<div style="text-align:center"><button class="btn warn big" id="playerRollBtn" ${sent?"disabled":""}>${sent?L.choiceSent:L.rollBtn}</button></div>`;
         }
       }else if(turn.phase==="rolling"){
-        main+=`<div style="text-align:center"><div class="dice rolling">🎲</div></div>`;
+        main+=`<div style="text-align:center"><div class="dice rolling">${DICE_SVG}</div></div>`;
       }else if(turn.phase==="walking"){
-        main+=`<div style="text-align:center"><div class="dice">${turn.dice||"🎲"}</div><p class="hint">${L.walking}</p></div>`;
+        main+=`<div style="text-align:center"><div class="dice">${turn.dice||DICE_SVG}</div><p class="hint">${L.walking}</p></div>`;
       }else if(turn.phase==="landed"){
         if(mine){
           const sent=wasSent(turn,"drawCard");
-          main+=`<div style="text-align:center"><div class="ti" style="font-size:40px">${SP_ICON[turn.cardType]||""}</div><button class="btn warn big" id="playerDrawBtn" ${sent?"disabled":""}>${sent?L.choiceSent:L.drawCardBtn}</button></div>`;
+          main+=`<div style="text-align:center">${spBadgeHtml(turn.cardType,L)}<br><br><button class="btn warn big" id="playerDrawBtn" ${sent?"disabled":""}>${sent?L.choiceSent:L.drawCardBtn}</button></div>`;
         }else{
-          main+=`<div style="text-align:center"><div class="ti" style="font-size:40px">${SP_ICON[turn.cardType]||""}</div><p class="hint">${L.waitForYourTeam}</p></div>`;
+          main+=`<div style="text-align:center">${spBadgeHtml(turn.cardType,L)}<p class="hint" style="margin-top:10px">${L.waitForYourTeam}</p></div>`;
         }
       }else if(turn.phase==="card"&&turn.card){
         const isKD=turn.cardType==="kennisduel";
@@ -1854,7 +1874,7 @@ function initPlayerView(){
         }
         main+=detail;
         if(turn.guessResults&&turn.guessResults.length){
-          main+=`<div class="guessbox">`+turn.guessResults.map(g=>`<span class="guesschip ${g.correct?'good':'bad'}" style="border-color:${g.color}">${esc(g.name)} ${g.correct?"✓ +1":"✗"}</span>`).join("")+`</div>`;
+          main+=`<div class="guessbox">`+turn.guessResults.map(g=>`<span class="guesschip ${g.correct?'good':'bad'}" style="border-color:${g.color}">${esc(g.name)} ${g.correct?L.guessHit:L.guessMiss}</span>`).join("")+`</div>`;
           if(me&&!mine){
             const myGuess=turn.guessResults.find(g=>String(g.id)===String(me.id));
             if(myGuess)main+=`<p class="hint" style="text-align:center;margin-top:6px">${myGuess.correct?L.guessCorrectMsg:L.guessWrongMsg}</p>`;
