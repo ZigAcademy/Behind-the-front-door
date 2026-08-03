@@ -122,6 +122,16 @@
   .stand-legend .lgi img{width:20px;height:20px;object-fit:contain}
   .metdelta{display:inline-flex;align-items:center;gap:5px;font-weight:700}
   .metdelta img{width:18px;height:18px;object-fit:contain;vertical-align:-4px}
+  .whybox{max-width:460px;margin:8px auto 0;text-align:start;background:var(--soft);border-radius:12px;padding:10px 14px}
+  .whybox b{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.3px;color:var(--blue);margin-bottom:4px}
+  .whybox p{margin:0;font-size:14px;line-height:1.4}
+  .effectrow{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:12px 0}
+  .effectchip{display:inline-flex;align-items:center;gap:8px;font-size:16px;font-weight:800;border-radius:16px;padding:9px 16px;background:var(--soft);color:var(--ink);box-shadow:var(--shadow-sm)}
+  .effectchip img{width:26px;height:26px;object-fit:contain}
+  .effectchip.coin{background:linear-gradient(180deg,#ffe392,#f3b73f);color:#7a4100;border:1px solid #e7b768}
+  .effectchip.pos{background:#e5f7ee;color:#137a44;border:1px solid #8fddb4}
+  .effectchip.neg{background:#fdeee9;color:#a4321f;border:1px solid #f2b3a1}
+  @media (prefers-color-scheme:dark){.effectchip.pos{background:#12301f;border-color:#1f5a3a}.effectchip.neg{background:#331912;border-color:#5a2a1c}}
   .stand2{display:flex;flex-direction:column;gap:7px;max-height:78vh;overflow:auto}
   .srow2{border:1px solid var(--line);border-radius:11px;padding:8px 10px;background:var(--card);box-shadow:var(--shadow-sm)}
   .srow2.up{outline:2px solid var(--orange);outline-offset:-1px}
@@ -805,6 +815,7 @@ const T={
   waitRoll:(n)=>`Wacht tot ${n} zelf de dobbelsteen gooit op hun eigen scherm…`,rollFallback:"Of gooi hier als host:",
   drawCardBtn:"🎴 Trek een kaart",waitDrawCard:(n)=>`${n} staat op dit vakje — wacht tot zij zelf een kaart trekken…`,drawCardFallback:"Of trek hier als host:",
   ackChanceFallback:"Of bevestig hier als host:",nextTurnFallback:"Of ga hier verder als host:",spTitle:"Waarom was dit lastig?",
+  whyLbl:"Waarom deze uitkomst",effectLbl:"Effect op munten en punten",
   drawTask:"Trek een opdrachtkaart",drawChance:"Trek een kanskaart",drawShock:"⚠️ Onvoorziene gebeurtenis!",drawKennisduel:"🧠 Kennisduel",
   kdVersus:(n)=>`⚔️ Bij een goed antwoord tik je munten af bij <b>${n}</b>`,kdCorrect:"✅ Goed antwoord!",kdWrong:"❌ Helaas, niet correct.",legKennisduel:"Kennisduel — sectorkennis, verover munten van je rivaal",
   chooseOpt:"Kies een aanpak:",confirmChoice:"Bevestigen",continueBtn:"Volgende beurt →",
@@ -846,6 +857,7 @@ const T={
   waitRoll:(n)=>`Waiting for ${n} to roll the dice on their own screen…`,rollFallback:"Or roll here as host:",
   drawCardBtn:"🎴 Draw a card",waitDrawCard:(n)=>`${n} is on this tile — waiting for them to draw a card…`,drawCardFallback:"Or draw here as host:",
   ackChanceFallback:"Or confirm here as host:",nextTurnFallback:"Or continue here as host:",spTitle:"Why was this hard?",
+  whyLbl:"Why this outcome",effectLbl:"Effect on coins and points",
   drawTask:"Draw a task card",drawChance:"Draw a chance card",drawShock:"⚠️ Unforeseen event!",drawKennisduel:"🧠 Knowledge duel",
   kdVersus:(n)=>`⚔️ A correct answer steals coins from <b>${n}</b>`,kdCorrect:"✅ Correct answer!",kdWrong:"❌ Not correct, unfortunately.",legKennisduel:"Knowledge duel — sector knowledge, steal coins from your rival",
   chooseOpt:"Choose an approach:",confirmChoice:"Confirm",continueBtn:"Next turn →",
@@ -911,6 +923,19 @@ function celebrate(kind){
   else if(kind==="win")FX.burst(cx,cy,["#1F5AFF","#FF9000","#2FBF71","#8B5CF6","#E4572E"],140);
 }
 function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+/* Bouwt een rij grote, duidelijke "effect-chips" (munten + metrics) voor het
+   resolved-scherm - toont expliciet wat een gekozen optie oplevert of kost,
+   met naam + icoon + getal per metric, in plaats van kleine kale cijfertjes. */
+function effectChipsHtml(lang,coins,fx){
+  const chips=[];
+  if(coins!=null)chips.push(`<span class="effectchip coin">🪙 ${coins>0?"+":""}${coins} ${T[lang].coinsLbl.toLowerCase()}</span>`);
+  Object.keys(MET[lang]).forEach(k=>{
+    if(!fx||!fx[k])return;
+    const v=fx[k];
+    chips.push(`<span class="effectchip ${v>0?"pos":"neg"}"><img src="assets/${MET_ICON[k]}.png">${MET[lang][k]} ${v>0?"+":""}${v}</span>`);
+  });
+  return chips.length?`<div class="effectrow">${chips.join("")}</div>`:"";
+}
 function rnd(n){return Math.floor(Math.random()*n);}
 function clamp(v,lo,hi){return Math.max(lo,Math.min(hi,v));}
 function uid(){return Math.random().toString(36).slice(2,9);}
@@ -1403,18 +1428,18 @@ function renderStage(){
     let detail="";
     if(card&&state.turn.chosenIdx!=null){
       const o=card.o[state.turn.chosenIdx];
-      const metsHtml=Object.keys(MET[state.lang]).filter(k=>o.fx&&o.fx[k]).map(k=>`<span class="metdelta"><img src="assets/${MET_ICON[k]}.png">${MET[state.lang][k]} ${o.fx[k]>0?"+":""}${o.fx[k]}</span>`).join(" &nbsp; ");
+      const chips=effectChipsHtml(state.lang,o.coins,o.fx);
       if(type==="kennisduel"){
         const correct=o.correct===true;
         const kdRes=state.turn.kdResult;
         detail=`<div class="kdverdict ${correct?'good':'bad'}">${correct?L.kdCorrect:L.kdWrong}</div>
-          <p class="hint">${esc(o.e||"")}</p>
-          <p class="hint"><b>${o.coins>0?"+":""}${o.coins}</b> ${L.coinsLbl.toLowerCase()}${metsHtml?` &nbsp;·&nbsp; ${metsHtml}`:""}</p>
+          ${o.e?`<div class="whybox"><b>${L.whyLbl}</b><p>${esc(o.e)}</p></div>`:""}
+          <p class="hint" style="margin-top:8px"><b>${L.effectLbl}</b></p>${chips}
           ${kdRes?`<p class="hint" style="color:#5b3aa8">${L.duelAffects(esc(kdRes.name))} (${kdRes.coins>0?"+":""}${kdRes.coins} ${L.coinsLbl.toLowerCase()})</p>`:""}`;
       }else{
         detail=`<p class="hint"><b>${esc(o.l)}</b></p>`+
-          (o.e?`<p class="hint">${esc(o.e)}</p>`:"")+
-          `<p class="hint"><b>${o.coins>0?"+":""}${o.coins}</b> ${L.coinsLbl.toLowerCase()}${metsHtml?` &nbsp;·&nbsp; ${metsHtml}`:""}</p>`+
+          (o.e?`<div class="whybox"><b>${L.whyLbl}</b><p>${esc(o.e)}</p></div>`:"")+
+          `<p class="hint" style="margin-top:8px"><b>${L.effectLbl}</b></p>${chips}`+
           (card.sp?`<div class="spbox"><b>${L.spTitle}</b><p>${esc(card.sp)}</p></div>`:"");
       }
     }else if(card&&type==="chance"){
@@ -1816,12 +1841,12 @@ function initPlayerView(){
         let detail="";
         if(turn.card&&turn.card.o&&turn.chosenIdx!=null){
           const o=turn.card.o[turn.chosenIdx];
-          const metsHtml=Object.keys(MET[playerLang]).filter(k=>o.fx&&o.fx[k]).map(k=>`<span class="metdelta"><img src="assets/${MET_ICON[k]}.png">${MET[playerLang][k]} ${o.fx[k]>0?"+":""}${o.fx[k]}</span>`).join(" &nbsp; ");
+          const chips=effectChipsHtml(playerLang,o.coins,o.fx);
           if(turn.cardType==="kennisduel"){
             const correct=o.correct===true;
-            detail=`<div class="cardface" style="margin-top:10px"><div class="kdverdict ${correct?'good':'bad'}">${correct?L.kdCorrect:L.kdWrong}</div><p class="hint">${esc(o.e||"")}</p><p class="hint"><b>${o.coins>0?"+":""}${o.coins}</b> ${L.coinsLbl.toLowerCase()}${metsHtml?` &nbsp;·&nbsp; ${metsHtml}`:""}</p></div>`;
+            detail=`<div class="cardface" style="margin-top:10px"><div class="kdverdict ${correct?'good':'bad'}">${correct?L.kdCorrect:L.kdWrong}</div>${o.e?`<div class="whybox"><b>${L.whyLbl}</b><p>${esc(o.e)}</p></div>`:""}<p class="hint" style="margin-top:8px"><b>${L.effectLbl}</b></p>${chips}</div>`;
           }else{
-            detail=`<div class="cardface" style="margin-top:10px"><p class="hint"><b>${esc(o.l)}</b></p>${o.e?`<p class="hint">${esc(o.e)}</p>`:""}<p class="hint"><b>${o.coins>0?"+":""}${o.coins}</b> ${L.coinsLbl.toLowerCase()}${metsHtml?` &nbsp;·&nbsp; ${metsHtml}`:""}</p>${turn.card.sp?`<div class="spbox"><b>${L.spTitle}</b><p>${esc(turn.card.sp)}</p></div>`:""}</div>`;
+            detail=`<div class="cardface" style="margin-top:10px"><p class="hint"><b>${esc(o.l)}</b></p>${o.e?`<div class="whybox"><b>${L.whyLbl}</b><p>${esc(o.e)}</p></div>`:""}<p class="hint" style="margin-top:8px"><b>${L.effectLbl}</b></p>${chips}${turn.card.sp?`<div class="spbox"><b>${L.spTitle}</b><p>${esc(turn.card.sp)}</p></div>`:""}</div>`;
           }
         }else if(turn.cardType==="chance"&&turn.card){
           detail=`<div class="cardface" style="margin-top:10px"><p class="hint"><b>${esc(turn.card.t)}</b> — ${turn.card.coins>0?"+":""}${turn.card.coins} ${L.coinsLbl.toLowerCase()}</p>${turn.duelTarget?`<p class="hint" style="color:#a4321f">${L.duelAffects(esc(turn.duelTarget.name))} (${turn.duelTarget.coins>0?"+":""}${turn.duelTarget.coins} ${L.coinsLbl.toLowerCase()})</p>`:""}</div>`;
