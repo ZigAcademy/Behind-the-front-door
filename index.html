@@ -115,7 +115,8 @@
   .tile.chance{border-color:#FF9000}
   .tile.task{border-color:#1F5AFF}
   .tile.here{outline:3px solid var(--orange);outline-offset:-2px}
-  .ringcenter{position:absolute;left:12.5%;top:12.5%;width:75%;height:75%;background:var(--card) center/cover no-repeat url('assets/bord-achtergrond-nacht.jpg');border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);z-index:2}
+  .ringcenter{position:absolute;left:12.5%;top:12.5%;width:75%;height:75%;background:var(--card) center/cover no-repeat url('assets/bord-achtergrond-nacht.jpg');border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);z-index:2;padding:14px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+  .stageshort{background:var(--card);border-radius:14px;box-shadow:0 14px 30px rgba(0,0,0,.3);padding:16px 20px;max-width:92%;max-height:92%;overflow:auto}
   .pawnlayer{position:absolute;inset:0;pointer-events:none;z-index:6;display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr);gap:5px}
   .pawncell{display:flex;align-items:flex-end;justify-content:center;flex-wrap:nowrap;padding:2px;overflow:visible}
   .pw2{width:52px;height:68px;background-size:contain;background-repeat:no-repeat;background-position:center bottom;filter:drop-shadow(1px 0 0 rgba(255,255,255,.95)) drop-shadow(-1px 0 0 rgba(255,255,255,.95)) drop-shadow(0 1px 0 rgba(255,255,255,.95)) drop-shadow(0 -1px 0 rgba(255,255,255,.95)) drop-shadow(2px 0 0 rgba(21,35,48,.55)) drop-shadow(-2px 0 0 rgba(21,35,48,.55)) drop-shadow(0 2px 0 rgba(21,35,48,.55)) drop-shadow(0 -2px 0 rgba(21,35,48,.55)) drop-shadow(0 4px 6px rgba(0,0,0,.45));position:relative;flex:0 0 auto;transform-origin:center bottom}
@@ -329,7 +330,7 @@
             <div class="ringwrap" id="ringWrap">
               <div class="ringgrid" id="boardPath"></div>
               <div class="pawnlayer" id="pawnLayer"></div>
-              <div class="ringcenter" id="ringCenter"></div>
+              <div class="ringcenter" id="ringCenter"><div class="stageshort" id="stageShort"></div></div>
             </div>
           </div>
         </div>
@@ -1428,11 +1429,12 @@ function renderPawns(){
 
 function renderStage(){
   const el=$("stage");
+  const shortEl=$("stageShort");
   const L=T[state.lang];
   const team=activeTeam();
   const ph=state.turn.phase;
   const backdrop=$("stageBackdrop");
-  if(state.appStage!=="play"){el.innerHTML="";el.classList.add("hide");if(backdrop)backdrop.classList.add("hide");return;}
+  if(state.appStage!=="play"){el.innerHTML="";el.classList.add("hide");if(shortEl)shortEl.innerHTML="";if(backdrop)backdrop.classList.add("hide");return;}
   let html="";
   if(ph==="idle"){
     html=`<div class="yourturn" style="background:${team.color}">${esc(L.yourTurnBanner(team.name))}</div>
@@ -1514,9 +1516,21 @@ function renderStage(){
     html=`<div style="text-align:center">${msg?`<p class="hint">${msg}</p>`:""}${detail}${guessBox}
       <button class="btn soft pulseglow" id="nextTurnBtn">${L.continueBtn}</button></div>`;
   }
-  el.innerHTML=html;
-  el.classList.remove("hide");
-  if(backdrop)backdrop.classList.remove("hide");
+  /* Only card/resolved phases (which can carry long dilemma text) escalate to
+     the floating popup+backdrop; idle/rolling/walking/landed stay embedded in
+     the ring itself so the board, pawns and dice animation stay visible. */
+  const isPopup=(ph==="card"||ph==="resolved");
+  if(isPopup){
+    el.innerHTML=html;
+    el.classList.remove("hide");
+    if(backdrop)backdrop.classList.remove("hide");
+    if(shortEl)shortEl.innerHTML="";
+  }else{
+    if(shortEl)shortEl.innerHTML=html;
+    el.innerHTML="";
+    el.classList.add("hide");
+    if(backdrop)backdrop.classList.add("hide");
+  }
   const rb=$("rollBtn");if(rb)rb.onclick=()=>rollDice();
   const dcb=$("drawCardBtn");if(dcb)dcb.onclick=()=>drawCard();
   const ack=$("ackCardBtn");if(ack)ack.onclick=()=>ackAutoCard();
