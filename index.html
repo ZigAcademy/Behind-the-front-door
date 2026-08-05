@@ -226,6 +226,7 @@
   .pdash-head h1{font-size:22px;margin:0 0 6px}
   .pdash-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:20px;align-items:start;margin-top:14px}
   @media (max-width:760px){.pdash-grid{grid-template-columns:1fr}}
+  .pdash-grid.noside{grid-template-columns:1fr}
   .pdash-main{min-width:0}
   .pdash-side{background:var(--soft);border:1px solid var(--line);border-radius:16px;padding:14px;max-height:70vh;overflow:auto}
   .pdash-side h3{margin:0 0 8px;font-size:13px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted)}
@@ -2517,7 +2518,7 @@ function initPlayerView(){
        and causing a visible flicker for every connected player. Now each region
        only touches the DOM when its own content actually changed. */
     if(!$("pdashMain")){
-      $("joinWaiting").innerHTML=`<div class="pdash-head" id="pdashHead"></div><div class="pdash-grid"><div class="pdash-main" id="pdashMain"></div><div class="pdash-side" id="pdashSide"></div></div>`;
+      $("joinWaiting").innerHTML=`<div class="pdash-head" id="pdashHead"></div><div class="pdash-grid" id="pdashGrid"><div class="pdash-main" id="pdashMain"></div><div class="pdash-side" id="pdashSide"></div></div>`;
     }
     if(head!==_lastHead){
       _lastHead=head;
@@ -2530,6 +2531,8 @@ function initPlayerView(){
       sideEl.innerHTML=side;
     }
     sideEl.style.display=side?"":"none";
+    const gridEl=$("pdashGrid");
+    if(gridEl)gridEl.classList.toggle("noside",!side);
 
     const mainKey=main+"::"+(turn.token||"")+"::"+mine+"::"+(me?me.id:"");
     if(mainKey===_lastMainKey)return;
