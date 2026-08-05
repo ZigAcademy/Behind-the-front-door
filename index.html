@@ -415,12 +415,14 @@ window.FIREBASE_CONFIG = {
 /* ============ data ============ */
 const MET={nl:{sat:"Tevredenheid",fin:"Financieel",comp:"Compliance",dur:"Duurzaamheid"},en:{sat:"Satisfaction",fin:"Financial",comp:"Compliance",dur:"Sustainability"}};
 const MET_ICON={sat:"icoon-tevredenheid",fin:"icoon-financieel",comp:"icoon-compliance",dur:"icoon-duurzaamheid"};
-/* Balansbonus: elke metric die 0 of hoger staat levert +1 muntpunt op, elke
-   metric die negatief staat kost 1 muntpunt. Zo tellen tevredenheid, financieel,
-   compliance en duurzaamheid ook echt mee voor de einduitslag, niet alleen munten. */
+/* Balansbonus: de daadwerkelijke waarde van elke metric (tevredenheid, financieel,
+   compliance, duurzaamheid) telt 1-op-1 mee in de eindscore, in plaats van alleen
+   het teken. Een +3 op een metric levert dus ook echt +3 punten op, en een -2
+   kost ook echt 2 punten - zo wegen keuzes die munten kosten maar de metrics
+   flink verbeteren net zo zwaar mee als munten sparen. */
 function metricsBonus(team){
   const met=team.met||{};
-  return ["sat","fin","comp","dur"].reduce((sum,k)=>sum+((met[k]||0)>=0?1:-1),0);
+  return ["sat","fin","comp","dur"].reduce((sum,k)=>sum+(met[k]||0),0);
 }
 function finalScore(team){return team.coins+metricsBonus(team);}
 const CAT={A:"onderhoud",B:"wooncrisis",C:"sociaal",D:"duurzaam",E:"onderhoud",J1:"onderhoud",J2:"digitaal",J3:"leefbaarheid",J4:"toewijzing",J5:"financien",J6:"sociaal",J7:"financien",J8:"toewijzing",J9:"duurzaam",J10:"digitaal",J11:"zorg",J12:"toewijzing",C1:"duurzaam",C2:"digitaal",C3:"duurzaam",C4:"onderhoud",C5:"financien",C6:"financien",S:"shock",S2:"shock",S3:"shock",N1:"onderhoud",N2:"wooncrisis",N3:"participatie",N4:"duurzaam",N5:"digitaal",N6:"financien",N7:"veiligheid",N8:"toewijzing",N9:"sociaal",N10:"duurzaam",N11:"digitaal",N12:"financien",N13:"veiligheid",N14:"toewijzing",N15:"zorg",N16:"duurzaam",N17:"digitaal",N18:"financien",N19:"veiligheid",N20:"wooncrisis",N21:"sociaal",N22:"digitaal",KD1:"kennisduel",KD2:"kennisduel",KD3:"kennisduel",KD4:"kennisduel",KD5:"kennisduel",KD6:"kennisduel",KD7:"kennisduel",KD8:"kennisduel",KD9:"kennisduel",KD10:"kennisduel",KD11:"kennisduel",KD12:"kennisduel",KD13:"kennisduel",KD14:"kennisduel",KD15:"kennisduel",KD16:"kennisduel"};
@@ -856,7 +858,7 @@ const T={
     "Denk goed na: bijna geen enkele keuze is vanzelfsprekend goed. Elke optie raakt bewoners, munten, onderhoud of duurzaamheid net iets anders.",
     "Elke ronde langs Start levert het team huurinkomsten op."],
   introWinTitle:"Hoe win je?",
-  introWin:"Na het ingestelde aantal beurten per team stopt het spel. De eindscore is: munten + 1 punt voor elke metric (tevredenheid, financieel, compliance, duurzaamheid) die op 0 of hoger staat, min 1 punt voor elke metric die negatief staat. Het team met de hoogste eindscore wint, dus alleen munten sparen is niet genoeg, de balans telt net zo hard mee.",
+  introWin:"Na het ingestelde aantal beurten per team stopt het spel. De eindscore is: munten + de score op elke metric (tevredenheid, financieel, compliance, duurzaamheid) bij elkaar opgeteld. Elk punt op een metric telt dus 1-op-1 mee, zowel in de plus als in de min. Het team met de hoogste eindscore wint, dus een keuze die munten kost maar de metrics flink verbetert kan zich echt uitbetalen.",
   introStartBtn:"Volgende: teams instellen →",
   setupH:"Teams instellen",setupP:"Voeg teams toe, kies de speelduur en start het spel. Spelers openen de join-link of vullen de kamercode in — op telefoon of computer.",
   addTeam:"+ Team toevoegen",teamName:"Teamnaam",removeTeam:"Verwijderen",
@@ -883,7 +885,7 @@ const T={
   flipBoardBanner:(n)=>`${n} GOOIT HET BORD OM!`,
   scoresH:"Eindstand",scoresP:"Bekijk de resultaten en bespreek de belangrijkste keuzes na.",againBtn:"Nieuw spel",
   winnerHeadline:(n,c)=>`<b>${n}</b> wint met <b>${c} punten</b>!`,
-  finalScoreLbl:"Eindscore",balansBonusLbl:"Balansbonus",balansHint:"1 punt per metric die op 0 of hoger staat, -1 punt per metric die negatief staat.",
+  finalScoreLbl:"Eindscore",balansBonusLbl:"Balansbonus",balansHint:"De waarde van elke metric (tevredenheid, financieel, compliance, duurzaamheid) telt 1-op-1 mee bij de munten, in de plus en in de min.",
   sectorBanner:(t,x)=>`<b>Sectorgebeurtenis — ${t}</b><br>${x}`,sectorBtnTip:"Los een gebeurtenis los die alle teams raakt",
   legend:"Legenda vakjes",legStart:"Start/Finish — inkomsten bij passeren",legTask:"Opdracht — kies uit 3 opties",legChance:"Kans — automatisch effect",legShock:"Shock — grote onverwachte gebeurtenis",
   helpTitle:"Hoe werkt het?",helpBody:"<ol><li>Elk team gooit op zijn beurt één dobbelsteen en de pion loopt stap voor stap naar het nieuwe vakje.</li><li>Het vakje bepaalt wat je krijgt: een <b>opdracht</b> (kies uit 3 opties), een <b>kans</b> (automatisch effect), een <b>kennisduel</b> (meerkeuzevraag over de sector — bij een goed antwoord tik je munten af bij je rivaal) of de <b>shock</b> (bijzondere gebeurtenis).</li><li>Elke ronde langs Start levert het team huurinkomsten op.</li><li>De host kan via de <b>Sector</b>-knop op elk moment een sectorbrede gebeurtenis loslaten die alle teams tegelijk raakt — gebruik dit bewust om het spel spannender te maken.</li><li>Na het ingestelde aantal beurten per team volgt de eindstand.</li></ol>",
@@ -900,7 +902,7 @@ const T={
     "Think it through: almost no choice is obviously right. Every option affects residents, coins, maintenance or sustainability a little differently.",
     "Each lap past Start earns the team rent income."],
   introWinTitle:"How do you win?",
-  introWin:"After the configured number of turns per team, the game ends. The final score is: coins plus 1 point for every metric (satisfaction, financial, compliance, sustainability) at 0 or above, minus 1 point for every metric that is negative. The team with the highest final score wins, so hoarding coins alone is not enough, balance matters just as much.",
+  introWin:"After the configured number of turns per team, the game ends. The final score is: coins plus the scores on every metric (satisfaction, financial, compliance, sustainability) added together. Every point on a metric counts 1-to-1, both positive and negative. The team with the highest final score wins, so a choice that costs coins but boosts the metrics can genuinely pay off.",
   introStartBtn:"Next: set up teams →",
   setupH:"Set up teams",setupP:"Add teams, choose the play duration and start the game. Players open the join link or enter the room code — on a phone or a computer.",
   addTeam:"+ Add team",teamName:"Team name",removeTeam:"Remove",
@@ -927,7 +929,7 @@ const T={
   flipBoardBanner:(n)=>`${n} FLIPS THE BOARD!`,
   scoresH:"Final standings",scoresP:"Review the results and debrief the key choices.",againBtn:"New game",
   winnerHeadline:(n,c)=>`<b>${n}</b> wins with <b>${c} points</b>!`,
-  finalScoreLbl:"Final score",balansBonusLbl:"Balance bonus",balansHint:"1 point per metric at 0 or above, -1 point per metric that's negative.",
+  finalScoreLbl:"Final score",balansBonusLbl:"Balance bonus",balansHint:"The value of every metric (satisfaction, financial, compliance, sustainability) counts 1-to-1 toward the coins, both positive and negative.",
   sectorBanner:(t,x)=>`<b>Sector event — ${t}</b><br>${x}`,sectorBtnTip:"Trigger an event that affects all teams",
   legend:"Tile legend",legStart:"Start/Finish — income when passing",legTask:"Task — choose from 3 options",legChance:"Chance — automatic effect",legShock:"Shock — major unforeseen event",
   helpTitle:"How does it work?",helpBody:"<ol><li>Each team rolls one die on its turn and the pawn walks step by step to the new tile.</li><li>The tile decides what you get: a <b>task</b> (choose from 3 options), a <b>chance</b> (automatic effect), a <b>knowledge duel</b> (multiple-choice question about the sector — a correct answer steals coins from your rival) or the <b>shock</b> (special event).</li><li>Each lap past Start earns the team rent income.</li><li>The host can trigger a sector-wide event at any moment via the <b>Sector</b> button, affecting all teams at once — use it deliberately to raise the stakes.</li><li>After the configured number of turns per team, the final standings appear.</li></ol>",
