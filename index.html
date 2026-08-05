@@ -1230,6 +1230,17 @@ function estimatedMinutes(turnsPerTeam){return Math.round(turnsPerTeam*Math.max(
 
 /* ============ state ============ */
 let state=null;
+/* Expose the internal `state` binding on `window`. In a classic (non-module)
+   script, top-level `let`/`const` declarations do NOT become `window`
+   properties - they live in a separate lexical environment. Without this,
+   external code that reaches into the page via a `window`/iframe reference
+   (like test-harness.html driving the host iframe) and does `w.state=...`
+   would silently write to a disconnected `window.state` object that
+   render(), stepWalk() etc. never read, while reading it back would just
+   echo the same disconnected object - looking consistent but having zero
+   effect on the actual running game. This getter/setter makes `window.state`
+   a true alias for the real `state` variable used everywhere in this file. */
+Object.defineProperty(window,"state",{get(){return state;},set(v){state=v;},configurable:true});
 function freshTeam(i){
   return {id:i+1,name:(state&&state.lang==="en"?"Team ":"Team ")+(i+1),color:TEAM_COLORS[i%TEAM_COLORS.length],
     coins:10,met:{sat:0,fin:0,comp:0,dur:0},boardPos:0,turnsTaken:0,history:[],
