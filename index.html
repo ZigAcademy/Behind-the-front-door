@@ -263,14 +263,17 @@
   .recapopt .rchosen{margin-inline-start:auto;flex:0 0 auto;font-size:11px;font-weight:800;letter-spacing:.3px;text-transform:uppercase;color:#1F5AFF;background:#fff;border:1px solid #1F5AFF;border-radius:20px;padding:2px 8px}
   /* Investeringsfase: bewust andere, "shop"-achtige visuele stijl dan de
      opdracht/kans-kaarten, zodat dit moment duidelijk anders aanvoelt. */
-  .investgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:14px}
+  .investgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:14px;align-items:start}
+  @media (max-width:760px){.investgrid{grid-template-columns:repeat(2,1fr)}}
+  @media (max-width:480px){.investgrid{grid-template-columns:1fr}}
+  .investcol{display:flex;flex-direction:column;gap:10px;min-width:0}
+  .investcol-h{display:flex;align-items:center;gap:7px;font-weight:800;font-size:13px;padding-bottom:7px;margin-bottom:2px;border-bottom:2px solid var(--line);text-transform:uppercase;letter-spacing:.3px}
+  .investcol-h img{width:20px;height:20px}
   .investcard{border:2px solid var(--line);border-radius:14px;padding:12px 14px;cursor:pointer;background:var(--card);transition:border-color .15s,background .15s;text-align:start}
   .investcard:hover{border-color:var(--blue)}
   .investcard.sel{border-color:var(--blue);background:#EAF0FF}
   .investcard.unaffordable{opacity:.45;cursor:not-allowed}
-  .investcard .ic-top{display:flex;align-items:center;gap:8px;margin-bottom:6px}
-  .investcard .ic-top img{width:22px;height:22px}
-  .investcard .ic-title{font-weight:800;font-size:14px;flex:1}
+  .investcard .ic-title{font-weight:800;font-size:14px;display:block;margin-bottom:6px}
   .investcard .ic-desc{font-size:12.5px;color:var(--muted);margin-bottom:8px}
   .investcard .ic-tags{display:flex;gap:6px;font-size:12px;font-weight:700}
   .investcard .ic-cost{color:#a4321f;background:#fde2dc;border-radius:20px;padding:2px 9px}
@@ -320,6 +323,7 @@
     <button class="btn ghost sm" id="fullscreenToggle">Volledig scherm</button>
     <button class="btn ghost sm" id="langToggle">EN</button>
     <button class="btn ghost sm" id="copyJoin">Join-link</button>
+    <button class="btn ghost sm" id="testEnvBtn" title="Testomgeving">Testomgeving</button>
     <button class="btn soft sm" id="resetGame">Nieuw spel</button>
   </div></header>
   <div class="wrap">
@@ -330,7 +334,6 @@
 
     <section id="view-intro" class="panel hide">
       <img src="assets/corpopoly-logo.png" alt="Corpopoly" class="setup-logo">
-      <div class="cover" style="background-image:url('assets/gameboard.jpg')"></div>
       <h2 id="introTitle" style="margin-top:0"></h2>
       <p class="hint" id="introAbout"></p>
       <div class="banner" id="introMission" style="border-color:#1F5AFF;background:#EAF0FF"></div>
@@ -343,7 +346,6 @@
 
     <section id="view-setup" class="panel hide">
       <img src="assets/corpopoly-logo.png" alt="Corpopoly" class="setup-logo">
-      <div class="cover" style="background-image:url('assets/gameboard.jpg')"></div>
       <div id="setupLegend"></div>
       <h2 id="setupH">Teams instellen</h2>
       <p class="hint" id="setupP" style="margin-top:0"></p>
@@ -414,7 +416,6 @@
 <div id="player" class="player-shell hide">
   <div class="join-card" id="joinCard">
     <div id="pLogo"></div>
-    <div class="jc-cover" style="background-image:url('assets/gameboard.jpg')"></div>
     <div id="pNet" class="pnet"></div>
     <div id="joinForm">
       <h1 id="jfH">Doe mee</h1><p class="s" id="jfSub"></p>
@@ -693,7 +694,7 @@ const SECTOR_EN=[
 const INVEST_NL=[
  {id:"IS1",metric:"sat",cost:3,gain:1,t:"Bewonersavond organiseren",x:"Een informele avond waarop bewoners hun zorgen kwijt kunnen en zich gehoord voelen."},
  {id:"IS2",metric:"sat",cost:6,gain:2,t:"Klantenservice uitbreiden",x:"Meer capaciteit voor meldingen en vragen, snellere opvolging voor huurders."},
- {id:"IS3",metric:"sat",cost:10,gain:3,t:"Wijkvernieuwingsproject",x:"Een gezamenlijk project met bewoners dat de leefbaarheid van de wijk merkbaar verbetert."},
+ {id:"IS3",metric:"sat",cost:10,gain:3,t:"Bouw van nieuwe huurwoningen",x:"Een nieuwbouwproject voegt echte extra huurwoningen toe aan de wijk - de meest ingrijpende investering in tevredenheid en beschikbaarheid."},
  {id:"IF1",metric:"fin",cost:3,gain:1,t:"Kleine efficiencyslag",x:"Interne processen stroomlijnen levert direct wat lucht op in de begroting."},
  {id:"IF2",metric:"fin",cost:6,gain:2,t:"Herfinanciering tegen lager rentetarief",x:"Bestaande leningen herfinancieren verlaagt de rentelasten structureel."},
  {id:"IF3",metric:"fin",cost:10,gain:3,t:"Strategische portefeuilleoptimalisatie",x:"Een grondige doorlichting van het bezit verbetert het rendement op de lange termijn."},
@@ -707,7 +708,7 @@ const INVEST_NL=[
 const INVEST_EN=[
  {id:"IS1",metric:"sat",cost:3,gain:1,t:"Organise a residents' evening",x:"An informal evening where residents can voice concerns and feel heard."},
  {id:"IS2",metric:"sat",cost:6,gain:2,t:"Expand customer service",x:"More capacity for reports and questions, faster follow-up for tenants."},
- {id:"IS3",metric:"sat",cost:10,gain:3,t:"Neighbourhood renewal project",x:"A joint project with residents that noticeably improves the neighbourhood's liveability."},
+ {id:"IS3",metric:"sat",cost:10,gain:3,t:"Build new rental homes",x:"A new-build project adds genuinely more rental homes to the neighbourhood - the most impactful investment in satisfaction and availability."},
  {id:"IF1",metric:"fin",cost:3,gain:1,t:"Small efficiency drive",x:"Streamlining internal processes directly frees up some room in the budget."},
  {id:"IF2",metric:"fin",cost:6,gain:2,t:"Refinance at a lower interest rate",x:"Refinancing existing loans structurally lowers interest costs."},
  {id:"IF3",metric:"fin",cost:10,gain:3,t:"Strategic portfolio optimisation",x:"A thorough review of the property portfolio improves long-term returns."},
@@ -947,7 +948,7 @@ const AVG_MIN_PER_TURN=2.5;
 const TURNS_MIN=4,TURNS_MAX=16;
 /* ============ translations ============ */
 const T={
- nl:{brand:"Corpopoly",room:"Kamer",joinLink:"Join-link",newGame:"Nieuw spel",help:"Uitleg",sector:"Sector",soundOnLbl:"Geluid aan",soundOffLbl:"Geluid uit",fxOnLbl:"Effecten aan",fxOffLbl:"Effecten uit",
+ nl:{brand:"Corpopoly",room:"Kamer",joinLink:"Join-link",newGame:"Nieuw spel",testEnvBtn:"Testomgeving",help:"Uitleg",sector:"Sector",soundOnLbl:"Geluid aan",soundOffLbl:"Geluid uit",fxOnLbl:"Effecten aan",fxOffLbl:"Effecten uit",
   introTitle:"Welkom bij Corpopoly",
   introAbout:"Een bordspel waarin jullie team, net als een echte woningcorporatie, elke beurt een lastige keuze maakt over onderhoud, betaalbaarheid, verduurzaming, leefbaarheid en digitalisering — met altijd een addertje onder het gras.",
   introMission:"Een woningcorporatie heeft geen winstoogmerk — succes betekent <b>tevredenheid</b>, <b>beschikbaarheid</b>, <b>betaalbaarheid</b> en <b>kwaliteit</b> van de woningen. Munten in dit spel staan voor middelen, niet voor winst: ze zijn nodig om te investeren, maar de eindscore draait om deze vier pijlers.",
@@ -1002,7 +1003,7 @@ const T={
   waitForHostTitle:"Bijna zover!",waitForHostMsg:"De host is het spel nog aan het klaarzetten. Zodra alles staat, begint het spel automatisch op dit scherm.",
   netLive:"Live verbonden",netOff:"Offline (lokaal)",netLiveTip:"Live verbonden — wijzigingen worden direct gedeeld met alle spelers.",netOffTip:"Offline (lokaal) — dit spel wordt niet gedeeld, alleen zichtbaar op dit scherm.",footNL:"Zig Grow · Corpopoly",
   roundHint:(done,total)=>`Voortgang: ${done} van ${total} beurten gespeeld`,metricsLbl:"Meters",coinsLbl:"Munten"},
- en:{brand:"Corpopoly",room:"Room",joinLink:"Join link",newGame:"New game",help:"Guide",sector:"Sector",soundOnLbl:"Sound on",soundOffLbl:"Sound off",fxOnLbl:"Effects on",fxOffLbl:"Effects off",
+ en:{brand:"Corpopoly",room:"Room",joinLink:"Join link",newGame:"New game",testEnvBtn:"Test environment",help:"Guide",sector:"Sector",soundOnLbl:"Sound on",soundOffLbl:"Sound off",fxOnLbl:"Effects on",fxOffLbl:"Effects off",
   introTitle:"Welcome to Corpopoly",
   introAbout:"A board game where your team, just like a real housing corporation, faces a tough call every turn — on maintenance, affordability, sustainability, liveability and digitalisation — always with a catch.",
   introMission:"A housing corporation is not-for-profit — success means <b>satisfaction</b>, <b>availability</b>, <b>affordability</b> and <b>quality</b> of homes. Coins in this game represent resources, not profit: you need them to invest, but the final score is all about these four pillars.",
@@ -1534,6 +1535,13 @@ function startInvestPhase(){
   render();saveLocal();NET.publish();
 }
 function investOptions(lang){return (lang||(typeof state!=="undefined"&&state?state.lang:"nl"))==="nl"?INVEST_NL:INVEST_EN;}
+/* Groepeert de investeringsopties per metric, in vaste volgorde, zodat de
+   shop als kolommen (één per metric) getoond kan worden i.p.v. een losse
+   grid van 12 door elkaar gehusselde kaarten. */
+function investByMetric(opts){
+  const order=["sat","fin","comp","dur"];
+  return order.map(mk=>({metric:mk,items:opts.filter(o=>o.metric===mk)}));
+}
 function applyInvestment(selectedIds){
   const team=activeTeam();
   if(!team)return;
@@ -1571,10 +1579,14 @@ function renderInvest(){
   if(!team){banner.innerHTML="";grid.innerHTML="";foot.innerHTML="";return;}
   banner.innerHTML=`<b>${esc(L.investWaitBanner(team.name))}</b>`;
   const opts=investOptions();
-  grid.innerHTML=opts.map(o=>`<div class="investcard" style="cursor:default">
-      <div class="ic-top"><img src="assets/${MET_ICON[o.metric]}.png"><span class="ic-title">${esc(o.t)}</span></div>
-      <div class="ic-desc">${esc(o.x)}</div>
-      <div class="ic-tags"><span class="ic-cost">${L.coinsLbl} -${o.cost}</span><span class="ic-gain">${MET[state.lang][o.metric]} +${o.gain}</span></div>
+  const groups=investByMetric(opts);
+  grid.innerHTML=groups.map(g=>`<div class="investcol">
+      <div class="investcol-h"><img src="assets/${MET_ICON[g.metric]}.png"><span>${MET[state.lang][g.metric]}</span></div>
+      ${g.items.map(o=>`<div class="investcard" style="cursor:default">
+        <span class="ic-title">${esc(o.t)}</span>
+        <div class="ic-desc">${esc(o.x)}</div>
+        <div class="ic-tags"><span class="ic-cost">${L.coinsLbl} -${o.cost}</span><span class="ic-gain">+${o.gain}</span></div>
+      </div>`).join("")}
     </div>`).join("");
   foot.innerHTML=`<span class="iftotal">${L.investCoinsAvail(team.coins)}</span>`;
 }
@@ -1611,6 +1623,7 @@ function render(){
   $("roomCode").textContent=state.room;
   $("copyJoin").textContent=T[state.lang].joinLink;
   $("resetGame").textContent=T[state.lang].newGame;
+  $("testEnvBtn").textContent=T[state.lang].testEnvBtn;
   $("helpToggle").textContent=T[state.lang].help;
   $("sectorBtn").textContent=T[state.lang].sector;
   $("fullscreenToggle").textContent=document.fullscreenElement?T[state.lang].fsExit:T[state.lang].fsEnter;
@@ -2117,6 +2130,10 @@ function wireFacilitator(){
     state=freshState();NET.bindRoom();NET.bindActions();renderLegendAndHelp();render();saveLocal();NET.publish();
   };
   $("againBtn").onclick=()=>$("resetGame").onclick();
+  /* Alleen voor de host: opent de simulatie-/testomgeving in een nieuw
+     tabblad. Volledig los van de echte state van dit spel - dit opent puur
+     de losse testpagina, raakt niets in het huidige spel aan. */
+  $("testEnvBtn").onclick=()=>{window.open("test-harness.html","_blank");};
 }
 
 /* Applies a player-submitted turn action (roll / drawCard / choice / ackChance /
@@ -2395,11 +2412,15 @@ function initPlayerView(){
         if(investSent){
           main+=`<p class="hint" style="text-align:center">${L.choiceSent}</p>`;
         }else{
-          main+=`<div class="investgrid" id="pInvestGrid">`+opts.map(o=>`<div class="investcard" data-id="${o.id}" data-cost="${o.cost}">
-            <div class="ic-top"><img src="assets/${MET_ICON[o.metric]}.png"><span class="ic-title">${esc(o.t)}</span></div>
-            <div class="ic-desc">${esc(o.x)}</div>
-            <div class="ic-tags"><span class="ic-cost">${L.coinsLbl} -${o.cost}</span><span class="ic-gain">${MET[playerLang][o.metric]} +${o.gain}</span></div>
-          </div>`).join("")+`</div>
+          const groups=investByMetric(opts);
+          main+=`<div class="investgrid" id="pInvestGrid">`+groups.map(g=>`<div class="investcol">
+              <div class="investcol-h"><img src="assets/${MET_ICON[g.metric]}.png"><span>${MET[playerLang][g.metric]}</span></div>
+              ${g.items.map(o=>`<div class="investcard" data-id="${o.id}" data-cost="${o.cost}">
+                <span class="ic-title">${esc(o.t)}</span>
+                <div class="ic-desc">${esc(o.x)}</div>
+                <div class="ic-tags"><span class="ic-cost">${L.coinsLbl} -${o.cost}</span><span class="ic-gain">+${o.gain}</span></div>
+              </div>`).join("")}
+            </div>`).join("")+`</div>
           <div class="investfoot"><span class="iftotal" id="pInvestTotal"></span><button class="btn warn" id="pInvestConfirm">${L.investConfirm}</button></div>`;
         }
       }else{
@@ -2524,6 +2545,12 @@ function initPlayerView(){
       });
     }
   }
+  /* Test-hook voor de hosttestomgeving (test-harness.html): staat toe om deze
+     - normaal alleen via een live NET-snapshot bereikbare - renderfunctie
+     rechtstreeks aan te roepen met een zelfgemaakte snapshot, zonder dat er
+     ooit echt bij Firebase hoeft te worden ingelogd/verbonden. Volledig
+     inert/onschadelijk tijdens normaal spelen: wordt nooit vanzelf aangeroepen. */
+  window.__testRenderPlayer=function(snap,team){renderPlayerDashboard(snap,team);};
 }
 
 /* ============ boot ============ */

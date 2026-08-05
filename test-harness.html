@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Corpopoly — Testomgeving</title>
+<style>
+  :root{
+    --blue:#1F5AFF;--navy:#0D1626;--orange:#E4572E;--ink:#141B29;--muted:#6b7688;
+    --line:#E3E7EF;--card:#FFFFFF;--soft:#EAF0FF;--bg:#F4F6FA;
+    --shadow:0 10px 30px rgba(21,35,48,.10);--shadow-sm:0 4px 14px rgba(21,35,48,.07);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,Helvetica,"Segoe UI",sans-serif}
+  header{display:flex;align-items:center;gap:16px;padding:14px 22px;background:var(--card);border-bottom:1px solid var(--line);box-shadow:var(--shadow-sm);position:sticky;top:0;z-index:5}
+  header img{height:42px;width:auto}
+  header .htxt h1{font-size:18px;margin:0}
+  header .htxt p{font-size:13px;margin:2px 0 0;color:var(--muted)}
+  .layout{display:grid;grid-template-columns:340px 1fr;gap:18px;padding:18px;align-items:start}
+  @media (max-width:980px){.layout{grid-template-columns:1fr}}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow-sm);padding:14px}
+  .panel + .panel{margin-top:14px}
+  .panel h2{font-size:13px;text-transform:uppercase;letter-spacing:.4px;margin:0 0 10px;color:var(--muted)}
+  .btnrow{display:flex;flex-direction:column;gap:8px}
+  button.tbtn{border:1px solid var(--line);background:var(--soft);color:var(--ink);border-radius:10px;padding:9px 12px;font-size:13.5px;font-weight:700;cursor:pointer;text-align:start;transition:background .15s,border-color .15s}
+  button.tbtn:hover{border-color:var(--blue);background:#e0e9ff}
+  button.tbtn.warn{background:#FFF1E0;border-color:#f2c48a}
+  button.tbtn.warn:hover{border-color:var(--orange);background:#ffe4c9}
+  button.tbtn.danger{background:#fdeee9;border-color:#f2b3a1}
+  .rowgap{display:flex;gap:8px;flex-wrap:wrap}
+  .rowgap button{flex:1}
+  select,input[type=text]{border:1px solid var(--line);border-radius:8px;padding:7px 9px;font-size:13px;background:#fff;color:var(--ink)}
+  .screens{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media (max-width:1300px){.screens{grid-template-columns:1fr}}
+  .screenbox{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);overflow:hidden}
+  .screenbox .sb-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 14px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#fbfcff,#f3f6ff)}
+  .screenbox .sb-head b{font-size:13.5px}
+  .screenbox .sb-head .tag{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.3px;color:var(--blue);background:var(--soft);border-radius:20px;padding:3px 9px}
+  .screenbox iframe{width:100%;height:640px;border:0;display:block;background:#0d1524}
+  .teampick{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted)}
+  .log{background:var(--navy);color:#dbe4f5;border-radius:12px;padding:10px 12px;font-size:12.5px;font-family:Consolas,monospace;max-height:160px;overflow:auto;line-height:1.5}
+  .log div{border-bottom:1px solid rgba(255,255,255,.08);padding:3px 0}
+  .log div:last-child{border-bottom:none}
+  .hint{font-size:12px;color:var(--muted);margin:0 0 10px;line-height:1.5}
+  .badge-count{display:inline-block;background:var(--soft);color:var(--blue);border-radius:20px;padding:1px 8px;font-size:11px;font-weight:800;margin-left:6px}
+</style>
+</head>
+<body>
+<header>
+  <img src="assets/corpopoly-logo.png" alt="Corpopoly">
+  <div class="htxt">
+    <h1>Testomgeving</h1>
+    <p>Simuleer elk scherm en elke feature - los van je echte spel. Sluit dit tabblad om terug te gaan.</p>
+  </div>
+</header>
+
+<div class="layout">
+  <div>
+    <div class="panel">
+      <h2>1 · Spel opzetten</h2>
+      <p class="hint">Start hier altijd eerst een testspel met 2 fictieve teams (met wat munten en metrics erin, zodat effecten meteen zichtbaar zijn).</p>
+      <div class="btnrow">
+        <button class="tbtn warn" data-fn="freshTestGame">Nieuw testspel starten (2 teams)</button>
+        <button class="tbtn" data-fn="testIntroScreen">Toon introscherm (host nog bezig)</button>
+        <button class="tbtn" data-fn="testSetupScreen">Toon setup-scherm (teams/pionkleur/duur)</button>
+        <button class="tbtn" data-fn="testPlayIdle">Zet spel op "aan de beurt" (idle)</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>2 · Kaarten trekken</h2>
+      <p class="hint">Springt direct naar de kaart-fase. Je kunt daarna gewoon verder klikken in het host-scherm hiernaast, precies als in een echt spel.</p>
+      <div class="rowgap">
+        <button class="tbtn" data-fn="drawTask">Opdracht</button>
+        <button class="tbtn" data-fn="drawShock">Shock</button>
+      </div>
+      <div class="rowgap" style="margin-top:8px">
+        <button class="tbtn" data-fn="drawChance">Kans</button>
+        <button class="tbtn" data-fn="drawKD">Kennisduel</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>3 · Gok-timer (30s)</h2>
+      <p class="hint">Trekt een opdrachtkaart en start meteen het gok-venster voor het wachtende team. Bekijk het speler-scherm rechts (kies het niet-actieve team hierboven bij de teamkiezer).</p>
+      <div class="rowgap">
+        <button class="tbtn" data-fn="testGuessTimer30">Start timer (30s)</button>
+        <button class="tbtn" data-fn="testGuessTimer3">Bijna om (3s)</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>4 · Flip the Board</h2>
+      <p class="hint">Simuleert een negatieve uitkomst en speelt het volledige effect af: popup weg, bord trilt, pionnen vallen, automatisch door naar de volgende beurt.</p>
+      <div class="btnrow">
+        <button class="tbtn danger" data-fn="testFlip">Trigger Flip the Board</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>5 · Overige pop-ups</h2>
+      <div class="btnrow">
+        <button class="tbtn" data-fn="triggerRent">Huurinkomsten-popup (passeren Start)</button>
+        <button class="tbtn" data-fn="testCoinPos">Muntchip-kleur: positief (groen)</button>
+        <button class="tbtn" data-fn="testCoinNeg">Muntchip-kleur: negatief (rood)</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>6 · Investeringen &amp; score</h2>
+      <div class="btnrow">
+        <button class="tbtn" data-fn="testInvest">Ga naar investeringsfase (kolommen)</button>
+        <button class="tbtn" data-fn="testScores">Toon eindstand</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>7 · Kaartherhaling-check</h2>
+      <p class="hint">Trekt 40 opdrachtkaarten, om en om voor beide teams, en telt hoe vaak dezelfde kaart terugkomt (zou nu zelden/nooit moeten gebeuren binnen één spel).</p>
+      <div class="btnrow">
+        <button class="tbtn" data-fn="testRepetition">Simuleer 40 trekkingen</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Logboek</h2>
+      <div class="log" id="log"></div>
+    </div>
+  </div>
+
+  <div>
+    <div class="screens">
+      <div class="screenbox">
+        <div class="sb-head"><b>Host-scherm (gedeeld beeldscherm)</b><span class="tag">Live</span></div>
+        <iframe id="hostFrame" src="index.html?testharness=1"></iframe>
+      </div>
+      <div class="screenbox">
+        <div class="sb-head">
+          <b>Speler-scherm</b>
+          <div class="teampick">
+            Bekijk als:
+            <select id="teamPick">
+              <option value="1">Team Noord</option>
+              <option value="2">Team Zuid</option>
+            </select>
+          </div>
+        </div>
+        <iframe id="playerFrame" src="index.html?player=1&testharness=1"></iframe>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function hostWin(){ return document.getElementById("hostFrame").contentWindow; }
+function playerWin(){ return document.getElementById("playerFrame").contentWindow; }
+function currentTeamId(){ return document.getElementById("teamPick").value; }
+
+function logMsg(msg){
+  const log=document.getElementById("log");
+  const row=document.createElement("div");
+  const t=new Date().toLocaleTimeString("nl-NL",{hour12:false});
+  row.textContent="["+t+"] "+msg;
+  log.insertBefore(row,log.firstChild);
+}
+
+/* Spiegelt de huidige host-state naar het speler-paneel via het __testRenderPlayer
+   testhaakje in index.html - geen Firebase nodig, puur lokaal en direct. */
+function syncPlayer(){
+  const w=hostWin(),p=playerWin();
+  if(!w||!w.state||!p||!p.__testRenderPlayer)return;
+  try{ p.__testRenderPlayer(w.state, currentTeamId()); }catch(e){ /* iframe nog niet klaar */ }
+}
+setInterval(syncPlayer,600);
+document.getElementById("teamPick").addEventListener("change",syncPlayer);
+
+function ensureTestGame(w){
+  if(!w||!w.state||!w.state.teams||w.state.teams.length<2||!w.state.turn){
+    freshTestGame();
+    return hostWin();
+  }
+  return w;
+}
+
+function freshTestGame(){
+  const w=hostWin();
+  if(!w||!w.freshState){ logMsg("Host-scherm laadt nog, probeer over een paar tellen opnieuw."); return; }
+  w.state=w.freshState();
+  w.state.teams[0].name="Team Noord";
+  w.state.teams[1].name="Team Zuid";
+  w.state.teams[0].coins=12;
+  w.state.teams[1].coins=9;
+  w.state.teams[0].met={sat:2,fin:-1,comp:1,dur:0};
+  w.state.teams[1].met={sat:-1,fin:2,comp:-2,dur:1};
+  w.state.appStage="play";
+  w.state.turnsPerTeam=w.computeTurnsPerTeam?w.computeTurnsPerTeam():8;
+  w.state.activeTeamIdx=0;
+  w.state.turn={phase:"idle",dice:null,walkTo:null,cardType:null,card:null,pendingCard:null,chosenIdx:null,lapGain:0,token:w.uid(),guesses:{},guessResults:null,guessDeadline:null};
+  w.render();
+  syncPlayer();
+  logMsg("Nieuw testspel gestart: Team Noord (12 munten) vs Team Zuid (9 munten).");
+}
+
+function testIntroScreen(){
+  const w=ensureTestGame(hostWin());
+  w.state.appStage="intro";
+  w.render();
+  syncPlayer();
+  logMsg("Introscherm getoond - speler-scherm hoort nu het branded wachtscherm te tonen.");
+}
+function testSetupScreen(){
+  const w=ensureTestGame(hostWin());
+  w.state.appStage="setup";
+  w.render();
+  syncPlayer();
+  logMsg("Setup-scherm getoond (teams, pionkleur, speelduur).");
+}
+function testPlayIdle(){
+  const w=ensureTestGame(hostWin());
+  w.state.appStage="play";
+  w.state.turn={phase:"idle",dice:null,walkTo:null,cardType:null,card:null,pendingCard:null,chosenIdx:null,lapGain:0,token:w.uid(),guesses:{},guessResults:null,guessDeadline:null};
+  w.render();
+  syncPlayer();
+  logMsg("Terug naar spelbord, "+w.activeTeam().name+" is aan de beurt.");
+}
+
+function drawCardOfType(type){
+  const w=ensureTestGame(hostWin());
+  const team=w.activeTeam();
+  w.state.turn.cardType=type;
+  w.state.turn.card=null;
+  w.state.turn.pendingCard=null;
+  w.state.turn.kdRival=null;
+  if(type==="chance")w.state.turn.pendingCard=w.drawChanceFor(team);
+  else if(type==="shock")w.state.turn.pendingCard=w.drawShockFor(team);
+  else if(type==="kennisduel"){
+    w.state.turn.pendingCard=w.drawKDFor(team);
+    const rival=w.resolveDuelTarget(team);
+    if(rival)w.state.turn.kdRival={id:rival.id,name:rival.name,color:rival.color};
+  }else{
+    w.state.turn.pendingCard=w.drawTaskFor(team);
+  }
+  w.state.turn.phase="landed";
+  w.render();
+  syncPlayer();
+  setTimeout(()=>{ w.drawCard(); syncPlayer(); },250);
+  logMsg((team.name)+" trekt een "+type+"-kaart.");
+}
+function drawTask(){ drawCardOfType("task"); }
+function drawShock(){ drawCardOfType("shock"); }
+function drawChance(){ drawCardOfType("chance"); }
+function drawKD(){ drawCardOfType("kennisduel"); }
+
+function testGuessTimer(seconds){
+  const w=ensureTestGame(hostWin());
+  const team=w.activeTeam();
+  w.state.turn.token=w.uid();
+  w.state.turn.cardType="task";
+  w.state.turn.card=w.drawTaskFor(team);
+  w.state.turn.phase="card";
+  w.state.turn.guessDeadline=Date.now()+seconds*1000;
+  w.render();
+  syncPlayer();
+  logMsg("Gok-timer gestart ("+seconds+"s) - bekijk het speler-scherm als het WACHTENDE team.");
+}
+function testGuessTimer30(){ testGuessTimer(30); }
+function testGuessTimer3(){ testGuessTimer(3); }
+
+function testFlip(){
+  const w=ensureTestGame(hostWin());
+  const team=w.activeTeam();
+  w.state.turn.token=w.uid();
+  w.state.turn.cardType="task";
+  w.state.turn.card={id:"demo-flip",t:"Testkaart voor Flip the Board",x:"Dit is een gesimuleerde, negatieve uitkomst om het effect te testen.",
+    o:[{l:"Testoptie",e:"Test-uitleg bij deze optie.",coins:-6,fx:{sat:-1}}]};
+  w.state.turn.chosenIdx=0;
+  w.state.turn.phase="resolved";
+  w.render();
+  syncPlayer();
+  logMsg("Negatieve uitkomst gesimuleerd, Flip the Board-effect start over 0.4s...");
+  setTimeout(()=>{ w.hostFlipBoardAndAdvance(team.name); syncPlayer(); },400);
+}
+
+function triggerRent(){
+  const w=ensureTestGame(hostWin());
+  const team=w.activeTeam();
+  team.coins+=5;
+  w.state.turn.token=w.uid();
+  w.state.turn.cardType="task";
+  w.state.turn.card=null;
+  w.state.turn.chosenIdx=null;
+  w.state.turn.lapGain=5;
+  w.state.turn.phase="resolved";
+  w.render();
+  syncPlayer();
+  logMsg("Huurinkomsten-popup getriggerd voor "+team.name+" (+5 munten).");
+}
+
+function testCoinChip(sign){
+  const w=ensureTestGame(hostWin());
+  const team=w.activeTeam();
+  w.state.turn.token=w.uid();
+  w.state.turn.cardType="task";
+  w.state.turn.card={id:"demo-coin",t:"Muntchip-kleurtest",x:"Demo om de kleur van de muntchip te controleren.",
+    o:[{l:"Testoptie",e:"",coins:sign>0?6:-6,fx:{fin:sign>0?1:-1}}]};
+  w.state.turn.chosenIdx=0;
+  w.state.turn.phase="resolved";
+  w.render();
+  syncPlayer();
+  logMsg("Muntchip-demo: "+(sign>0?"positief (groen)":"negatief (rood)")+".");
+}
+function testCoinPos(){ testCoinChip(1); }
+function testCoinNeg(){ testCoinChip(-1); }
+
+function testInvest(){
+  const w=ensureTestGame(hostWin());
+  w.startInvestPhase();
+  syncPlayer();
+  logMsg("Investeringsfase gestart - kolommen per metric zouden nu zichtbaar moeten zijn.");
+}
+
+function testScores(){
+  const w=ensureTestGame(hostWin());
+  w.state.appStage="scores";
+  w.render();
+  syncPlayer();
+  logMsg("Eindstand getoond.");
+}
+
+function testRepetition(){
+  const w=ensureTestGame(hostWin());
+  w.state.seenTaskGlobal=[];
+  const teamA=w.state.teams[0],teamB=w.state.teams[1];
+  const drawn=[];
+  let repeats=0;
+  for(let i=0;i<40;i++){
+    const team=i%2===0?teamA:teamB;
+    const card=w.drawTaskFor(team);
+    if(drawn.includes(card.id))repeats++;
+    drawn.push(card.id);
+  }
+  const totalUnique=w.taskIds().length;
+  logMsg("Kaartherhaling-test: 40 trekkingen over 2 teams, "+repeats+" herhaling(en) ("+totalUnique+" unieke opdrachtkaarten beschikbaar).");
+}
+
+document.querySelectorAll("button[data-fn]").forEach(btn=>{
+  btn.onclick=()=>{
+    const fn=window[btn.dataset.fn];
+    if(typeof fn==="function")fn();
+  };
+});
+
+document.getElementById("hostFrame").addEventListener("load",()=>{ setTimeout(syncPlayer,300); });
+</script>
+</body>
+</html>
