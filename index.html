@@ -311,14 +311,11 @@
   .boardflip{animation:boardflip .9s cubic-bezier(.36,.07,.19,.97) both}
   #flipToast{position:fixed;left:50%;top:18px;transform:translateX(-50%) translateY(-12px);z-index:9998;background:#E4572E;color:#fff;font-weight:800;font-size:15px;letter-spacing:.3px;border-radius:12px;padding:11px 20px;box-shadow:0 14px 30px rgba(0,0,0,.35);opacity:0;transition:opacity .25s ease,transform .25s ease;pointer-events:none;text-align:center}
   #flipToast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-  #rentToast{position:fixed;left:50%;top:18px;transform:translateX(-50%) translateY(-12px);z-index:9997;background:#2FBF71;color:#fff;font-weight:800;font-size:15px;letter-spacing:.3px;border-radius:12px;padding:11px 20px;box-shadow:0 14px 30px rgba(0,0,0,.35);opacity:0;transition:opacity .25s ease,transform .25s ease;pointer-events:none;text-align:center}
-  #rentToast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
 </head>
 <body>
 <canvas id="fxCanvas"></canvas>
 <div id="flipToast"></div>
-<div id="rentToast"></div>
 
 <div id="facilitator">
   <header class="top"><div class="top-in">
@@ -428,7 +425,6 @@
       <h1 id="jfH">Doe mee</h1><p class="s" id="jfSub"></p>
       <ul class="tips" id="joinTips"></ul>
       <div class="fldwrap"><label class="fld" id="jfRoomL" for="pRoom">Kamercode</label><input type="text" id="pRoom" maxlength="6" placeholder="AB3K" autocomplete="off"></div>
-      <div class="fldwrap"><label class="fld" id="jfNameL" for="pName">Jouw naam</label><input type="text" id="pName" autocomplete="off"></div>
       <div class="fldwrap"><label class="fld" id="jfTeamL" for="pTeam">Team</label><select id="pTeam"><option value="1">Team 1</option><option value="2">Team 2</option><option value="3">Team 3</option><option value="4">Team 4</option><option value="5">Team 5</option><option value="6">Team 6</option></select></div>
       <button class="btn warn big" id="joinBtn" style="width:100%">Meedoen →</button>
     </div>
@@ -982,7 +978,9 @@ const T={
   chooseOpt:"Kies een aanpak:",confirmChoice:"Bevestigen",continueBtn:"Volgende beurt →",
   choiceSent:"Keuze verzonden — wordt verwerkt op het hoofdscherm…",waitForYourTeam:"Kom op, jouw team — maak die keuze!",
   passedStart:"Rondje voltooid! +5 munten huurinkomsten.",collectedStart:"Aangekomen op Start! +5 munten huurinkomsten.",
-  rentToast:(n,a)=>`${n} passeert Start! +${a} munten huurinkomsten`,
+  rentPauseTitle:(n)=>`${n} komt langs Start!`,rentPauseMsg:(a)=>`+${a} munten huurinkomsten ontvangen.`,rentContinueBtn:"Ga verder →",
+  investIntroTitle:"Het boekjaar is voorbij!",investIntroMsg:"Tijd om te investeren!",investIntroBtn:"Naar investeren →",
+  bonusRollBadge:"Extra beurt! Je gooide een 6 - ga nog een keer.",
   chanceAutoGood:"Meevaller!",chanceAutoBad:"Tegenvaller.",
   duelBadge:"Concurrentie-kaart",duelAffects:(n)=>`Dit treft ook: <b>${n}</b>`,duelHitBy:(n)=>`Geraakt door ${n}`,
   newLeader:(n)=>`${n} neemt de leiding!`,dismiss:"OK",
@@ -1004,7 +1002,7 @@ const T={
   finalScoreLbl:"Punten",balansBonusLbl:"Balansbonus",balansHint:"De punten zijn de optelling van de 4 metrics (tevredenheid, financieel, compliance, duurzaamheid). Geld telt niet rechtstreeks mee, alleen via investeringen aan het einde.",scoreBreakdown:(coins)=>`${coins} geld over - telt niet mee voor de punten, tenzij geïnvesteerd`,
   legend:"Legenda vakjes",legStart:"Start/Finish — inkomsten bij passeren",legTask:"Opdracht — kies uit 3 opties",legChance:"Kans — automatisch effect",legShock:"Shock — grote onverwachte gebeurtenis",
   helpTitle:"Hoe werkt het?",helpBody:"<ol><li>Elk team gooit op zijn beurt één dobbelsteen en de pion loopt stap voor stap naar het nieuwe vakje.</li><li>Het vakje bepaalt wat je krijgt: een <b>opdracht</b> (kies uit 3 opties), een <b>kans</b> (automatisch effect), een <b>kennisduel</b> (meerkeuzevraag over de sector — bij een goed antwoord tik je munten af bij je rivaal) of de <b>shock</b> (bijzondere gebeurtenis).</li><li>Elke ronde langs Start levert het team huurinkomsten op, gevolgd door een korte kans om (een deel van) dat geld te investeren.</li><li>Na het ingestelde aantal beurten per team volgt de eindstand.</li></ol>",
-  jfH:"Doe mee",jfSub:"Vul de kamercode in en kies je team.",jfRoomL:"Kamercode",jfNameL:"Jouw naam",jfTeamL:"Team",joinBtn:"Meedoen →",
+  jfH:"Doe mee",jfSub:"Vul de kamercode in en kies je team.",jfRoomL:"Kamercode",jfTeamL:"Team",joinBtn:"Meedoen →",
   jwH:"Je bent binnen!",jwWait:"Hou 'm in de gaten — zodra jullie aan de beurt zijn, gebeurt het hier live!",jwRoomL:"kamer",
   waitForHostTitle:"Bijna zover!",waitForHostMsg:"De host is het spel nog aan het klaarzetten. Zodra alles staat, begint het spel automatisch op dit scherm.",
   netLive:"Live verbonden",netOff:"Offline (lokaal)",netLiveTip:"Live verbonden — wijzigingen worden direct gedeeld met alle spelers.",netOffTip:"Offline (lokaal) — dit spel wordt niet gedeeld, alleen zichtbaar op dit scherm.",footNL:"Zig Grow · Corpopoly",
@@ -1040,7 +1038,9 @@ const T={
   chooseOpt:"Choose an approach:",confirmChoice:"Confirm",continueBtn:"Next turn →",
   choiceSent:"Choice sent — being processed on the main screen…",waitForYourTeam:"Come on, your team — make that call!",
   passedStart:"Lap complete! +5 coins in rent income.",collectedStart:"Arrived at Start! +5 coins in rent income.",
-  rentToast:(n,a)=>`${n} passes Start! +${a} coins in rent income`,
+  rentPauseTitle:(n)=>`${n} passes Start!`,rentPauseMsg:(a)=>`+${a} coins in rent income received.`,rentContinueBtn:"Continue →",
+  investIntroTitle:"The financial year is over!",investIntroMsg:"Time to invest!",investIntroBtn:"Go to investing →",
+  bonusRollBadge:"Bonus turn! You rolled a 6 - go again.",
   chanceAutoGood:"Lucky break!",chanceAutoBad:"Setback.",
   duelBadge:"Rivalry card",duelAffects:(n)=>`This also affects: <b>${n}</b>`,duelHitBy:(n)=>`Hit by ${n}`,
   newLeader:(n)=>`${n} takes the lead!`,dismiss:"OK",
@@ -1062,7 +1062,7 @@ const T={
   finalScoreLbl:"Points",balansBonusLbl:"Balance bonus",balansHint:"Points are the sum of the 4 metrics (satisfaction, financial, compliance, sustainability). Money does not count directly, only through investments at the end.",scoreBreakdown:(coins)=>`${coins} money left - not counted toward the points unless invested`,
   legend:"Tile legend",legStart:"Start/Finish — income when passing",legTask:"Task — choose from 3 options",legChance:"Chance — automatic effect",legShock:"Shock — major unforeseen event",
   helpTitle:"How does it work?",helpBody:"<ol><li>Each team rolls one die on its turn and the pawn walks step by step to the new tile.</li><li>The tile decides what you get: a <b>task</b> (choose from 3 options), a <b>chance</b> (automatic effect), a <b>knowledge duel</b> (multiple-choice question about the sector — a correct answer steals coins from your rival) or the <b>shock</b> (special event).</li><li>Each lap past Start earns the team rent income, followed by a brief chance to invest (some of) that money.</li><li>After the configured number of turns per team, the final standings appear.</li></ol>",
-  jfH:"Join in",jfSub:"Enter the room code and pick your team.",jfRoomL:"Room code",jfNameL:"Your name",jfTeamL:"Team",joinBtn:"Join →",
+  jfH:"Join in",jfSub:"Enter the room code and pick your team.",jfRoomL:"Room code",jfTeamL:"Team",joinBtn:"Join →",
   jwH:"You're in!",jwWait:"Keep an eye on this screen — the moment it's your turn, it happens right here!",jwRoomL:"room",
   waitForHostTitle:"Almost there!",waitForHostMsg:"The host is still setting up the game. As soon as everything is ready, the game will start automatically on this screen.",
   netLive:"Live connected",netOff:"Offline (local)",netLiveTip:"Live connected — changes are shared with all players instantly.",netOffTip:"Offline (local) — this game is not shared, only visible on this screen.",footNL:"Zig Grow · Corpopoly",
@@ -1241,7 +1241,7 @@ function freshState(){
     teams:[0,1].map(i=>freshTeam(i)),
     durationMode:"medium",customTurns:8,turnsPerTeam:8,turnTimerSec:0,
     activeTeamIdx:0,
-    turn:{phase:"idle",dice:null,walkTo:null,cardType:null,card:null,pendingCard:null,chosenIdx:null,lapGain:0,token:null,guessDeadline:null},
+    turn:{phase:"idle",dice:null,walkTo:null,cardType:null,card:null,pendingCard:null,chosenIdx:null,lapGain:0,token:null,guessDeadline:null,isBonus:false},
     /* Gedeelde (niet per-team) gezien-lijsten - voorkomt dat verschillende
        teams binnen dezelfde game dezelfde opdracht/shock/kans/kennisduel-
        kaart krijgen. Reset pas zodra de hele pool voor dat kaarttype op is. */
@@ -1275,7 +1275,7 @@ function startGame(){
   state.seenTaskGlobal=[];state.seenShockGlobal=[];state.seenChanceGlobal=[];state.seenKDGlobal=[];
   state.activeTeamIdx=0;
   _lastPawnPos={};
-  state.turn={phase:"idle",dice:null,walkTo:null,cardType:null,card:null,pendingCard:null,chosenIdx:null,lapGain:0,token:uid(),guesses:{},guessResults:null,guessDeadline:null};
+  state.turn={phase:"idle",dice:null,walkTo:null,cardType:null,card:null,pendingCard:null,chosenIdx:null,lapGain:0,token:uid(),guesses:{},guessResults:null,guessDeadline:null,isBonus:false};
   state.appStage="play";
   state.lastLeaderId=state.teams[0]?state.teams[0].id:null;
   state.leadChangeBanner=null;
@@ -1322,6 +1322,14 @@ function rollDice(){
   setTimeout(()=>{state.turn.phase="walking";stepWalk(from,to);},650);
 }
 
+/* Loopt de pion stap voor stap naar het nieuwe vakje. Zodra een stap Start
+   passeert, PAUZEERT de loop meteen (in plaats van door te lopen tot het
+   eindvakje) - de speler ziet direct de huurinkomsten-pop-up en daarna de
+   investerings-aankondiging, VOORDAT de resterende stappen worden afgelegd
+   en de bijbehorende kaart/actie van het eindvakje aan de beurt komt. Zie
+   ackRentPause()/ackInvestIntro()/startLapInvest()/resumeWalkAfterLapInvest()
+   voor het vervolg - die roepen stepWalk() opnieuw aan om de rest van de
+   route af te maken zodra de pop-ups zijn weggeklikt. */
 function stepWalk(from,to){
   const team=activeTeam();
   if(team.boardPos>=to){
@@ -1332,9 +1340,39 @@ function stepWalk(from,to){
   team.boardPos++;
   if(Math.floor(team.boardPos/RING_LEN)>Math.floor(before/RING_LEN)){
     team.coins+=5;team.laps++;state.turn.lapGain=(state.turn.lapGain||0)+5;
+    state.turn.walkTo=to;
+    state.turn.phase="rentpause";
+    render();saveLocal();NET.publish();
+    return;
   }
   render();saveLocal();NET.publish();
   setTimeout(()=>stepWalk(from,to),380);
+}
+/* Bevestigt de huurinkomsten-pop-up (fase "rentpause") en gaat door naar de
+   korte aankondiging dat er geïnvesteerd mag worden. */
+function ackRentPause(){
+  if(state.turn.phase!=="rentpause")return;
+  state.turn.phase="investintro";
+  NET.clearAction();
+  render();saveLocal();NET.publish();
+}
+/* Bevestigt de investerings-aankondiging (fase "investintro") en start de
+   daadwerkelijke tussentijdse investeringsronde voor dit ene team. */
+function ackInvestIntro(){
+  if(state.turn.phase!=="investintro")return;
+  startLapInvest();
+}
+/* Maakt de onderbroken route af zodra de tussentijdse investeringsronde is
+   afgerond (zie advanceInvestPhase()) - hervat stepWalk() vanaf de huidige
+   positie naar het oorspronkelijke eindvakje, zodat de rest van de beurt
+   (landen, kaart trekken, enz.) normaal doorloopt. */
+function resumeWalkAfterLapInvest(){
+  const team=activeTeam();
+  const to=state.turn.walkTo;
+  state.appStage="play";
+  state.turn.phase="walking";
+  render();saveLocal();NET.publish();
+  setTimeout(()=>stepWalk(team.boardPos,to),380);
 }
 
 /* Landing determines (and pre-selects) the card, but does NOT reveal it yet -
@@ -1511,15 +1549,25 @@ function ackAutoCard(){
   render();saveLocal();NET.publish();
 }
 
+/* Extra beurt bij een 6: telt niet als een "verbruikte" beurt uit het
+   vaste budget (turnsPerTeam) - team.turnsTaken wordt daarom NIET verhoogd
+   als de beurt die nu wordt afgerond zelf al een bonusbeurt was (state.turn.
+   isBonus), puur de "originele" beurt waarin de 6 gegooid werd telt normaal.
+   Zo is een 6 altijd een pure bonus, nooit een beurt die van het budget van
+   het team afgaat - en een team dat op de bonusbeurt zelf óók een 6 gooit,
+   krijgt gewoon weer een nieuwe bonusbeurt (kettingreactie, net als in het
+   origineel: doubles geven een extra worp). */
 function nextTurn(){
   if(state.turn.phase!=="resolved")return;
   const team=activeTeam();
-  team.turnsTaken++;
+  const rolledSix=state.turn.dice===6;
+  const wasBonus=!!state.turn.isBonus;
+  if(!wasBonus)team.turnsTaken++;
   NET.clearAction();
-  const hadLapGain=!!state.turn.lapGain;
-  state.turn={phase:"idle",dice:null,walkTo:null,cardType:null,card:null,pendingCard:null,chosenIdx:null,lapGain:0,token:uid(),guesses:{},guessResults:null,guessDeadline:null};
-  if(hadLapGain){
-    startLapInvest();
+  state.turn={phase:"idle",dice:null,walkTo:null,cardType:null,card:null,pendingCard:null,chosenIdx:null,lapGain:0,token:uid(),guesses:{},guessResults:null,guessDeadline:null,isBonus:false};
+  if(rolledSix){
+    state.turn.isBonus=true;
+    render();saveLocal();NET.publish();
     return;
   }
   finishNextTurn();
@@ -1557,15 +1605,18 @@ function startInvestPhase(){
   NET.clearAction();
   render();saveLocal();NET.publish();
 }
-/* Tussentijdse investeringsronde: elke keer dat een team langs Start komt (en
-   dus net huurinkomsten heeft ontvangen, zie de rentToast-melding) krijgt
-   ALLEEN dat team meteen de kans om te investeren, voordat de beurt echt aan
-   het volgende team overgaat. Hergebruikt dezelfde view-invest UI en dezelfde
-   applyInvestment()/advanceInvestPhase() als de eindspel-investeringsronde,
-   maar met state.investDone alvast gevuld met alle ANDERE teams zodat alleen
-   het actieve team aan de beurt is - advanceInvestPhase() ziet dan meteen
-   "niemand meer te gaan" zodra dit ene team klaar is, en geeft de controle
-   terug aan finishNextTurn() in plaats van naar de eindstand te gaan. */
+/* Tussentijdse investeringsronde: elke keer dat een team langs Start komt
+   pauzeert de looproute meteen (zie stepWalk()), toont een huurinkomsten-
+   pop-up ("rentpause") en daarna een korte aankondiging ("investintro") -
+   ackInvestIntro() roept deze functie aan om ALLEEN dat ene team meteen de
+   kans te geven te investeren, nog VOORDAT de rest van de route wordt
+   afgelegd. Hergebruikt dezelfde view-invest UI en dezelfde applyInvestment()/
+   advanceInvestPhase() als de eindspel-investeringsronde, maar met
+   state.investDone alvast gevuld met alle ANDERE teams zodat alleen het
+   actieve team aan de beurt is - advanceInvestPhase() ziet dan meteen
+   "niemand meer te gaan" zodra dit ene team klaar is, en roept dan
+   resumeWalkAfterLapInvest() aan om de onderbroken route af te maken, in
+   plaats van door te gaan naar de eindstand. */
 function startLapInvest(){
   const team=state.teams[state.activeTeamIdx];
   state.lapInvestActive=true;
@@ -1617,8 +1668,7 @@ function advanceInvestPhase(){
   if(!remaining.length){
     if(state.lapInvestActive){
       state.lapInvestActive=false;
-      state.appStage="play";
-      finishNextTurn();
+      resumeWalkAfterLapInvest();
       return;
     }
     state.appStage="scores";
@@ -1769,8 +1819,9 @@ function renderStage(){
   if(state.appStage!=="play"){if(inner)inner.innerHTML="";el.classList.add("hide");if(shortEl)shortEl.innerHTML="";if(backdrop)backdrop.classList.add("hide");return;}
   let html="";
   if(ph==="idle"){
+    const bonusBadge=state.turn.isBonus?`<div class="badge" style="background:#FFF4E5;color:#B45309;margin-bottom:8px;display:inline-block">${L.bonusRollBadge}</div>`:"";
     html=`<div class="yourturn" style="background:${team.color}">${esc(L.yourTurnBanner(team.name))}</div>
-      <div style="text-align:center"><p class="hint">${esc(L.waitRoll(team.name))}</p>
+      <div style="text-align:center">${bonusBadge}<p class="hint">${esc(L.waitRoll(team.name))}</p>
       <button class="btn soft pulseglow" id="rollBtn">${L.rollBtn}</button></div>`;
   }else if(ph==="rolling"){
     html=`<div style="text-align:center"><div class="dice rolling">${DICE_SVG}</div><div class="hint">${esc(team.name)}…</div></div>`;
@@ -1819,23 +1870,25 @@ function renderStage(){
         card.o.map((o,idx)=>`<button class="btn soft optbtn" data-idx="${idx}"><b>${esc(o.l)}</b><br><span class="hint">${esc(o.e)}</span></button>`).join("")+
         `</div></div>`;
     }
+  }else if(ph==="rentpause"){
+    /* Pop-up die meteen verschijnt zodra de pion Start passeert, nog VOORDAT
+       de rest van de route is afgelegd - zie stepWalk(). Alleen een simpele
+       bevestiging; de daadwerkelijke investeringsronde volgt in de
+       "investintro"-fase hierna. */
+    html=`<div style="text-align:center"><h3 style="margin-bottom:4px">${esc(L.rentPauseTitle(team.name))}</h3>
+      <p class="hint" style="font-size:16px">${esc(L.rentPauseMsg(state.turn.lapGain||5))}</p>
+      <button class="btn soft pulseglow" id="rentPauseBtn">${L.rentContinueBtn}</button></div>`;
+  }else if(ph==="investintro"){
+    /* Korte, losse aankondiging tussen de huurinkomsten-pop-up en de
+       daadwerkelijke investerings-kolommen - geeft het moment een duidelijke
+       "boekjaar is voorbij"-framing voordat de kaarten in beeld komen. */
+    html=`<div style="text-align:center"><h3 style="margin-bottom:4px">${esc(L.investIntroTitle)}</h3>
+      <p class="hint" style="font-size:16px">${esc(L.investIntroMsg)}</p>
+      <button class="btn soft pulseglow" id="investIntroContinueBtn">${L.investIntroBtn}</button></div>`;
   }else if(ph==="resolved"){
     const type=state.turn.cardType;
     let msg="";
-    if(type==="start"){msg=team.turnsTaken===0&&team.boardPos===0?L.collectedStart:L.passedStart;}
-    else if(state.turn.lapGain){msg=L.passedStart;}
-    /* Duidelijke, losse pop-up-melding voor huurinkomsten (i.p.v. alleen de
-       kleine tekstregel hierboven) - toont één keer per beurt-token. */
-    if(state.turn.lapGain&&_lastRentToastToken!==state.turn.token){
-      _lastRentToastToken=state.turn.token;
-      const rt=$("rentToast");
-      if(rt){
-        rt.textContent=L.rentToast(team.name,state.turn.lapGain);
-        rt.classList.add("show");
-        clearTimeout(rt._hideT);
-        rt._hideT=setTimeout(()=>rt.classList.remove("show"),2800);
-      }
-    }
+    if(type==="start")msg=L.collectedStart;
     const card=state.turn.card;
     let detail="";
     let negOutcome=false;
@@ -1875,7 +1928,7 @@ function renderStage(){
   /* Only card/resolved phases (which can carry long dilemma text) escalate to
      the floating popup+backdrop; idle/rolling/walking/landed stay embedded in
      the ring itself so the board, pawns and dice animation stay visible. */
-  const isPopup=(ph==="card"||ph==="resolved");
+  const isPopup=(ph==="card"||ph==="resolved"||ph==="rentpause"||ph==="investintro");
   if(isPopup){
     if(inner)inner.innerHTML=html;
     el.classList.remove("hide");
@@ -1891,6 +1944,8 @@ function renderStage(){
   const dcb=$("drawCardBtn");if(dcb)dcb.onclick=()=>drawCard();
   const ack=$("ackCardBtn");if(ack)ack.onclick=()=>ackAutoCard();
   const nb=$("nextTurnBtn");if(nb)nb.onclick=()=>nextTurn();
+  const rpb=$("rentPauseBtn");if(rpb)rpb.onclick=()=>ackRentPause();
+  const iib=$("investIntroContinueBtn");if(iib)iib.onclick=()=>ackInvestIntro();
   /* Veiligheidsklep voor de host: een popup moet altijd tijdelijk weg te klikken
      zijn (kruisje of klik op de backdrop), ook als een kaart een keer vastloopt.
      Dit verbergt alleen visueel - de onderliggende state/turn blijft ongewijzigd,
@@ -1908,7 +1963,6 @@ function renderStage(){
    shock/kennisduel) en state.turnTimerSec>0. Herstart alleen bij een echt
    nieuwe beurt/kaart (gekoppeld aan state.turn.token), niet bij elke re-render. */
 let _ttToken=null,_ttInterval=null,_ttRemain=0;
-let _lastRentToastToken=null;
 function stopTurnTimer(){
   if(_ttInterval){clearInterval(_ttInterval);_ttInterval=null;}
   _ttToken=null;
@@ -2208,6 +2262,10 @@ function handleIncomingAction(action){
     ackAutoCard();
   }else if(action.type==="nextTurn"&&state.turn.phase==="resolved"){
     nextTurn();
+  }else if(action.type==="ackRentPause"&&state.turn.phase==="rentpause"){
+    ackRentPause();
+  }else if(action.type==="ackInvestIntro"&&state.turn.phase==="investintro"){
+    ackInvestIntro();
   }else if(action.type==="flipBoard"&&state.turn.phase==="resolved"){
     /* De action zelf leegt hier meteen zodat hij niet blijft "hangen" tijdens
        de vertraagde nextTurn() die hostFlipBoardAndAdvance afvuurt. */
@@ -2225,7 +2283,7 @@ function initPlayerView(){
   if(roomFromUrl)$("pRoom").value=roomFromUrl;
   $("pLogo").innerHTML=`<img src="assets/corpopoly-logo.png" alt="Corpopoly" class="logo" style="height:auto;max-height:64px;width:auto;max-width:100%">`;
   $("jfH").textContent=T.nl.jfH;$("jfSub").textContent=T.nl.jfSub;$("jfRoomL").textContent=T.nl.jfRoomL;
-  $("jfNameL").textContent=T.nl.jfNameL;$("jfTeamL").textContent=T.nl.jfTeamL;$("joinBtn").textContent=T.nl.joinBtn;
+  $("jfTeamL").textContent=T.nl.jfTeamL;$("joinBtn").textContent=T.nl.joinBtn;
   $("joinTips").innerHTML=`<li>${T.nl.jfSub}</li>`;
   let joinedRoom=null,playerLang="nl",knownTeams=null,lastSubmittedKey=null;
   let _lastHead=null,_lastMainKey=null,_lastSide=null;
@@ -2294,16 +2352,15 @@ function initPlayerView(){
 
   $("joinBtn").onclick=()=>{
     const room=($("pRoom").value||"").trim().toUpperCase();
-    const name=($("pName").value||"").trim();
     const team=$("pTeam").value;
-    if(!room||!name)return;
+    if(!room)return;
     joinedRoom=room;
-    NET.joinAsPlayer(room,name,team);
+    const teamName=(knownTeams&&knownTeams.find(t=>String(t.id)===String(team))||{}).name||("Team "+team);
+    NET.joinAsPlayer(room,teamName,team);
     $("joinForm").style.display="none";
     $("joinWaiting").style.display="block";
     $("joinCard").classList.add("wide");
-    const teamName=(knownTeams&&knownTeams.find(t=>String(t.id)===String(team))||{}).name||("Team "+team);
-    $("joinWho").textContent=name+" · "+teamName;
+    $("joinWho").textContent=teamName;
     $("joinRoomEcho").textContent=room;
     $("jwH").textContent=T.nl.jwH;$("jwWait").textContent=T.nl.jwWait;$("jwRoomL").textContent=T.nl.jwRoomL;
     subscribeAsPlayer(room,team);
@@ -2343,9 +2400,12 @@ function initPlayerView(){
     if(snap.appStage==="play"&&active){
       main+=`<div class="yourturn" style="background:${active.color};font-size:16px">${esc(L.yourTurnBanner(active.name))}</div>`;
       if(turn.phase==="idle"){
+        const bonusBadge=turn.isBonus?`<div class="badge" style="background:#FFF4E5;color:#B45309;margin-bottom:8px;display:inline-block">${L.bonusRollBadge}</div>`:"";
         if(mine){
           const sent=wasSent(turn,"roll");
-          main+=`<div style="text-align:center"><button class="btn warn big pulseglow" id="playerRollBtn" ${sent?"disabled":""}>${sent?L.choiceSent:L.rollBtn}</button></div>`;
+          main+=`<div style="text-align:center">${bonusBadge}<button class="btn warn big pulseglow" id="playerRollBtn" ${sent?"disabled":""}>${sent?L.choiceSent:L.rollBtn}</button></div>`;
+        }else if(bonusBadge){
+          main+=`<div style="text-align:center">${bonusBadge}</div>`;
         }
       }else if(turn.phase==="rolling"){
         main+=`<div style="text-align:center"><div class="dice rolling">${DICE_SVG}</div></div>`;
@@ -2396,6 +2456,20 @@ function initPlayerView(){
           }else{
             main+=`<p class="hint" style="margin-bottom:6px">${L.waitForYourTeam}</p><div class="opts">`+turn.card.o.map(o=>`<div class="btn soft optbtn" style="opacity:.7">${esc(o.l)}${isKD?"":`<br><span class="hint">${esc(o.e)}</span>`}</div>`).join("")+`</div>`;
           }
+        }
+        main+=`</div>`;
+      }else if(turn.phase==="rentpause"){
+        main+=`<div style="text-align:center"><h3 style="margin-bottom:4px">${esc(L.rentPauseTitle(active.name))}</h3><p class="hint" style="font-size:16px">${esc(L.rentPauseMsg(turn.lapGain||5))}</p>`;
+        if(mine){
+          const sent=wasSent(turn,"ackRentPause");
+          main+=`<button class="btn soft pulseglow" id="playerRentPauseBtn" ${sent?"disabled":""}>${sent?L.choiceSent:L.rentContinueBtn}</button>`;
+        }
+        main+=`</div>`;
+      }else if(turn.phase==="investintro"){
+        main+=`<div style="text-align:center"><h3 style="margin-bottom:4px">${esc(L.investIntroTitle)}</h3><p class="hint" style="font-size:16px">${esc(L.investIntroMsg)}</p>`;
+        if(mine){
+          const sent=wasSent(turn,"ackInvestIntro");
+          main+=`<button class="btn soft pulseglow" id="playerInvestIntroBtn" ${sent?"disabled":""}>${sent?L.choiceSent:L.investIntroBtn}</button>`;
         }
         main+=`</div>`;
       }else if(turn.phase==="resolved"){
@@ -2521,6 +2595,10 @@ function initPlayerView(){
     if(ackBtn)ackBtn.onclick=()=>{markSent(turn,"ackChance");NET.submitAction(joinedRoom,{type:"ackChance",team,token:turn.token});renderPlayerDashboard(snap,team);};
     const nextBtn=$("playerNextBtn");
     if(nextBtn)nextBtn.onclick=()=>{markSent(turn,"nextTurn");NET.submitAction(joinedRoom,{type:"nextTurn",team,token:turn.token});renderPlayerDashboard(snap,team);};
+    const rentPauseBtn=$("playerRentPauseBtn");
+    if(rentPauseBtn)rentPauseBtn.onclick=()=>{markSent(turn,"ackRentPause");NET.submitAction(joinedRoom,{type:"ackRentPause",team,token:turn.token});renderPlayerDashboard(snap,team);};
+    const investIntroBtn=$("playerInvestIntroBtn");
+    if(investIntroBtn)investIntroBtn.onclick=()=>{markSent(turn,"ackInvestIntro");NET.submitAction(joinedRoom,{type:"ackInvestIntro",team,token:turn.token});renderPlayerDashboard(snap,team);};
     const flipBtn=$("playerFlipBtn");
     if(flipBtn)flipBtn.onclick=()=>{
       const flipName=(me?me.name:"");
