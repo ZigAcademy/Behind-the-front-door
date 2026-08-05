@@ -257,10 +257,15 @@
   .guesschip.good{color:#137a44}
   .guesschip.bad{color:#a4321f;opacity:.75}
   .guessOpt{position:relative}
+  @keyframes boardflip{0%{transform:rotate(0) scale(1)}8%{transform:rotate(-2.5deg) scale(1.01)}16%{transform:rotate(3deg) scale(1.02)}24%{transform:rotate(-4deg) scale(1.02)}32%{transform:rotate(4.5deg) scale(1.03)}40%{transform:rotate(-4deg) scale(1.03)}50%{transform:rotate(3.5deg) scale(1.02)}60%{transform:rotate(-3deg) scale(1.02)}70%{transform:rotate(2deg) scale(1.01)}80%{transform:rotate(-1.5deg)}90%{transform:rotate(.5deg)}100%{transform:rotate(0) scale(1)}}
+  .boardflip{animation:boardflip .9s cubic-bezier(.36,.07,.19,.97) both}
+  #flipToast{position:fixed;left:50%;top:18px;transform:translateX(-50%) translateY(-12px);z-index:9998;background:#E4572E;color:#fff;font-weight:800;font-size:15px;letter-spacing:.3px;border-radius:12px;padding:11px 20px;box-shadow:0 14px 30px rgba(0,0,0,.35);opacity:0;transition:opacity .25s ease,transform .25s ease;pointer-events:none;text-align:center}
+  #flipToast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
 </head>
 <body>
 <canvas id="fxCanvas"></canvas>
+<div id="flipToast"></div>
 
 <div id="facilitator">
   <header class="top"><div class="top-in">
@@ -865,6 +870,8 @@ const T={
   chanceAutoGood:"Meevaller!",chanceAutoBad:"Tegenvaller.",
   duelBadge:"Concurrentie-kaart",duelAffects:(n)=>`Dit treft ook: <b>${n}</b>`,duelHitBy:(n)=>`Geraakt door ${n}`,
   newLeader:(n)=>`${n} neemt de leiding!`,dismiss:"OK",
+  flipBoardBtn:"Flip het bord!",flipBoardTip:"Voor als het even niet meezit — puur voor de lol, telt niet mee voor de score.",
+  flipBoardBanner:(n)=>`${n} GOOIT HET BORD OM!`,
   scoresH:"Eindstand",scoresP:"Bekijk de resultaten en bespreek de belangrijkste keuzes na.",againBtn:"Nieuw spel",
   winnerHeadline:(n,c)=>`<b>${n}</b> wint met <b>${c} punten</b>!`,
   finalScoreLbl:"Eindscore",balansBonusLbl:"Balansbonus",balansHint:"1 punt per metric die op 0 of hoger staat, -1 punt per metric die negatief staat.",
@@ -907,6 +914,8 @@ const T={
   chanceAutoGood:"Lucky break!",chanceAutoBad:"Setback.",
   duelBadge:"Rivalry card",duelAffects:(n)=>`This also affects: <b>${n}</b>`,duelHitBy:(n)=>`Hit by ${n}`,
   newLeader:(n)=>`${n} takes the lead!`,dismiss:"OK",
+  flipBoardBtn:"Flip the board!",flipBoardTip:"For when it just isn't going your way — purely for fun, does not affect the score.",
+  flipBoardBanner:(n)=>`${n} FLIPS THE BOARD!`,
   scoresH:"Final standings",scoresP:"Review the results and debrief the key choices.",againBtn:"New game",
   winnerHeadline:(n,c)=>`<b>${n}</b> wins with <b>${c} points</b>!`,
   finalScoreLbl:"Final score",balansBonusLbl:"Balance bonus",balansHint:"1 point per metric at 0 or above, -1 point per metric that's negative.",
@@ -962,6 +971,37 @@ function celebrate(kind){
   if(kind==="leader")FX.burst(cx,cy,["#1F5AFF","#FF9000","#2FBF71"],80);
   else if(kind==="kd")FX.burst(cx,cy,["#8B5CF6","#5b3aa8","#c9b3f5"],55);
   else if(kind==="win")FX.burst(cx,cy,["#1F5AFF","#FF9000","#2FBF71","#8B5CF6","#E4572E"],140);
+  else if(kind==="flip")FX.burst(cx,innerHeight*0.4,["#E4572E","#15233022","#5b6472","#8a6d3b"],110);
+}
+/* Bepaalt of een afgeronde beurt per saldo negatief uitpakte voor het handelende
+   team (munten + som van alle metric-deltas samen onder 0), gebruikt om de
+   "Flip het bord"-knop alleen te tonen bij een echte tegenvaller. */
+function isNegativeOutcome(coins,fx){
+  const fxSum=Object.values(fx||{}).reduce((a,b)=>a+(b||0),0);
+  return ((coins||0)+fxSum)<0;
+}
+/* Puur cosmetische "Flip the Board"-easter egg (geen invloed op state/score):
+   schudt het bordpaneel (host) of de speler-kaart (deelnemer) heftig door
+   elkaar, laat een korte toast zien en vuurt een confetti-burst af. Werkt op
+   zowel host- als deelnemerscherm, want #flipToast en #fxCanvas staan buiten
+   beide view-containers in de gedeelde pagina-markup. */
+function triggerFlipBoard(name){
+  const L=T[state.lang];
+  const shakeEl=$("boardPanel")||$("joinCard");
+  if(shakeEl){
+    shakeEl.classList.remove("boardflip");
+    void shakeEl.offsetWidth;
+    shakeEl.classList.add("boardflip");
+    setTimeout(()=>shakeEl.classList.remove("boardflip"),950);
+  }
+  const toast=$("flipToast");
+  if(toast){
+    toast.textContent=L.flipBoardBanner(name||"");
+    toast.classList.add("show");
+    clearTimeout(toast._hideT);
+    toast._hideT=setTimeout(()=>toast.classList.remove("show"),2400);
+  }
+  celebrate("flip");
 }
 function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 /* Handgetekend dobbelsteen-icoon (geen emoji): een simpele vector-weergave van
@@ -1490,8 +1530,10 @@ function renderStage(){
     else if(state.turn.lapGain){msg=L.passedStart;}
     const card=state.turn.card;
     let detail="";
+    let negOutcome=false;
     if(card&&state.turn.chosenIdx!=null){
       const o=card.o[state.turn.chosenIdx];
+      negOutcome=isNegativeOutcome(o.coins,o.fx);
       const chips=effectChipsHtml(state.lang,o.coins,o.fx,o.mx);
       if(type==="kennisduel"){
         const correct=o.correct===true;
@@ -1508,13 +1550,15 @@ function renderStage(){
       }
     }else if(card&&type==="chance"){
       const dt=state.turn.duelTarget;
+      negOutcome=isNegativeOutcome(card.coins,card.fx);
       detail=`<p class="hint"><b>${esc(card.t)}</b></p>${effectChipsHtml(state.lang,card.coins,card.fx,null)}`+
         (dt?`<p class="hint" style="margin-top:8px;color:#a4321f">${L.duelAffects(esc(dt.name))}</p>${effectChipsHtml(state.lang,dt.coins,dt.fx,null)}`:"");
     }
     const gr=state.turn.guessResults;
     const guessBox=(gr&&gr.length)?`<div class="guessbox">`+gr.map(g=>`<span class="guesschip ${g.correct?'good':'bad'}" style="border-color:${g.color}">${esc(g.name)} ${g.correct?L.guessHit:L.guessMiss}</span>`).join("")+`</div>`:"";
+    const flipBtn=negOutcome?`<button class="btn ghost sm" id="flipBoardBtn" title="${L.flipBoardTip}" style="margin-inline-start:8px">${L.flipBoardBtn}</button>`:"";
     html=`<div style="text-align:center">${msg?`<p class="hint">${msg}</p>`:""}${detail}${guessBox}
-      <button class="btn soft pulseglow" id="nextTurnBtn">${L.continueBtn}</button></div>`;
+      <button class="btn soft pulseglow" id="nextTurnBtn">${L.continueBtn}</button>${flipBtn}</div>`;
   }
   /* Only card/resolved phases (which can carry long dilemma text) escalate to
      the floating popup+backdrop; idle/rolling/walking/landed stay embedded in
@@ -1535,6 +1579,7 @@ function renderStage(){
   const dcb=$("drawCardBtn");if(dcb)dcb.onclick=()=>drawCard();
   const ack=$("ackCardBtn");if(ack)ack.onclick=()=>ackAutoCard();
   const nb=$("nextTurnBtn");if(nb)nb.onclick=()=>nextTurn();
+  const fbb=$("flipBoardBtn");if(fbb)fbb.onclick=()=>triggerFlipBoard(team.name);
   el.querySelectorAll(".optbtn").forEach(b=>b.onclick=()=>resolveChoice(parseInt(b.dataset.idx,10)));
   manageTurnTimer();
 }
@@ -1777,6 +1822,11 @@ function handleIncomingAction(action){
     ackAutoCard();
   }else if(action.type==="nextTurn"&&state.turn.phase==="resolved"){
     nextTurn();
+  }else if(action.type==="flipBoard"&&state.turn.phase==="resolved"){
+    /* Puur cosmetisch: geen state-mutatie/publish nodig, dus de action zelf
+       moet hier expliciet geleegd worden zodat hij niet blijft "hangen". */
+    triggerFlipBoard(action.name||team.name);
+    NET.clearAction();
   }else{
     NET.clearAction();
   }
@@ -1919,8 +1969,10 @@ function initPlayerView(){
         main+=`</div>`;
       }else if(turn.phase==="resolved"){
         let detail="";
+        let negOutcome=false;
         if(turn.card&&turn.card.o&&turn.chosenIdx!=null){
           const o=turn.card.o[turn.chosenIdx];
+          negOutcome=isNegativeOutcome(o.coins,o.fx);
           const chips=effectChipsHtml(playerLang,o.coins,o.fx,o.mx);
           if(turn.cardType==="kennisduel"){
             const correct=o.correct===true;
@@ -1930,6 +1982,7 @@ function initPlayerView(){
           }
         }else if(turn.cardType==="chance"&&turn.card){
           const dt=turn.duelTarget;
+          negOutcome=isNegativeOutcome(turn.card.coins,turn.card.fx);
           detail=`<div class="cardface" style="margin-top:10px"><p class="hint"><b>${esc(turn.card.t)}</b></p>${effectChipsHtml(playerLang,turn.card.coins,turn.card.fx,null)}${dt?`<p class="hint" style="margin-top:8px;color:#a4321f">${L.duelAffects(esc(dt.name))}</p>${effectChipsHtml(playerLang,dt.coins,dt.fx,null)}`:""}</div>`;
         }else if(turn.cardType==="start"||turn.lapGain){
           detail=`<p class="hint" style="text-align:center;margin-top:10px">${L.passedStart}</p>`;
@@ -1944,7 +1997,8 @@ function initPlayerView(){
         }
         if(mine){
           const sent=wasSent(turn,"nextTurn");
-          main+=`<div style="text-align:center;margin-top:8px"><button class="btn soft pulseglow" id="playerNextBtn" ${sent?"disabled":""}>${sent?L.choiceSent:L.continueBtn}</button></div>`;
+          const flipBtn=negOutcome?`<button class="btn ghost sm" id="playerFlipBtn" title="${L.flipBoardTip}" style="margin-inline-start:8px">${L.flipBoardBtn}</button>`:"";
+          main+=`<div style="text-align:center;margin-top:8px"><button class="btn soft pulseglow" id="playerNextBtn" ${sent?"disabled":""}>${sent?L.choiceSent:L.continueBtn}</button>${flipBtn}</div>`;
         }
       }
     }
@@ -2011,6 +2065,12 @@ function initPlayerView(){
     if(ackBtn)ackBtn.onclick=()=>{markSent(turn,"ackChance");NET.submitAction(joinedRoom,{type:"ackChance",team,token:turn.token});renderPlayerDashboard(snap,team);};
     const nextBtn=$("playerNextBtn");
     if(nextBtn)nextBtn.onclick=()=>{markSent(turn,"nextTurn");NET.submitAction(joinedRoom,{type:"nextTurn",team,token:turn.token});renderPlayerDashboard(snap,team);};
+    const flipBtn=$("playerFlipBtn");
+    if(flipBtn)flipBtn.onclick=()=>{
+      const flipName=(me?me.name:"");
+      triggerFlipBoard(flipName);
+      NET.submitAction(joinedRoom,{type:"flipBoard",team,token:turn.token,name:flipName});
+    };
     if(turn.phase==="card"&&turn.cardType!=="chance"&&turn.card&&turn.card.o){
       $("pdashMain").querySelectorAll(".playerOpt").forEach(btn=>{
         btn.onclick=()=>{
