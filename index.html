@@ -241,7 +241,6 @@
   .tile.kennisduel{border-color:#8B5CF6}
   .cardface.kd{border-color:#c9b3f5;box-shadow:0 18px 40px rgba(91,58,168,.3)}
   .illo.kdimg{border:3px solid #8B5CF6;box-shadow:0 0 0 6px rgba(139,92,246,.22),0 10px 26px rgba(91,58,168,.4);animation:kdpulse 1.8s ease-in-out infinite}
-  .sectorimg{width:56px;height:56px;border-radius:10px;background-size:cover;background-position:center;float:left;margin-inline-end:10px;box-shadow:0 4px 10px rgba(0,0,0,.15)}
   @keyframes kdpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
   .badge.kdbadge{background:#5b3aa8;color:#fff}
   .kdopt{border:1.5px solid #d9c9f7}
@@ -326,7 +325,6 @@
     <div class="brandline" id="brand"></div><div class="spacer"></div>
     <div class="join-chip"><span id="roomLbl">Kamer</span>&nbsp;<b id="roomCode">----</b></div>
     <span id="netStatus" class="netdot off" title=""></span>
-    <button class="btn ghost sm" id="sectorBtn">Sector</button>
     <button class="btn ghost sm" id="helpToggle">Uitleg</button>
     <button class="btn ghost sm" id="soundToggle" title="Geluid">Geluid aan</button>
     <button class="btn ghost sm" id="fxToggle" title="Effecten">Effecten aan</button>
@@ -339,7 +337,6 @@
   <div class="wrap">
     <div class="roundbar" id="roundBar"></div>
     <div class="hint" id="roundHint"></div>
-    <div class="banner hide" id="sectorBanner" style="border-color:#FF9000;background:#fff6ec"></div>
     <div class="panel hide" id="helpPanel" style="margin-bottom:14px"></div>
 
     <section id="view-intro" class="panel hide">
@@ -503,14 +500,12 @@ const IMG_VARIANTS={
   "kans-goed":["kans-goed-1","kans-goed-2","kans-goed-3","kans-goed-4"],
   "kans-slecht":["kans-slecht-1","kans-slecht-2","kans-slecht-3","kans-slecht-4"]
 };
-const SECTOR_IMGS=["sector-1","sector-2","sector-3"];
 function hashStr(s){let h=0;for(let i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))>>>0;return h;}
 function imgFor(id,cat){
   const variants=IMG_VARIANTS[cat];
   if(!variants||!variants.length)return cat;
   return variants[hashStr(String(id))%variants.length];
 }
-function sectorImgFor(id){return SECTOR_IMGS[hashStr(String(id))%SECTOR_IMGS.length];}
 
 const TASK_NL=[
  {id:"A",t:"De schimmelmelding",x:"Een huurder meldt via het portaal schimmel in de slaapkamer. In het gezin woont een baby van vier maanden. Er zit een foto bij, met de boodschap: dit duurt nu al drie weken. De huurder is ongerust en voelt zich niet gehoord.",o:[{l:"A · Direct herstellen, gezin ontzien",e:"Snel en grondig, ook al is het duur.",coins:-3,fx:{sat:2,comp:1},mx:{sat:"Het gezin voelt zich eindelijk gehoord en geholpen.",comp:"Zorgplicht bij een gezondheidsrisico is direct en aantoonbaar nagekomen."}},{l:"B · Regulier inplannen",e:"Via de vaste aannemer, geen voorrang.",coins:-1,fx:{sat:1},mx:{sat:"Er gebeurt tenminste iets, al voelt het traag."}},{l:"C · Laten ventileren, zelf oplossen",e:"Kosten drukken, bal bij de huurder.",coins:0,fx:{sat:-2,comp:-1},mx:{sat:"De huurder voelt zich afgescheept met een gezondheidsklacht.",comp:"Bij een baby in huis is 'zelf oplossen' geen zorgvuldige aanpak."}}],sp:"Klanttevredenheid versus kostenbeheersing. Bij een baby komen reputatie en zorgplicht erbij — één bericht op sociale media en het is een mediakwestie."},
@@ -642,7 +637,15 @@ const CHANCE_NL=[
  {id:"D5",good:false,duel:true,t:"Concurrent haalt jouw huurder over",x:"Een andere corporatie overtuigt een van jullie huurders om over te stappen.",coins:-1,fx:{sat:-1},targetCoins:1,targetFx:{}},
  {id:"D6",good:false,duel:true,t:"Ongunstige vergelijking in de media",x:"Een artikel vergelijkt jullie ongunstig met de koploper.",coins:0,fx:{sat:-1},targetCoins:0,targetFx:{sat:1}},
  {id:"D7",good:true,duel:true,t:"Convenant als eerste getekend",x:"Jullie tekenen als eerste een gunstig convenant met de gemeente.",coins:1,fx:{comp:1},targetCoins:-1,targetFx:{}},
- {id:"D8",good:false,duel:true,t:"Personeel vertrekt naar de koploper",x:"Een ervaren medewerker vertrekt naar de koploper.",coins:-1,fx:{},targetCoins:1,targetFx:{comp:1}}
+ {id:"D8",good:false,duel:true,t:"Personeel vertrekt naar de koploper",x:"Een ervaren medewerker vertrekt naar de koploper.",coins:-1,fx:{},targetCoins:1,targetFx:{comp:1}},
+ {id:"SE1",good:false,t:"Rentestijging",x:"De marktrente stijgt; lenen wordt sectorbreed duurder.",coins:-1,fx:{}},
+ {id:"SE2",good:true,t:"Extra rijkssubsidie",x:"Een landelijke subsidieronde geeft alle corporaties lucht.",coins:1,fx:{}},
+ {id:"SE3",good:false,t:"Landelijke woonprotesten",x:"Woonprotesten zetten de hele sector onder druk.",coins:0,fx:{sat:-1}},
+ {id:"SE4",good:true,t:"Zachte winter",x:"Een zachte winter drukt de energielasten voor iedereen.",coins:0,fx:{sat:1}},
+ {id:"SE5",good:false,t:"Strenger Aw-toezicht",x:"De Autoriteit scherpt sectorbreed het toezicht aan.",coins:0,fx:{comp:-1}},
+ {id:"SE6",good:true,t:"Meevallende bouwkosten",x:"Bouwkosten dalen onverwacht in de hele sector.",coins:1,fx:{}},
+ {id:"SE7",good:false,t:"Nieuwe klimaatnorm",x:"Een aangescherpte norm dwingt iedereen te verduurzamen.",coins:0,fx:{dur:-1}},
+ {id:"SE8",good:false,t:"Personeelskrapte",x:"Krapte op de arbeidsmarkt vertraagt alle corporaties.",coins:0,fx:{comp:-1}}
 ];
 const CHANCE_EN=[
  {id:"K1",good:true,t:"Quick re-let",x:"A home is re-let remarkably fast.",coins:2,fx:{}},
@@ -672,27 +675,15 @@ const CHANCE_EN=[
  {id:"D5",good:false,duel:true,t:"Rival wins over your tenant",x:"Another corporation convinces one of your tenants to switch.",coins:-1,fx:{sat:-1},targetCoins:1,targetFx:{}},
  {id:"D6",good:false,duel:true,t:"Unfavourable media comparison",x:"An article compares you unfavourably with the front-runner.",coins:0,fx:{sat:-1},targetCoins:0,targetFx:{sat:1}},
  {id:"D7",good:true,duel:true,t:"Covenant signed first",x:"You're first to sign a favourable covenant with the municipality.",coins:1,fx:{comp:1},targetCoins:-1,targetFx:{}},
- {id:"D8",good:false,duel:true,t:"Staff leaves for the front-runner",x:"An experienced staff member leaves for the front-runner.",coins:-1,fx:{},targetCoins:1,targetFx:{comp:1}}
-];
-const SECTOR_NL=[
- {id:"SE1",t:"Rentestijging",x:"De marktrente stijgt; lenen wordt sectorbreed duurder.",coins:-1,fx:{}},
- {id:"SE2",t:"Extra rijkssubsidie",x:"Een landelijke subsidieronde geeft alle corporaties lucht.",coins:1,fx:{}},
- {id:"SE3",t:"Landelijke woonprotesten",x:"Woonprotesten zetten de hele sector onder druk.",coins:0,fx:{sat:-1}},
- {id:"SE4",t:"Zachte winter",x:"Een zachte winter drukt de energielasten voor iedereen.",coins:0,fx:{sat:1}},
- {id:"SE5",t:"Strenger Aw-toezicht",x:"De Autoriteit scherpt sectorbreed het toezicht aan.",coins:0,fx:{comp:-1}},
- {id:"SE6",t:"Meevallende bouwkosten",x:"Bouwkosten dalen onverwacht in de hele sector.",coins:1,fx:{}},
- {id:"SE7",t:"Nieuwe klimaatnorm",x:"Een aangescherpte norm dwingt iedereen te verduurzamen.",coins:0,fx:{dur:-1}},
- {id:"SE8",t:"Personeelskrapte",x:"Krapte op de arbeidsmarkt vertraagt alle corporaties.",coins:0,fx:{comp:-1}}
-];
-const SECTOR_EN=[
- {id:"SE1",t:"Interest rate rise",x:"Market interest rises; borrowing gets more expensive sector-wide.",coins:-1,fx:{}},
- {id:"SE2",t:"Extra state subsidy",x:"A national subsidy round gives all corporations breathing room.",coins:1,fx:{}},
- {id:"SE3",t:"National housing protests",x:"Housing protests put the whole sector under pressure.",coins:0,fx:{sat:-1}},
- {id:"SE4",t:"Mild winter",x:"A mild winter lowers energy costs for everyone.",coins:0,fx:{sat:1}},
- {id:"SE5",t:"Stricter Aw supervision",x:"The Authority tightens supervision across the sector.",coins:0,fx:{comp:-1}},
- {id:"SE6",t:"Lower construction costs",x:"Construction costs fall unexpectedly across the sector.",coins:1,fx:{}},
- {id:"SE7",t:"New climate standard",x:"A tightened standard forces everyone to go greener.",coins:0,fx:{dur:-1}},
- {id:"SE8",t:"Labour shortage",x:"A tight labour market slows all corporations.",coins:0,fx:{comp:-1}}
+ {id:"D8",good:false,duel:true,t:"Staff leaves for the front-runner",x:"An experienced staff member leaves for the front-runner.",coins:-1,fx:{},targetCoins:1,targetFx:{comp:1}},
+ {id:"SE1",good:false,t:"Interest rate rise",x:"Market interest rises; borrowing gets more expensive sector-wide.",coins:-1,fx:{}},
+ {id:"SE2",good:true,t:"Extra state subsidy",x:"A national subsidy round gives all corporations breathing room.",coins:1,fx:{}},
+ {id:"SE3",good:false,t:"National housing protests",x:"Housing protests put the whole sector under pressure.",coins:0,fx:{sat:-1}},
+ {id:"SE4",good:true,t:"Mild winter",x:"A mild winter lowers energy costs for everyone.",coins:0,fx:{sat:1}},
+ {id:"SE5",good:false,t:"Stricter Aw supervision",x:"The Authority tightens supervision across the sector.",coins:0,fx:{comp:-1}},
+ {id:"SE6",good:true,t:"Lower construction costs",x:"Construction costs fall unexpectedly across the sector.",coins:1,fx:{}},
+ {id:"SE7",good:false,t:"New climate standard",x:"A tightened standard forces everyone to go greener.",coins:0,fx:{dur:-1}},
+ {id:"SE8",good:false,t:"Labour shortage",x:"A tight labour market slows all corporations.",coins:0,fx:{comp:-1}}
 ];
 /* Investeringen: zowel tussentijds (elke keer dat een team langs Start komt,
    zie startLapInvest()) als aan het einde van het spel (na de laatste beurt,
@@ -895,12 +886,11 @@ const KD_EN=[
   {l:"C · Only label A or higher counts, the rest doesn't",coins:-1,fx:{},e:"Not correct — all labels weigh in, on a sliding scale."},
   {l:"D · The energy label only counts for new build",coins:-1,fx:{},e:"Not correct — it applies to all homes."}]}];
 function idx(a){return Object.fromEntries(a.map(o=>[o.id,o]));}
-const CONTENT={nl:{task:idx(TASK_NL),shock:idx(SHOCK_NL),chance:idx(CHANCE_NL),sector:idx(SECTOR_NL),kd:idx(KD_NL)},en:{task:idx(TASK_EN),shock:idx(SHOCK_EN),chance:idx(CHANCE_EN),sector:idx(SECTOR_EN),kd:idx(KD_EN)}};
+const CONTENT={nl:{task:idx(TASK_NL),shock:idx(SHOCK_NL),chance:idx(CHANCE_NL),kd:idx(KD_NL)},en:{task:idx(TASK_EN),shock:idx(SHOCK_EN),chance:idx(CHANCE_EN),kd:idx(KD_EN)}};
 const TASK_IDS_NL=TASK_NL.map(c=>c.id),TASK_IDS_EN=TASK_EN.map(c=>c.id);
 const SHOCK_IDS_NL=SHOCK_NL.map(c=>c.id),SHOCK_IDS_EN=SHOCK_EN.map(c=>c.id);
 const KD_IDS_NL=KD_NL.map(c=>c.id),KD_IDS_EN=KD_EN.map(c=>c.id);
 const CHANCE_IDS_NL=CHANCE_NL.map(c=>c.id),CHANCE_IDS_EN=CHANCE_EN.map(c=>c.id);
-const SECTOR_IDS=SECTOR_NL.map(s=>s.id);
 /* Blauw en oranje zijn bewust uit de pion-kleuren gehaald - die vielen te veel
    weg tegen de blauwe/oranje vakjes op het bord. Voor de twee extra kleuren
    (naast de 4 bestaande, echt losse pion-afbeeldingen) hertinten we via CSS
@@ -961,7 +951,7 @@ const AVG_MIN_PER_TURN=2.5;
 const TURNS_MIN=4,TURNS_MAX=16;
 /* ============ translations ============ */
 const T={
- nl:{brand:"Corpopoly",room:"Kamer",joinLink:"Join-link",newGame:"Nieuw spel",testEnvBtn:"Testomgeving",help:"Uitleg",sector:"Sector",soundOnLbl:"Geluid aan",soundOffLbl:"Geluid uit",fxOnLbl:"Effecten aan",fxOffLbl:"Effecten uit",
+ nl:{brand:"Corpopoly",room:"Kamer",joinLink:"Join-link",newGame:"Nieuw spel",testEnvBtn:"Testomgeving",help:"Uitleg",soundOnLbl:"Geluid aan",soundOffLbl:"Geluid uit",fxOnLbl:"Effecten aan",fxOffLbl:"Effecten uit",
   introTitle:"Welkom bij Corpopoly",
   introAbout:"Een bordspel waarin jullie team, net als een echte woningcorporatie, elke beurt een lastige keuze maakt over onderhoud, betaalbaarheid, verduurzaming, leefbaarheid en digitalisering — met altijd een addertje onder het gras.",
   introMission:"Een woningcorporatie heeft geen winstoogmerk — succes betekent <b>tevredenheid</b>, <b>beschikbaarheid</b>, <b>betaalbaarheid</b> en <b>kwaliteit</b> van de woningen. Munten in dit spel staan voor middelen, niet voor winst: ze zijn nodig om te investeren, maar de eindscore draait om deze vier pijlers.",
@@ -1012,15 +1002,14 @@ const T={
   scoresH:"Eindstand",scoresP:"Bekijk de resultaten en bespreek de belangrijkste keuzes na.",againBtn:"Nieuw spel",
   winnerHeadline:(n,c)=>`<b>${n}</b> wint met <b>${c} punten</b>!`,
   finalScoreLbl:"Punten",balansBonusLbl:"Balansbonus",balansHint:"De punten zijn de optelling van de 4 metrics (tevredenheid, financieel, compliance, duurzaamheid). Geld telt niet rechtstreeks mee, alleen via investeringen aan het einde.",scoreBreakdown:(coins)=>`${coins} geld over - telt niet mee voor de punten, tenzij geïnvesteerd`,
-  sectorBanner:(t,x)=>`<b>Sectorgebeurtenis — ${t}</b><br>${x}`,sectorBtnTip:"Los een gebeurtenis los die alle teams raakt",
   legend:"Legenda vakjes",legStart:"Start/Finish — inkomsten bij passeren",legTask:"Opdracht — kies uit 3 opties",legChance:"Kans — automatisch effect",legShock:"Shock — grote onverwachte gebeurtenis",
-  helpTitle:"Hoe werkt het?",helpBody:"<ol><li>Elk team gooit op zijn beurt één dobbelsteen en de pion loopt stap voor stap naar het nieuwe vakje.</li><li>Het vakje bepaalt wat je krijgt: een <b>opdracht</b> (kies uit 3 opties), een <b>kans</b> (automatisch effect), een <b>kennisduel</b> (meerkeuzevraag over de sector — bij een goed antwoord tik je munten af bij je rivaal) of de <b>shock</b> (bijzondere gebeurtenis).</li><li>Elke ronde langs Start levert het team huurinkomsten op.</li><li>De host kan via de <b>Sector</b>-knop op elk moment een sectorbrede gebeurtenis loslaten die alle teams tegelijk raakt — gebruik dit bewust om het spel spannender te maken.</li><li>Na het ingestelde aantal beurten per team volgt de eindstand.</li></ol>",
+  helpTitle:"Hoe werkt het?",helpBody:"<ol><li>Elk team gooit op zijn beurt één dobbelsteen en de pion loopt stap voor stap naar het nieuwe vakje.</li><li>Het vakje bepaalt wat je krijgt: een <b>opdracht</b> (kies uit 3 opties), een <b>kans</b> (automatisch effect), een <b>kennisduel</b> (meerkeuzevraag over de sector — bij een goed antwoord tik je munten af bij je rivaal) of de <b>shock</b> (bijzondere gebeurtenis).</li><li>Elke ronde langs Start levert het team huurinkomsten op, gevolgd door een korte kans om (een deel van) dat geld te investeren.</li><li>Na het ingestelde aantal beurten per team volgt de eindstand.</li></ol>",
   jfH:"Doe mee",jfSub:"Vul de kamercode in en kies je team.",jfRoomL:"Kamercode",jfNameL:"Jouw naam",jfTeamL:"Team",joinBtn:"Meedoen →",
   jwH:"Je bent binnen!",jwWait:"Hou 'm in de gaten — zodra jullie aan de beurt zijn, gebeurt het hier live!",jwRoomL:"kamer",
   waitForHostTitle:"Bijna zover!",waitForHostMsg:"De host is het spel nog aan het klaarzetten. Zodra alles staat, begint het spel automatisch op dit scherm.",
   netLive:"Live verbonden",netOff:"Offline (lokaal)",netLiveTip:"Live verbonden — wijzigingen worden direct gedeeld met alle spelers.",netOffTip:"Offline (lokaal) — dit spel wordt niet gedeeld, alleen zichtbaar op dit scherm.",footNL:"Zig Grow · Corpopoly",
   roundHint:(done,total)=>`Voortgang: ${done} van ${total} beurten gespeeld`,metricsLbl:"Meters",coinsLbl:"Geld"},
- en:{brand:"Corpopoly",room:"Room",joinLink:"Join link",newGame:"New game",testEnvBtn:"Test environment",help:"Guide",sector:"Sector",soundOnLbl:"Sound on",soundOffLbl:"Sound off",fxOnLbl:"Effects on",fxOffLbl:"Effects off",
+ en:{brand:"Corpopoly",room:"Room",joinLink:"Join link",newGame:"New game",testEnvBtn:"Test environment",help:"Guide",soundOnLbl:"Sound on",soundOffLbl:"Sound off",fxOnLbl:"Effects on",fxOffLbl:"Effects off",
   introTitle:"Welcome to Corpopoly",
   introAbout:"A board game where your team, just like a real housing corporation, faces a tough call every turn — on maintenance, affordability, sustainability, liveability and digitalisation — always with a catch.",
   introMission:"A housing corporation is not-for-profit — success means <b>satisfaction</b>, <b>availability</b>, <b>affordability</b> and <b>quality</b> of homes. Coins in this game represent resources, not profit: you need them to invest, but the final score is all about these four pillars.",
@@ -1071,9 +1060,8 @@ const T={
   scoresH:"Final standings",scoresP:"Review the results and debrief the key choices.",againBtn:"New game",
   winnerHeadline:(n,c)=>`<b>${n}</b> wins with <b>${c} points</b>!`,
   finalScoreLbl:"Points",balansBonusLbl:"Balance bonus",balansHint:"Points are the sum of the 4 metrics (satisfaction, financial, compliance, sustainability). Money does not count directly, only through investments at the end.",scoreBreakdown:(coins)=>`${coins} money left - not counted toward the points unless invested`,
-  sectorBanner:(t,x)=>`<b>Sector event — ${t}</b><br>${x}`,sectorBtnTip:"Trigger an event that affects all teams",
   legend:"Tile legend",legStart:"Start/Finish — income when passing",legTask:"Task — choose from 3 options",legChance:"Chance — automatic effect",legShock:"Shock — major unforeseen event",
-  helpTitle:"How does it work?",helpBody:"<ol><li>Each team rolls one die on its turn and the pawn walks step by step to the new tile.</li><li>The tile decides what you get: a <b>task</b> (choose from 3 options), a <b>chance</b> (automatic effect), a <b>knowledge duel</b> (multiple-choice question about the sector — a correct answer steals coins from your rival) or the <b>shock</b> (special event).</li><li>Each lap past Start earns the team rent income.</li><li>The host can trigger a sector-wide event at any moment via the <b>Sector</b> button, affecting all teams at once — use it deliberately to raise the stakes.</li><li>After the configured number of turns per team, the final standings appear.</li></ol>",
+  helpTitle:"How does it work?",helpBody:"<ol><li>Each team rolls one die on its turn and the pawn walks step by step to the new tile.</li><li>The tile decides what you get: a <b>task</b> (choose from 3 options), a <b>chance</b> (automatic effect), a <b>knowledge duel</b> (multiple-choice question about the sector — a correct answer steals coins from your rival) or the <b>shock</b> (special event).</li><li>Each lap past Start earns the team rent income, followed by a brief chance to invest (some of) that money.</li><li>After the configured number of turns per team, the final standings appear.</li></ol>",
   jfH:"Join in",jfSub:"Enter the room code and pick your team.",jfRoomL:"Room code",jfNameL:"Your name",jfTeamL:"Team",joinBtn:"Join →",
   jwH:"You're in!",jwWait:"Keep an eye on this screen — the moment it's your turn, it happens right here!",jwRoomL:"room",
   waitForHostTitle:"Almost there!",waitForHostMsg:"The host is still setting up the game. As soon as everything is ready, the game will start automatically on this screen.",
@@ -1254,7 +1242,6 @@ function freshState(){
     durationMode:"medium",customTurns:8,turnsPerTeam:8,turnTimerSec:0,
     activeTeamIdx:0,
     turn:{phase:"idle",dice:null,walkTo:null,cardType:null,card:null,pendingCard:null,chosenIdx:null,lapGain:0,token:null,guessDeadline:null},
-    usedSectorIds:[],lastSectorBanner:null,
     /* Gedeelde (niet per-team) gezien-lijsten - voorkomt dat verschillende
        teams binnen dezelfde game dezelfde opdracht/shock/kans/kennisduel-
        kaart krijgen. Reset pas zodra de hele pool voor dat kaarttype op is. */
@@ -1660,18 +1647,6 @@ function renderInvest(){
   foot.innerHTML=`<span class="iftotal">${L.investCoinsAvail(team.coins)}</span>`;
 }
 
-function triggerSectorEvent(){
-  const avail=SECTOR_IDS.filter(id=>!state.usedSectorIds.includes(id));
-  const pool=avail.length?avail:SECTOR_IDS.slice();
-  if(!avail.length)state.usedSectorIds=[];
-  const id=pick(pool);
-  state.usedSectorIds.push(id);
-  const ev=contentFor().sector[id];
-  state.teams.forEach(t=>applyCardEffect(t,ev.fx,ev.coins));
-  state.lastSectorBanner={t:ev.t,x:ev.x,at:Date.now()};
-  render();saveLocal();NET.publish();
-  setTimeout(()=>{if(state.lastSectorBanner&&state.lastSectorBanner.at===state.lastSectorBanner.at){/*keep until dismissed*/}},1);
-}
 /* ============ board layout ============ */
 function ringLayout(){
   const out=[];
@@ -1694,9 +1669,7 @@ function render(){
   $("resetGame").textContent=T[state.lang].newGame;
   $("testEnvBtn").textContent=T[state.lang].testEnvBtn;
   $("helpToggle").textContent=T[state.lang].help;
-  $("sectorBtn").textContent=T[state.lang].sector;
   $("fullscreenToggle").textContent=document.fullscreenElement?T[state.lang].fsExit:T[state.lang].fsEnter;
-  $("sectorBtn").title=T[state.lang].sectorBtnTip;
   $("soundToggle").textContent=state.soundOn?T[state.lang].soundOnLbl:T[state.lang].soundOffLbl;
   $("fxToggle").textContent=state.fxOn?T[state.lang].fxOnLbl:T[state.lang].fxOffLbl;
   $("footNL").textContent=T[state.lang].footNL;
@@ -1716,15 +1689,6 @@ function render(){
   if(state.appStage==="invest")renderInvest();
   if(state.appStage==="scores")renderScores();
 
-  if(state.lastSectorBanner){
-    $("sectorBanner").classList.remove("hide");
-    const sImg=sectorImgFor(state.lastSectorBanner.t);
-    $("sectorBanner").innerHTML=`<div class="sectorimg" style="background-image:url('assets/${sImg}.jpg')"></div>`+T[state.lang].sectorBanner(esc(state.lastSectorBanner.t),esc(state.lastSectorBanner.x))+
-      '<div style="margin-top:8px;clear:both"><button class="btn ghost sm" id="dismissSector">OK</button></div>';
-    const db=$("dismissSector");if(db)db.onclick=()=>{state.lastSectorBanner=null;render();saveLocal();NET.publish();};
-  }else{
-    $("sectorBanner").classList.add("hide");
-  }
 
 }
 
@@ -2187,7 +2151,6 @@ function wireFacilitator(){
   $("fxToggle").onclick=()=>{state.fxOn=!state.fxOn;$("fxToggle").textContent=state.fxOn?T[state.lang].fxOnLbl:T[state.lang].fxOffLbl;saveLocal();};
   $("fullscreenToggle").onclick=()=>toggleFullscreen();
   $("helpToggle").onclick=()=>{$("helpPanel").classList.toggle("hide");};
-  $("sectorBtn").onclick=()=>triggerSectorEvent();
   $("copyJoin").onclick=()=>{
     const url=location.origin+location.pathname+"?room="+state.room+"&player=1";
     if(navigator.clipboard)navigator.clipboard.writeText(url).catch(()=>{});
