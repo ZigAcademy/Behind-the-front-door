@@ -265,17 +265,18 @@
   .recapopt .rchosen{margin-inline-start:auto;flex:0 0 auto;font-size:11px;font-weight:800;letter-spacing:.3px;text-transform:uppercase;color:#1F5AFF;background:#fff;border:1px solid #1F5AFF;border-radius:20px;padding:2px 8px}
   /* Investeringsfase: bewust andere, "shop"-achtige visuele stijl dan de
      opdracht/kans-kaarten, zodat dit moment duidelijk anders aanvoelt. */
-  .investgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:14px;align-items:start}
+  .investgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:14px}
   @media (max-width:760px){.investgrid{grid-template-columns:repeat(2,1fr)}}
   @media (max-width:480px){.investgrid{grid-template-columns:1fr}}
   .investcol{display:flex;flex-direction:column;gap:10px;min-width:0}
   .investcol-h{display:flex;flex-direction:column;align-items:center;gap:8px;font-weight:800;font-size:13.5px;padding-bottom:12px;margin-bottom:4px;border-bottom:2px solid var(--line);text-transform:uppercase;letter-spacing:.3px;text-align:center}
   .investcol-h img{width:58px;height:58px}
-  .investcard{border:2px solid var(--line);border-radius:14px;padding:12px 14px;cursor:pointer;background:var(--card);transition:border-color .15s,background .15s;text-align:start}
+  .investcard{border:2px solid var(--line);border-radius:14px;padding:12px 14px;cursor:pointer;background:var(--card);transition:border-color .15s,background .15s;text-align:start;display:flex;flex-direction:column;height:100%}
   .investcard:hover{border-color:var(--blue)}
   .investcard.sel{border-color:var(--blue);background:#EAF0FF}
   .investcard.unaffordable{opacity:.45;cursor:not-allowed}
   .investcard .ic-title{font-weight:800;font-size:14px;display:block;margin-bottom:6px}
+  .investcard .ic-tags{margin-top:auto;padding-top:8px}
   .investcard .ic-desc{font-size:12.5px;color:var(--muted);margin-bottom:8px}
   .investcard .ic-tags{display:flex;gap:6px;font-size:12px;font-weight:700}
   .investcard .ic-cost{color:#a4321f;background:#fde2dc;border-radius:20px;padding:2px 9px}
@@ -1544,6 +1545,19 @@ function investByMetric(opts){
   const order=["sat","fin","comp","dur"];
   return order.map(mk=>({metric:mk,items:opts.filter(o=>o.metric===mk)}));
 }
+/* Bouwt de kolomkoppen + kaarten als platte, in leesvolgorde-per-rij
+   opgesomde grid-cellen (i.p.v. geneste kolom-divs), zodat CSS Grid elke rij
+   automatisch even hoog maakt - de kaarten in dezelfde rij (tier) staan dan
+   altijd mooi op gelijke hoogte uitgelijnd, ongeacht hun tekstlengte. */
+function investGridCellsHtml(opts,lang,cardFn){
+  const groups=investByMetric(opts);
+  let html=groups.map(g=>`<div class="investcol-h"><img src="assets/${MET_ICON[g.metric]}.png"><span>${MET[lang][g.metric]}</span></div>`).join("");
+  const rows=Math.max(0,...groups.map(g=>g.items.length));
+  for(let r=0;r<rows;r++){
+    html+=groups.map(g=>g.items[r]?cardFn(g.items[r]):`<div></div>`).join("");
+  }
+  return html;
+}
 function applyInvestment(selectedIds){
   const team=activeTeam();
   if(!team)return;
@@ -1581,15 +1595,11 @@ function renderInvest(){
   if(!team){banner.innerHTML="";grid.innerHTML="";foot.innerHTML="";return;}
   banner.innerHTML=`<b>${esc(L.investWaitBanner(team.name))}</b>`;
   const opts=investOptions();
-  const groups=investByMetric(opts);
-  grid.innerHTML=groups.map(g=>`<div class="investcol">
-      <div class="investcol-h"><img src="assets/${MET_ICON[g.metric]}.png"><span>${MET[state.lang][g.metric]}</span></div>
-      ${g.items.map(o=>`<div class="investcard" style="cursor:default">
-        <span class="ic-title">${esc(o.t)}</span>
-        <div class="ic-desc">${esc(o.x)}</div>
-        <div class="ic-tags"><span class="ic-cost">${L.coinsLbl} -${o.cost}</span><span class="ic-gain">+${o.gain}</span></div>
-      </div>`).join("")}
-    </div>`).join("");
+  grid.innerHTML=investGridCellsHtml(opts,state.lang,o=>`<div class="investcard" style="cursor:default">
+      <span class="ic-title">${esc(o.t)}</span>
+      <div class="ic-desc">${esc(o.x)}</div>
+      <div class="ic-tags"><span class="ic-cost">${L.coinsLbl} -${o.cost}</span><span class="ic-gain">+${o.gain}</span></div>
+    </div>`);
   foot.innerHTML=`<span class="iftotal">${L.investCoinsAvail(team.coins)}</span>`;
 }
 
@@ -2414,15 +2424,11 @@ function initPlayerView(){
         if(investSent){
           main+=`<p class="hint" style="text-align:center">${L.choiceSent}</p>`;
         }else{
-          const groups=investByMetric(opts);
-          main+=`<div class="investgrid" id="pInvestGrid">`+groups.map(g=>`<div class="investcol">
-              <div class="investcol-h"><img src="assets/${MET_ICON[g.metric]}.png"><span>${MET[playerLang][g.metric]}</span></div>
-              ${g.items.map(o=>`<div class="investcard" data-id="${o.id}" data-cost="${o.cost}">
-                <span class="ic-title">${esc(o.t)}</span>
-                <div class="ic-desc">${esc(o.x)}</div>
-                <div class="ic-tags"><span class="ic-cost">${L.coinsLbl} -${o.cost}</span><span class="ic-gain">+${o.gain}</span></div>
-              </div>`).join("")}
-            </div>`).join("")+`</div>
+          main+=`<div class="investgrid" id="pInvestGrid">`+investGridCellsHtml(opts,playerLang,o=>`<div class="investcard" data-id="${o.id}" data-cost="${o.cost}">
+              <span class="ic-title">${esc(o.t)}</span>
+              <div class="ic-desc">${esc(o.x)}</div>
+              <div class="ic-tags"><span class="ic-cost">${L.coinsLbl} -${o.cost}</span><span class="ic-gain">+${o.gain}</span></div>
+            </div>`)+`</div>
           <div class="investfoot"><span class="iftotal" id="pInvestTotal"></span><button class="btn warn" id="pInvestConfirm">${L.investConfirm}</button></div>`;
         }
       }else{
