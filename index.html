@@ -55,7 +55,7 @@
   .minichance{margin-top:7px;border-radius:9px;padding:6px 8px;font-size:11.5px;border:1px solid}
   .minichance.good{background:#e9f9f0;border-color:#8fddb4;color:#137a44}.minichance.bad{background:#fdeee9;border-color:#f2b3a1;color:#b3391b}
   @media (prefers-color-scheme:dark){.minichance.good{background:#12301f;border-color:#1f5a3a}.minichance.bad{background:#331912;border-color:#5a2a1c}}
-  .stage{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:90;background:var(--card);border-radius:20px;box-shadow:0 30px 70px rgba(0,0,0,.4);padding:20px 24px;width:92vw;max-width:640px;max-height:85vh;overflow:auto;display:flex;flex-direction:column;animation:popin .35s cubic-bezier(.2,.9,.3,1.2) both}
+  .stage{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:90;background:var(--card);border-radius:20px;box-shadow:0 30px 70px rgba(0,0,0,.4);padding:20px 24px;width:92vw;max-width:760px;max-height:88vh;overflow:auto;display:flex;flex-direction:column;animation:popin .35s cubic-bezier(.2,.9,.3,1.2) both}
   @keyframes popin{0%{opacity:0;transform:translate(-50%,-50%) scale(.92)}100%{opacity:1;transform:translate(-50%,-50%) scale(1)}}
   .stagebackdrop{position:fixed;inset:0;background:rgba(10,16,26,.55);backdrop-filter:blur(2px);z-index:80}
   .stageclose{position:absolute;top:10px;right:10px;width:30px;height:30px;border-radius:50%;border:1px solid var(--line);background:var(--soft);color:var(--muted);font-size:20px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:1}
@@ -121,7 +121,7 @@
   .stageshort{background:var(--card);border-radius:14px;box-shadow:0 14px 30px rgba(0,0,0,.3);padding:16px 20px;max-width:92%;max-height:92%;overflow:auto}
   .pawnlayer{position:absolute;inset:0;pointer-events:none;z-index:6;display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr);gap:5px}
   .pawncell{display:flex;align-items:flex-end;justify-content:center;flex-wrap:nowrap;padding:2px;overflow:visible}
-  .pw2{width:52px;height:68px;background-size:contain;background-repeat:no-repeat;background-position:center bottom;filter:drop-shadow(1px 0 0 rgba(255,255,255,.95)) drop-shadow(-1px 0 0 rgba(255,255,255,.95)) drop-shadow(0 1px 0 rgba(255,255,255,.95)) drop-shadow(0 -1px 0 rgba(255,255,255,.95)) drop-shadow(2px 0 0 rgba(21,35,48,.55)) drop-shadow(-2px 0 0 rgba(21,35,48,.55)) drop-shadow(0 2px 0 rgba(21,35,48,.55)) drop-shadow(0 -2px 0 rgba(21,35,48,.55)) drop-shadow(0 4px 6px rgba(0,0,0,.45));position:relative;flex:0 0 auto;transform-origin:center bottom}
+  .pw2{width:68px;height:88px;background-size:contain;background-repeat:no-repeat;background-position:center bottom;filter:hue-rotate(var(--pawnhue,0deg)) saturate(var(--pawnsat,1)) drop-shadow(1px 0 0 rgba(255,255,255,.95)) drop-shadow(-1px 0 0 rgba(255,255,255,.95)) drop-shadow(0 1px 0 rgba(255,255,255,.95)) drop-shadow(0 -1px 0 rgba(255,255,255,.95)) drop-shadow(2px 0 0 rgba(21,35,48,.55)) drop-shadow(-2px 0 0 rgba(21,35,48,.55)) drop-shadow(0 2px 0 rgba(21,35,48,.55)) drop-shadow(0 -2px 0 rgba(21,35,48,.55)) drop-shadow(0 4px 6px rgba(0,0,0,.45));position:relative;flex:0 0 auto;transform-origin:center bottom}
   .pw2.hop{animation:pawnhop .42s cubic-bezier(.4,0,.3,1)}
   @keyframes pawnhop{
     0%{transform:translate(var(--fx,0),var(--fy,0)) rotate(0deg) scale(1)}
@@ -142,7 +142,7 @@
   .dice{width:88px;height:88px;border-radius:20px;background:var(--card);border:3px solid var(--line);box-shadow:0 10px 22px rgba(0,0,0,.2);display:flex;align-items:center;justify-content:center;font-size:48px;margin:0 auto 8px}
   .dice.rolling{animation:diceroll .7s cubic-bezier(.34,1.4,.4,1)}
   @keyframes diceroll{0%{transform:rotate(0) scale(1)}12%{transform:rotate(-28deg) scale(1.18)}26%{transform:rotate(24deg) scale(1.24)}40%{transform:rotate(-20deg) scale(1.16)}55%{transform:rotate(14deg) scale(1.1)}70%{transform:rotate(-9deg) scale(1.05)}85%{transform:rotate(4deg) scale(1.02)}100%{transform:rotate(0) scale(1)}}
-  @media (max-width:860px){.pw2{width:32px;height:42px}.dice{width:62px;height:62px;font-size:32px}}
+  @media (max-width:860px){.pw2{width:42px;height:55px}.dice{width:62px;height:62px;font-size:32px}}
   .playgrid{display:grid;grid-template-columns:1fr;gap:18px;align-items:start}
   #view-play.playgrid{max-width:1600px;width:100vw;margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw);padding:0 18px;box-sizing:border-box}
   .stageframe{width:100%;aspect-ratio:16/9;max-width:calc((100vh - 165px) * 16 / 9);max-height:calc(100vh - 165px);margin:0 auto;display:flex;align-items:center;justify-content:center;overflow:hidden}
@@ -184,6 +184,8 @@
   .srow2 .sr-top{display:flex;align-items:center;gap:7px}
   .srow2 .pos{font-weight:900;color:var(--muted);font-size:13px;width:16px;text-align:center;flex:0 0 auto}
   .srow2 .dot2{width:11px;height:11px;border-radius:50%;border:1.5px solid #fff;box-shadow:0 1px 2px rgba(0,0,0,.25);flex:0 0 auto}
+  .colorswatch{width:24px;height:24px;border-radius:50%;border:2px solid transparent;cursor:pointer;padding:0;flex:0 0 auto}
+  .colorswatch.sel{border-color:var(--ink);box-shadow:0 0 0 2px var(--card),0 0 0 3px var(--ink)}
   .srow2 .nm{font-weight:800;font-size:12.5px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .srow2 .sc{font-weight:900;font-size:15px;flex:0 0 auto}
   .srow2 .sr-bot{display:flex;justify-content:space-between;align-items:center;margin-top:5px;font-size:10.5px;color:var(--muted);flex-wrap:wrap;gap:4px}
@@ -254,6 +256,10 @@
   .cardface p{font-size:17px;margin:0 0 10px;line-height:1.45;font-weight:500}
   .badge{display:inline-block;font-size:12.5px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;background:var(--soft);color:var(--blue);border-radius:7px;padding:4px 11px;margin-bottom:10px}
   .opts{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+  .recapopts{display:flex;flex-direction:column;gap:4px;margin:8px 0}
+  .recapopt{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:8px;border:1px solid var(--line);font-size:13px;color:var(--muted)}
+  .recapopt.chosen{background:#EAF0FF;border-color:#1F5AFF;color:var(--ink);font-weight:700}
+  .recapopt .rchosen{margin-inline-start:auto;flex:0 0 auto;font-size:11px;font-weight:800;letter-spacing:.3px;text-transform:uppercase;color:#1F5AFF;background:#fff;border:1px solid #1F5AFF;border-radius:20px;padding:2px 8px}
   .optbtn{text-align:start;padding:13px 16px;line-height:1.45;width:100%;font-size:16px}
   .optbtn b{font-size:17px;color:var(--blue)}
   .turntimer{display:inline-flex;align-items:center;gap:7px;font-size:13.5px;font-weight:800;letter-spacing:.3px;background:var(--soft);color:var(--blue);border-radius:20px;padding:6px 15px;margin:0 auto 10px;text-transform:uppercase}
@@ -272,11 +278,14 @@
   .boardflip{animation:boardflip .9s cubic-bezier(.36,.07,.19,.97) both}
   #flipToast{position:fixed;left:50%;top:18px;transform:translateX(-50%) translateY(-12px);z-index:9998;background:#E4572E;color:#fff;font-weight:800;font-size:15px;letter-spacing:.3px;border-radius:12px;padding:11px 20px;box-shadow:0 14px 30px rgba(0,0,0,.35);opacity:0;transition:opacity .25s ease,transform .25s ease;pointer-events:none;text-align:center}
   #flipToast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  #rentToast{position:fixed;left:50%;top:18px;transform:translateX(-50%) translateY(-12px);z-index:9997;background:#2FBF71;color:#fff;font-weight:800;font-size:15px;letter-spacing:.3px;border-radius:12px;padding:11px 20px;box-shadow:0 14px 30px rgba(0,0,0,.35);opacity:0;transition:opacity .25s ease,transform .25s ease;pointer-events:none;text-align:center}
+  #rentToast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
 </head>
 <body>
 <canvas id="fxCanvas"></canvas>
 <div id="flipToast"></div>
+<div id="rentToast"></div>
 
 <div id="facilitator">
   <header class="top"><div class="top-in">
@@ -296,7 +305,6 @@
     <div class="roundbar" id="roundBar"></div>
     <div class="hint" id="roundHint"></div>
     <div class="banner hide" id="sectorBanner" style="border-color:#FF9000;background:#fff6ec"></div>
-    <div class="banner hide" id="leadBanner" style="border-color:#FF9000;background:#fff6ec;text-align:center;font-size:16px"></div>
     <div class="panel hide" id="helpPanel" style="margin-bottom:14px"></div>
 
     <section id="view-intro" class="panel hide">
@@ -806,9 +814,26 @@ const SHOCK_IDS_NL=SHOCK_NL.map(c=>c.id),SHOCK_IDS_EN=SHOCK_EN.map(c=>c.id);
 const KD_IDS_NL=KD_NL.map(c=>c.id),KD_IDS_EN=KD_EN.map(c=>c.id);
 const CHANCE_IDS_NL=CHANCE_NL.map(c=>c.id),CHANCE_IDS_EN=CHANCE_EN.map(c=>c.id);
 const SECTOR_IDS=SECTOR_NL.map(s=>s.id);
-const TEAM_COLORS=["#1F5AFF","#FF9000","#2FBF71","#8B5CF6","#E4572E","#0EA5B5"];
-const PAWN_IMG_BY_COLOR={"#1F5AFF":"pion-blauw","#FF9000":"pion-oranje","#2FBF71":"pion-groen","#8B5CF6":"pion-paars","#E4572E":"pion-rood","#0EA5B5":"pion-turquoise"};
-function pawnImgFor(color){return PAWN_IMG_BY_COLOR[color]||"pion-blauw";}
+/* Blauw en oranje zijn bewust uit de pion-kleuren gehaald - die vielen te veel
+   weg tegen de blauwe/oranje vakjes op het bord. Voor de twee extra kleuren
+   (naast de 4 bestaande, echt losse pion-afbeeldingen) hertinten we via CSS
+   custom properties --pawnhue/--pawnsat een bestaande pionafbeelding, zodat
+   we alsnog 6 duidelijk te onderscheiden pionkleuren houden zonder blauw/oranje. */
+const PAWN_DEFS=[
+  {hex:"#2FBF71",img:"pion-groen"},
+  {hex:"#8B5CF6",img:"pion-paars"},
+  {hex:"#E4572E",img:"pion-rood"},
+  {hex:"#0EA5B5",img:"pion-turquoise"},
+  {hex:"#F2B705",img:"pion-rood",hue:"45deg",sat:"1.35"},
+  {hex:"#D6336C",img:"pion-paars",hue:"165deg",sat:"1.25"}
+];
+const TEAM_COLORS=PAWN_DEFS.map(d=>d.hex);
+const PAWN_IMG_BY_COLOR={};PAWN_DEFS.forEach(d=>{PAWN_IMG_BY_COLOR[d.hex]=d.img;});
+const PAWN_HUE_BY_COLOR={};PAWN_DEFS.forEach(d=>{if(d.hue)PAWN_HUE_BY_COLOR[d.hex]=d.hue;});
+const PAWN_SAT_BY_COLOR={};PAWN_DEFS.forEach(d=>{if(d.sat)PAWN_SAT_BY_COLOR[d.hex]=d.sat;});
+function pawnImgFor(color){return PAWN_IMG_BY_COLOR[color]||"pion-groen";}
+function pawnHueFor(color){return PAWN_HUE_BY_COLOR[color]||"0deg";}
+function pawnSatFor(color){return PAWN_SAT_BY_COLOR[color]||"1";}
 /* ---- board: fixed 28-tile ring, every tile matters ---- */
 const RING_LEN=28;
 const TILE_TYPES=["start","task","task","chance","task","task","kennisduel","task","chance","task","task","chance","task","kennisduel","shock","task","chance","task","task","kennisduel","task","chance","task","task","chance","task","kennisduel","task"];
@@ -874,12 +899,13 @@ const T={
   waitRoll:(n)=>`${n}, ga naar je eigen scherm en gooi die dobbelsteen!`,rollFallback:"Liever de host die gooit? Ga je gang:",
   drawCardBtn:"Trek een kaart",waitDrawCard:(n)=>`${n}, deze kant op! Trek een kaart!`,drawCardFallback:"Host, trek 'm zelf? Ga je gang:",
   ackChanceFallback:"Host, bevestig het hier:",nextTurnFallback:"Host, op naar de volgende beurt:",spTitle:"Waarom was dit lastig?",
-  whyLbl:"Waarom deze uitkomst",effectLbl:"Effect op munten en punten",
+  whyLbl:"Waarom deze uitkomst",effectLbl:"Effect op munten en punten",chosenTag:"Gekozen",
   drawTask:"Trek een opdrachtkaart",drawChance:"Trek een kanskaart",drawShock:"Onvoorziene gebeurtenis!",drawKennisduel:"Kennisduel",
   kdVersus:(n)=>`Bij een goed antwoord tik je munten af bij <b>${n}</b>`,kdCorrect:"Goed antwoord!",kdWrong:"Helaas, niet correct.",legKennisduel:"Kennisduel — sectorkennis, verover munten van je rivaal",
   chooseOpt:"Kies een aanpak:",confirmChoice:"Bevestigen",continueBtn:"Volgende beurt →",
   choiceSent:"Keuze verzonden — wordt verwerkt op het hoofdscherm…",waitForYourTeam:"Kom op, jouw team — maak die keuze!",
   passedStart:"Rondje voltooid! +5 munten huurinkomsten.",collectedStart:"Aangekomen op Start! +5 munten huurinkomsten.",
+  rentToast:(n,a)=>`${n} passeert Start! +${a} munten huurinkomsten`,
   chanceAutoGood:"Meevaller!",chanceAutoBad:"Tegenvaller.",
   duelBadge:"Concurrentie-kaart",duelAffects:(n)=>`Dit treft ook: <b>${n}</b>`,duelHitBy:(n)=>`Geraakt door ${n}`,
   newLeader:(n)=>`${n} neemt de leiding!`,dismiss:"OK",
@@ -918,12 +944,13 @@ const T={
   waitRoll:(n)=>`${n}, head to your own screen and roll that dice!`,rollFallback:"Prefer the host to roll? Go for it:",
   drawCardBtn:"Draw a card",waitDrawCard:(n)=>`${n}, this way! Draw a card!`,drawCardFallback:"Host, draw it yourself? Go for it:",
   ackChanceFallback:"Host, confirm it here:",nextTurnFallback:"Host, on to the next turn:",spTitle:"Why was this hard?",
-  whyLbl:"Why this outcome",effectLbl:"Effect on coins and points",
+  whyLbl:"Why this outcome",effectLbl:"Effect on coins and points",chosenTag:"Chosen",
   drawTask:"Draw a task card",drawChance:"Draw a chance card",drawShock:"Unforeseen event!",drawKennisduel:"Knowledge duel",
   kdVersus:(n)=>`A correct answer steals coins from <b>${n}</b>`,kdCorrect:"Correct answer!",kdWrong:"Not correct, unfortunately.",legKennisduel:"Knowledge duel — sector knowledge, steal coins from your rival",
   chooseOpt:"Choose an approach:",confirmChoice:"Confirm",continueBtn:"Next turn →",
   choiceSent:"Choice sent — being processed on the main screen…",waitForYourTeam:"Come on, your team — make that call!",
   passedStart:"Lap complete! +5 coins in rent income.",collectedStart:"Arrived at Start! +5 coins in rent income.",
+  rentToast:(n,a)=>`${n} passes Start! +${a} coins in rent income`,
   chanceAutoGood:"Lucky break!",chanceAutoBad:"Setback.",
   duelBadge:"Rivalry card",duelAffects:(n)=>`This also affects: <b>${n}</b>`,duelHitBy:(n)=>`Hit by ${n}`,
   newLeader:(n)=>`${n} takes the lead!`,dismiss:"OK",
@@ -1059,7 +1086,8 @@ const DICE_SVG='<svg viewBox="0 0 24 24" width="34" height="34" fill="none" xmln
    zodat direct duidelijk is WAAROM juist die metric zo verandert. */
 function effectChipsHtml(lang,coins,fx,mx){
   const chips=[];
-  if(coins!=null)chips.push(`<span class="effectchip coin"><span class="echead"><img src="assets/icoon-financieel.png">${coins>0?"+":""}${coins} ${T[lang].coinsLbl.toLowerCase()}</span></span>`);
+  /* Consistent met de metric-chips hieronder: eerst het label, dan het +/- bedrag. */
+  if(coins!=null)chips.push(`<span class="effectchip coin"><span class="echead"><img src="assets/icoon-financieel.png">${T[lang].coinsLbl} ${coins>0?"+":""}${coins}</span></span>`);
   Object.keys(MET[lang]).forEach(k=>{
     if(!fx||!fx[k])return;
     const v=fx[k];
@@ -1160,14 +1188,14 @@ function resolveDuelTarget(drawingTeam){
   return target;
 }
 
-/* Detects when the #1 ranked team changes (by coins) and surfaces a transient
-   celebratory banner - purely presentational, reinforces the competitive feel. */
+/* Detects when the #1 ranked team changes and viert dit alleen nog met een
+   korte confetti-burst - de tekstmelding is op verzoek verwijderd, dit voelt
+   anders te veel als "winnen = munten/score", wat niet de bedoeling is. */
 function checkLeaderChange(){
   if(!state.teams.length)return;
   let leader=state.teams[0];
   state.teams.forEach(t=>{if(finalScore(t)>finalScore(leader))leader=t;});
   if(state.lastLeaderId!=null&&state.lastLeaderId!==leader.id){
-    state.leadChangeBanner={teamId:leader.id,teamName:leader.name,color:leader.color,at:Date.now()};
     celebrate("leader");
   }
   state.lastLeaderId=leader.id;
@@ -1438,21 +1466,14 @@ function render(){
     $("sectorBanner").classList.add("hide");
   }
 
-  if(state.leadChangeBanner){
-    $("leadBanner").classList.remove("hide");
-    $("leadBanner").style.background=state.leadChangeBanner.color?`linear-gradient(135deg, ${state.leadChangeBanner.color}22, #fff6ec)`:"#fff6ec";
-    $("leadBanner").innerHTML=`<b>${T[state.lang].newLeader(esc(state.leadChangeBanner.teamName))}</b>`+
-      `<div style="margin-top:6px"><button class="btn ghost sm" id="dismissLead">${T[state.lang].dismiss}</button></div>`;
-    const dl=$("dismissLead");if(dl)dl.onclick=()=>{state.leadChangeBanner=null;render();saveLocal();NET.publish();};
-  }else{
-    $("leadBanner").classList.add("hide");
-  }
 }
 
 function renderRoundBar(){
   const total=state.teams.length*state.turnsPerTeam;
   const done=state.teams.reduce((a,t)=>a+t.turnsTaken,0);
-  $("roundHint").textContent=T[state.lang].roundHint(done,total);
+  /* De tekst "X van Y beurten gespeeld" is op verzoek verwijderd - de balk
+     hieronder blijft staan als subtiele, getalloze voortgangsindicatie. */
+  $("roundHint").textContent="";
   const pct=total?Math.round(100*done/total):0;
   $("roundBar").innerHTML=`<div style="height:8px;background:var(--soft);border-radius:6px;overflow:hidden"><div style="height:100%;width:${pct}%;background:var(--blue);transition:width .4s"></div></div>`;
 }
@@ -1498,6 +1519,7 @@ function renderPawns(){
       const prevRaw=_lastPawnPos[team.id];
       const moved=prevRaw!==undefined&&prevRaw!==team.boardPos;
       let styleVars=pIdx>0?"margin-left:-26px;":"";
+      styleVars+=`--pawnhue:${pawnHueFor(team.color)};--pawnsat:${pawnSatFor(team.color)};`;
       if(moved){
         const prevIdx=((prevRaw%RING_LEN)+RING_LEN)%RING_LEN;
         const prevPos=RING_LAYOUT[prevIdx];
@@ -1574,6 +1596,18 @@ function renderStage(){
     let msg="";
     if(type==="start"){msg=team.turnsTaken===0&&team.boardPos===0?L.collectedStart:L.passedStart;}
     else if(state.turn.lapGain){msg=L.passedStart;}
+    /* Duidelijke, losse pop-up-melding voor huurinkomsten (i.p.v. alleen de
+       kleine tekstregel hierboven) - toont één keer per beurt-token. */
+    if(state.turn.lapGain&&_lastRentToastToken!==state.turn.token){
+      _lastRentToastToken=state.turn.token;
+      const rt=$("rentToast");
+      if(rt){
+        rt.textContent=L.rentToast(team.name,state.turn.lapGain);
+        rt.classList.add("show");
+        clearTimeout(rt._hideT);
+        rt._hideT=setTimeout(()=>rt.classList.remove("show"),2800);
+      }
+    }
     const card=state.turn.card;
     let detail="";
     let negOutcome=false;
@@ -1581,15 +1615,20 @@ function renderStage(){
       const o=card.o[state.turn.chosenIdx];
       negOutcome=isNegativeOutcome(o.coins,o.fx);
       const chips=effectChipsHtml(state.lang,o.coins,o.fx,o.mx);
+      /* De oorspronkelijke vraag + alle opties blijven zichtbaar (gekozen optie
+         gemarkeerd), zodat het leermoment - ook zien wat de andere opties waren -
+         niet verdwijnt zodra er gekozen is. */
+      const recap=`<h3 style="margin-bottom:4px">${esc(card.t)}</h3><p class="hint" style="margin-top:0">${esc(card.x)}</p>`+
+        `<div class="recapopts">`+card.o.map((opt,idx)=>`<div class="recapopt${idx===state.turn.chosenIdx?" chosen":""}"><span>${esc(opt.l)}</span>${idx===state.turn.chosenIdx?`<span class="rchosen">${L.chosenTag}</span>`:""}</div>`).join("")+`</div>`;
       if(type==="kennisduel"){
         const correct=o.correct===true;
         const kdRes=state.turn.kdResult;
-        detail=`<div class="kdverdict ${correct?'good':'bad'}">${correct?L.kdCorrect:L.kdWrong}</div>
+        detail=recap+`<div class="kdverdict ${correct?'good':'bad'}">${correct?L.kdCorrect:L.kdWrong}</div>
           ${o.e?`<div class="whybox"><b>${L.whyLbl}</b><p>${esc(o.e)}</p></div>`:""}
           <p class="hint" style="margin-top:8px"><b>${L.effectLbl}</b></p>${chips}
           ${kdRes?`<p class="hint" style="color:#5b3aa8">${L.duelAffects(esc(kdRes.name))} (${kdRes.coins>0?"+":""}${kdRes.coins} ${L.coinsLbl.toLowerCase()})</p>`:""}`;
       }else{
-        detail=`<p class="hint"><b>${esc(o.l)}</b></p>`+
+        detail=recap+
           (o.e?`<div class="whybox"><b>${L.whyLbl}</b><p>${esc(o.e)}</p></div>`:"")+
           `<p class="hint" style="margin-top:8px"><b>${L.effectLbl}</b></p>${chips}`+
           (card.sp?`<div class="spbox"><b>${L.spTitle}</b><p>${esc(card.sp)}</p></div>`:"");
@@ -1602,9 +1641,8 @@ function renderStage(){
     }
     const gr=state.turn.guessResults;
     const guessBox=(gr&&gr.length)?`<div class="guessbox">`+gr.map(g=>`<span class="guesschip ${g.correct?'good':'bad'}" style="border-color:${g.color}">${esc(g.name)} ${g.correct?L.guessHit:L.guessMiss}</span>`).join("")+`</div>`:"";
-    const flipBtn=negOutcome?`<button class="btn ghost sm" id="flipBoardBtn" title="${L.flipBoardTip}" style="margin-inline-start:8px">${L.flipBoardBtn}</button>`:"";
     html=`<div style="text-align:center">${msg?`<p class="hint">${msg}</p>`:""}${detail}${guessBox}
-      <button class="btn soft pulseglow" id="nextTurnBtn">${L.continueBtn}</button>${flipBtn}</div>`;
+      <button class="btn soft pulseglow" id="nextTurnBtn">${L.continueBtn}</button></div>`;
   }
   /* Only card/resolved phases (which can carry long dilemma text) escalate to
      the floating popup+backdrop; idle/rolling/walking/landed stay embedded in
@@ -1625,7 +1663,6 @@ function renderStage(){
   const dcb=$("drawCardBtn");if(dcb)dcb.onclick=()=>drawCard();
   const ack=$("ackCardBtn");if(ack)ack.onclick=()=>ackAutoCard();
   const nb=$("nextTurnBtn");if(nb)nb.onclick=()=>nextTurn();
-  const fbb=$("flipBoardBtn");if(fbb)fbb.onclick=()=>hostFlipBoardAndAdvance(team.name);
   /* Veiligheidsklep voor de host: een popup moet altijd tijdelijk weg te klikken
      zijn (kruisje of klik op de backdrop), ook als een kaart een keer vastloopt.
      Dit verbergt alleen visueel - de onderliggende state/turn blijft ongewijzigd,
@@ -1642,6 +1679,7 @@ function renderStage(){
    shock/kennisduel) en state.turnTimerSec>0. Herstart alleen bij een echt
    nieuwe beurt/kaart (gekoppeld aan state.turn.token), niet bij elke re-render. */
 let _ttToken=null,_ttInterval=null,_ttRemain=0;
+let _lastRentToastToken=null;
 function stopTurnTimer(){
   if(_ttInterval){clearInterval(_ttInterval);_ttInterval=null;}
   _ttToken=null;
@@ -1716,13 +1754,26 @@ function renderSetup(){
   topts[0].textContent=L.timerOff;topts[1].textContent=L.timer30;topts[2].textContent=L.timer60;topts[3].textContent=L.timer90;
   $("timerSelect").value=String(state.turnTimerSec||0);
   $("setupRows").innerHTML=state.teams.map((t,i)=>`
-    <div class="teamrow" style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
-      <span class="dot2" style="width:14px;height:14px;border-radius:50%;background:${t.color};flex:0 0 auto"></span>
-      <input type="text" value="${esc(t.name)}" data-i="${i}" class="teamNameInput" style="flex:1">
+    <div class="teamrow" style="display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap">
+      <input type="text" value="${esc(t.name)}" data-i="${i}" class="teamNameInput" style="flex:1;min-width:120px">
+      <span class="colorpicker" data-i="${i}" style="display:flex;gap:5px">`+
+      TEAM_COLORS.map(c=>`<button type="button" class="colorswatch${t.color===c?" sel":""}" data-i="${i}" data-c="${c}" style="background:${c}" title="${c}"></button>`).join("")+
+      `</span>
       ${state.teams.length>2?`<button class="btn ghost sm removeTeamBtn" data-i="${i}">Verwijder</button>`:""}
     </div>`).join("");
   document.querySelectorAll(".teamNameInput").forEach(inp=>inp.oninput=()=>{state.teams[parseInt(inp.dataset.i,10)].name=inp.value;saveLocal();});
   document.querySelectorAll(".removeTeamBtn").forEach(b=>b.onclick=()=>{state.teams.splice(parseInt(b.dataset.i,10),1);renderSetup();updateEstimate();});
+  /* Kleur kiezen per team; als een andere team die kleur al had, wisselen we
+     de twee kleuren om zodat elk team altijd een unieke, herkenbare pion houdt. */
+  document.querySelectorAll(".colorswatch").forEach(b=>b.onclick=()=>{
+    const i=parseInt(b.dataset.i,10),newColor=b.dataset.c;
+    const team=state.teams[i];
+    if(team.color===newColor)return;
+    const other=state.teams.find((tm,ti)=>ti!==i&&tm.color===newColor);
+    if(other)other.color=team.color;
+    team.color=newColor;
+    renderSetup();saveLocal();
+  });
   updateEstimate();
 }
 function updateEstimate(){
@@ -2027,11 +2078,13 @@ function initPlayerView(){
           const o=turn.card.o[turn.chosenIdx];
           negOutcome=isNegativeOutcome(o.coins,o.fx);
           const chips=effectChipsHtml(playerLang,o.coins,o.fx,o.mx);
+          const recap=`<h3 style="margin-bottom:4px">${esc(turn.card.t)}</h3><p class="hint" style="margin-top:0">${esc(turn.card.x)}</p>`+
+            `<div class="recapopts">`+turn.card.o.map((opt,idx)=>`<div class="recapopt${idx===turn.chosenIdx?" chosen":""}"><span>${esc(opt.l)}</span>${idx===turn.chosenIdx?`<span class="rchosen">${L.chosenTag}</span>`:""}</div>`).join("")+`</div>`;
           if(turn.cardType==="kennisduel"){
             const correct=o.correct===true;
-            detail=`<div class="cardface" style="margin-top:10px"><div class="kdverdict ${correct?'good':'bad'}">${correct?L.kdCorrect:L.kdWrong}</div>${o.e?`<div class="whybox"><b>${L.whyLbl}</b><p>${esc(o.e)}</p></div>`:""}<p class="hint" style="margin-top:8px"><b>${L.effectLbl}</b></p>${chips}</div>`;
+            detail=`<div class="cardface" style="margin-top:10px">${recap}<div class="kdverdict ${correct?'good':'bad'}">${correct?L.kdCorrect:L.kdWrong}</div>${o.e?`<div class="whybox"><b>${L.whyLbl}</b><p>${esc(o.e)}</p></div>`:""}<p class="hint" style="margin-top:8px"><b>${L.effectLbl}</b></p>${chips}</div>`;
           }else{
-            detail=`<div class="cardface" style="margin-top:10px"><p class="hint"><b>${esc(o.l)}</b></p>${o.e?`<div class="whybox"><b>${L.whyLbl}</b><p>${esc(o.e)}</p></div>`:""}<p class="hint" style="margin-top:8px"><b>${L.effectLbl}</b></p>${chips}${turn.card.sp?`<div class="spbox"><b>${L.spTitle}</b><p>${esc(turn.card.sp)}</p></div>`:""}</div>`;
+            detail=`<div class="cardface" style="margin-top:10px">${recap}${o.e?`<div class="whybox"><b>${L.whyLbl}</b><p>${esc(o.e)}</p></div>`:""}<p class="hint" style="margin-top:8px"><b>${L.effectLbl}</b></p>${chips}${turn.card.sp?`<div class="spbox"><b>${L.spTitle}</b><p>${esc(turn.card.sp)}</p></div>`:""}</div>`;
           }
         }else if(turn.cardType==="chance"&&turn.card){
           const dt=turn.duelTarget;
@@ -2147,7 +2200,7 @@ function initPlayerView(){
 function preloadAssets(){
   const files=[];
   Object.values(VAKJE_VARIANTS).forEach(arr=>arr.forEach(f=>files.push(f+".jpg")));
-  Object.values(PAWN_IMG_BY_COLOR).forEach(f=>files.push(f+".png"));
+  [...new Set(Object.values(PAWN_IMG_BY_COLOR))].forEach(f=>files.push(f+".png"));
   Object.values(IMG_VARIANTS).forEach(arr=>{if(arr[0])files.push(arr[0]+".jpg");});
   files.push("podium-winnaar.jpg");
   files.forEach(f=>{const img=new Image();img.src="assets/"+f;});
