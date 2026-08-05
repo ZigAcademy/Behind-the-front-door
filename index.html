@@ -1497,7 +1497,7 @@ function startInvestPhase(){
   NET.clearAction();
   render();saveLocal();NET.publish();
 }
-function investOptions(){return state.lang==="nl"?INVEST_NL:INVEST_EN;}
+function investOptions(lang){return (lang||(typeof state!=="undefined"&&state?state.lang:"nl"))==="nl"?INVEST_NL:INVEST_EN;}
 function applyInvestment(selectedIds){
   const team=activeTeam();
   if(!team)return;
@@ -2263,7 +2263,7 @@ function initPlayerView(){
       }
     }
     if(snap.appStage==="invest"&&active){
-      const opts=investOptions();
+      const opts=investOptions(playerLang);
       if(mine){
         const investSent=wasSent({token:snap.investToken},"invest");
         main+=`<div class="banner" style="text-align:center;font-size:15px"><b>${esc(L.investYourTurn(me?me.coins:0))}</b></div>`;
@@ -2354,7 +2354,7 @@ function initPlayerView(){
     };
     const investGrid=$("pInvestGrid");
     if(investGrid){
-      const opts=investOptions();
+      const opts=investOptions(playerLang);
       const sel=new Set();
       const budget=me?me.coins:0;
       const paintInvest=()=>{
