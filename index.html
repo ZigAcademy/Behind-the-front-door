@@ -1232,6 +1232,10 @@ function freshState(){
     activeTeamIdx:0,
     turn:{phase:"idle",dice:null,walkTo:null,cardType:null,card:null,pendingCard:null,chosenIdx:null,lapGain:0,token:null,guessDeadline:null},
     usedSectorIds:[],lastSectorBanner:null,
+    /* Gedeelde (niet per-team) gezien-lijsten - voorkomt dat verschillende
+       teams binnen dezelfde game dezelfde opdracht/shock/kans/kennisduel-
+       kaart krijgen. Reset pas zodra de hele pool voor dat kaarttype op is. */
+    seenTaskGlobal:[],seenShockGlobal:[],seenChanceGlobal:[],seenKDGlobal:[],
     lastLeaderId:null,leadChangeBanner:null,
     soundOn:true,fxOn:true,
     players:{},
@@ -1257,6 +1261,7 @@ function startGame(){
   state.soundOn=true;state.fxOn=true;
   state.turnsPerTeam=computeTurnsPerTeam();
   state.teams.forEach(tm=>{tm.coins=10;tm.met={sat:0,fin:0,comp:0,dur:0};tm.boardPos=0;tm.turnsTaken=0;tm.history=[];tm.seenTask=[];tm.seenChance=[];tm.seenKD=[];tm.seenShock=[];tm.laps=0;});
+  state.seenTaskGlobal=[];state.seenShockGlobal=[];state.seenChanceGlobal=[];state.seenKDGlobal=[];
   state.activeTeamIdx=0;
   _lastPawnPos={};
   state.turn={phase:"idle",dice:null,walkTo:null,cardType:null,card:null,pendingCard:null,chosenIdx:null,lapGain:0,token:uid(),guesses:{},guessResults:null,guessDeadline:null};
@@ -1384,38 +1389,45 @@ function guessRemainSec(turn){
   return Math.max(0,Math.ceil((turn.guessDeadline-Date.now())/1000));
 }
 
+/* team-param blijft staan zodat bestaande call sites (drawXFor(team)) niet
+   hoeven te wijzigen, maar de "gezien"-boekhouding zelf is nu spelbreed
+   (state.seenXGlobal) in plaats van per team - zo krijgt geen enkel team een
+   kaart die een ander team dit spel al heeft gehad, totdat echt de hele pool
+   op is. */
 function drawTaskFor(team){
+  if(!state.seenTaskGlobal)state.seenTaskGlobal=[];
   const all=taskIds();
-  let avail=all.filter(id=>!team.seenTask.includes(id));
-  if(avail.length===0){team.seenTask=[];avail=all.slice();}
+  let avail=all.filter(id=>!state.seenTaskGlobal.includes(id));
+  if(avail.length===0){state.seenTaskGlobal=[];avail=all.slice();}
   const id=pick(avail);
-  team.seenTask.push(id);
+  state.seenTaskGlobal.push(id);
   return contentFor().task[id];
 }
 function drawShockFor(team){
-  if(!team.seenShock)team.seenShock=[];
+  if(!state.seenShockGlobal)state.seenShockGlobal=[];
   const all=shockIds();
-  let avail=all.filter(id=>!team.seenShock.includes(id));
-  if(avail.length===0){team.seenShock=[];avail=all.slice();}
+  let avail=all.filter(id=>!state.seenShockGlobal.includes(id));
+  if(avail.length===0){state.seenShockGlobal=[];avail=all.slice();}
   const id=pick(avail);
-  team.seenShock.push(id);
+  state.seenShockGlobal.push(id);
   return contentFor().shock[id];
 }
 function drawChanceFor(team){
+  if(!state.seenChanceGlobal)state.seenChanceGlobal=[];
   const all=chanceIds();
-  let avail=all.filter(id=>!team.seenChance.includes(id));
-  if(avail.length===0){team.seenChance=[];avail=all.slice();}
+  let avail=all.filter(id=>!state.seenChanceGlobal.includes(id));
+  if(avail.length===0){state.seenChanceGlobal=[];avail=all.slice();}
   const id=pick(avail);
-  team.seenChance.push(id);
+  state.seenChanceGlobal.push(id);
   return contentFor().chance[id];
 }
 function drawKDFor(team){
-  if(!team.seenKD)team.seenKD=[];
+  if(!state.seenKDGlobal)state.seenKDGlobal=[];
   const all=kdIds();
-  let avail=all.filter(id=>!team.seenKD.includes(id));
-  if(avail.length===0){team.seenKD=[];avail=all.slice();}
+  let avail=all.filter(id=>!state.seenKDGlobal.includes(id));
+  if(avail.length===0){state.seenKDGlobal=[];avail=all.slice();}
   const id=pick(avail);
-  team.seenKD.push(id);
+  state.seenKDGlobal.push(id);
   return contentFor().kd[id];
 }
 function applyCardEffect(team,fx,coins){
