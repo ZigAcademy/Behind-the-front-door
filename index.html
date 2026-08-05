@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
-<title>Behind the Front Door — Spelbord · Zig Grow</title>
+<title>Corpopoly — Spelbord · Zig Grow</title>
 <style>
   :root{--blue:#1F5AFF;--orange:#FF9000;--navy:#152330;--ink:#152330;--muted:#5B6472;--line:#E4E3DC;--bg:#FBF7EE;
     --card:#FFFFFF;--warn:#E4572E;--soft:#EAF0FF;--softwarm:#FFF1E0;--shadow:0 10px 30px rgba(21,35,48,.10);--shadow-sm:0 4px 14px rgba(21,35,48,.07);}
@@ -19,6 +19,7 @@
   header.top{position:sticky;top:0;z-index:95;background:color-mix(in srgb,var(--card) 88%,transparent);backdrop-filter:saturate(1.4) blur(8px);border-bottom:1px solid var(--line)}
   .top-in{max-width:1200px;margin:0 auto;padding:10px 18px;display:flex;align-items:center;gap:9px;flex-wrap:nowrap;overflow-x:auto}
   .brandline{display:flex;align-items:center;gap:13px;min-width:0}.brandline h1{font-size:17px;margin:0;font-weight:800;letter-spacing:-.2px;white-space:nowrap}.brandline .sub{color:var(--muted);font-size:12px;white-space:nowrap}
+  .brand-logo{height:36px;width:auto;display:block}
   .spacer{flex:1 1 auto}
   .join-chip{display:flex;align-items:center;gap:8px;background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:6px 10px;font-size:13px}.join-chip b{font-family:Consolas,monospace;letter-spacing:2px;color:var(--blue)}
   .netchip{font-size:12px;font-weight:800;padding:6px 10px;border-radius:9px;white-space:nowrap}.netchip.live{background:#e5f7ee;color:#137a44}.netchip.off{background:#fff1e0;color:#b3391b}
@@ -90,6 +91,7 @@
   label.fld{display:block;font-size:12.5px;color:var(--muted);font-weight:700;margin:0 0 4px}
   .setup-row{display:grid;grid-template-columns:1.4fr .6fr auto;gap:10px;align-items:end;margin-bottom:10px}
   .cover{aspect-ratio:2.4/1;width:100%;max-width:640px;margin:0 auto 14px;border-radius:16px;background:#fbfaf6 center/cover no-repeat;box-shadow:var(--shadow),0 0 0 1px rgba(255,255,255,.5) inset}
+  .setup-logo{display:block;height:auto;max-height:110px;width:auto;max-width:80%;margin:0 auto 14px}
   .legend{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 4px}
   .legend .lg{display:flex;align-items:center;gap:6px;background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:6px 11px;font-size:12.5px;font-weight:700;white-space:nowrap}
   .legswatch{display:inline-block;width:12px;height:12px;border-radius:4px;margin-inline-end:6px;vertical-align:-1px}
@@ -328,6 +330,7 @@
     <div class="panel hide" id="helpPanel" style="margin-bottom:14px"></div>
 
     <section id="view-intro" class="panel hide">
+      <img src="assets/corpopoly-logo.png" alt="Corpopoly" class="setup-logo">
       <div class="cover" style="background-image:url('assets/gameboard.jpg')"></div>
       <h2 id="introTitle" style="margin-top:0"></h2>
       <p class="hint" id="introAbout"></p>
@@ -340,6 +343,7 @@
     </section>
 
     <section id="view-setup" class="panel hide">
+      <img src="assets/corpopoly-logo.png" alt="Corpopoly" class="setup-logo">
       <div class="cover" style="background-image:url('assets/gameboard.jpg')"></div>
       <div id="setupLegend"></div>
       <h2 id="setupH">Teams instellen</h2>
@@ -944,8 +948,8 @@ const AVG_MIN_PER_TURN=2.5;
 const TURNS_MIN=4,TURNS_MAX=16;
 /* ============ translations ============ */
 const T={
- nl:{brand:"Behind the Front Door",room:"Kamer",joinLink:"Join-link",newGame:"Nieuw spel",help:"Uitleg",sector:"Sector",soundOnLbl:"Geluid aan",soundOffLbl:"Geluid uit",fxOnLbl:"Effecten aan",fxOffLbl:"Effecten uit",
-  introTitle:"Welkom bij Behind the Front Door",
+ nl:{brand:"Corpopoly",room:"Kamer",joinLink:"Join-link",newGame:"Nieuw spel",help:"Uitleg",sector:"Sector",soundOnLbl:"Geluid aan",soundOffLbl:"Geluid uit",fxOnLbl:"Effecten aan",fxOffLbl:"Effecten uit",
+  introTitle:"Welkom bij Corpopoly",
   introAbout:"Een bordspel waarin jullie team, net als een echte woningcorporatie, elke beurt een lastige keuze maakt over onderhoud, betaalbaarheid, verduurzaming, leefbaarheid en digitalisering — met altijd een addertje onder het gras.",
   introMission:"Een woningcorporatie heeft geen winstoogmerk — succes betekent <b>tevredenheid</b>, <b>beschikbaarheid</b>, <b>betaalbaarheid</b> en <b>kwaliteit</b> van de woningen. Munten in dit spel staan voor middelen, niet voor winst: ze zijn nodig om te investeren, maar de eindscore draait om deze vier pijlers.",
   introRulesTitle:"Spelregels",
@@ -996,10 +1000,11 @@ const T={
   helpTitle:"Hoe werkt het?",helpBody:"<ol><li>Elk team gooit op zijn beurt één dobbelsteen en de pion loopt stap voor stap naar het nieuwe vakje.</li><li>Het vakje bepaalt wat je krijgt: een <b>opdracht</b> (kies uit 3 opties), een <b>kans</b> (automatisch effect), een <b>kennisduel</b> (meerkeuzevraag over de sector — bij een goed antwoord tik je munten af bij je rivaal) of de <b>shock</b> (bijzondere gebeurtenis).</li><li>Elke ronde langs Start levert het team huurinkomsten op.</li><li>De host kan via de <b>Sector</b>-knop op elk moment een sectorbrede gebeurtenis loslaten die alle teams tegelijk raakt — gebruik dit bewust om het spel spannender te maken.</li><li>Na het ingestelde aantal beurten per team volgt de eindstand.</li></ol>",
   jfH:"Doe mee",jfSub:"Vul de kamercode in en kies je team.",jfRoomL:"Kamercode",jfNameL:"Jouw naam",jfTeamL:"Team",joinBtn:"Meedoen →",
   jwH:"Je bent binnen!",jwWait:"Hou 'm in de gaten — zodra jullie aan de beurt zijn, gebeurt het hier live!",jwRoomL:"kamer",
-  netLive:"Live verbonden",netOff:"Offline (lokaal)",netLiveTip:"Live verbonden — wijzigingen worden direct gedeeld met alle spelers.",netOffTip:"Offline (lokaal) — dit spel wordt niet gedeeld, alleen zichtbaar op dit scherm.",footNL:"Zig Grow · Behind the Front Door",
+  waitForHostTitle:"Bijna zover!",waitForHostMsg:"De host is het spel nog aan het klaarzetten. Zodra alles staat, begint het spel automatisch op dit scherm.",
+  netLive:"Live verbonden",netOff:"Offline (lokaal)",netLiveTip:"Live verbonden — wijzigingen worden direct gedeeld met alle spelers.",netOffTip:"Offline (lokaal) — dit spel wordt niet gedeeld, alleen zichtbaar op dit scherm.",footNL:"Zig Grow · Corpopoly",
   roundHint:(done,total)=>`Voortgang: ${done} van ${total} beurten gespeeld`,metricsLbl:"Meters",coinsLbl:"Munten"},
- en:{brand:"Behind the Front Door",room:"Room",joinLink:"Join link",newGame:"New game",help:"Guide",sector:"Sector",soundOnLbl:"Sound on",soundOffLbl:"Sound off",fxOnLbl:"Effects on",fxOffLbl:"Effects off",
-  introTitle:"Welcome to Behind the Front Door",
+ en:{brand:"Corpopoly",room:"Room",joinLink:"Join link",newGame:"New game",help:"Guide",sector:"Sector",soundOnLbl:"Sound on",soundOffLbl:"Sound off",fxOnLbl:"Effects on",fxOffLbl:"Effects off",
+  introTitle:"Welcome to Corpopoly",
   introAbout:"A board game where your team, just like a real housing corporation, faces a tough call every turn — on maintenance, affordability, sustainability, liveability and digitalisation — always with a catch.",
   introMission:"A housing corporation is not-for-profit — success means <b>satisfaction</b>, <b>availability</b>, <b>affordability</b> and <b>quality</b> of homes. Coins in this game represent resources, not profit: you need them to invest, but the final score is all about these four pillars.",
   introRulesTitle:"How to play",
@@ -1050,7 +1055,8 @@ const T={
   helpTitle:"How does it work?",helpBody:"<ol><li>Each team rolls one die on its turn and the pawn walks step by step to the new tile.</li><li>The tile decides what you get: a <b>task</b> (choose from 3 options), a <b>chance</b> (automatic effect), a <b>knowledge duel</b> (multiple-choice question about the sector — a correct answer steals coins from your rival) or the <b>shock</b> (special event).</li><li>Each lap past Start earns the team rent income.</li><li>The host can trigger a sector-wide event at any moment via the <b>Sector</b> button, affecting all teams at once — use it deliberately to raise the stakes.</li><li>After the configured number of turns per team, the final standings appear.</li></ol>",
   jfH:"Join in",jfSub:"Enter the room code and pick your team.",jfRoomL:"Room code",jfNameL:"Your name",jfTeamL:"Team",joinBtn:"Join →",
   jwH:"You're in!",jwWait:"Keep an eye on this screen — the moment it's your turn, it happens right here!",jwRoomL:"room",
-  netLive:"Live connected",netOff:"Offline (local)",netLiveTip:"Live connected — changes are shared with all players instantly.",netOffTip:"Offline (local) — this game is not shared, only visible on this screen.",footNL:"Zig Grow · Behind the Front Door",
+  waitForHostTitle:"Almost there!",waitForHostMsg:"The host is still setting up the game. As soon as everything is ready, the game will start automatically on this screen.",
+  netLive:"Live connected",netOff:"Offline (local)",netLiveTip:"Live connected — changes are shared with all players instantly.",netOffTip:"Offline (local) — this game is not shared, only visible on this screen.",footNL:"Zig Grow · Corpopoly",
   roundHint:(done,total)=>`Progress: ${done} of ${total} turns played`,metricsLbl:"Meters",coinsLbl:"Coins"}
 };
 /* ============ helpers ============ */
@@ -1601,7 +1607,7 @@ const RING_LAYOUT=ringLayout();
 function render(){
   if(!state)return;
   document.documentElement.lang=state.lang;
-  $("brand").textContent=T[state.lang].brand;
+  $("brand").innerHTML=`<img src="assets/corpopoly-logo.png" alt="${esc(T[state.lang].brand)}" class="brand-logo">`;
   $("roomLbl").textContent=T[state.lang].room;
   $("roomCode").textContent=state.room;
   $("copyJoin").textContent=T[state.lang].joinLink;
@@ -2169,8 +2175,7 @@ function initPlayerView(){
   const params=new URLSearchParams(location.search);
   const roomFromUrl=params.get("room");
   if(roomFromUrl)$("pRoom").value=roomFromUrl;
-  const logoTpl=$("logoTpl");
-  $("pLogo").appendChild(logoTpl.content.cloneNode(true));
+  $("pLogo").innerHTML=`<img src="assets/corpopoly-logo.png" alt="Corpopoly" class="logo" style="height:auto;max-height:64px;width:auto;max-width:100%">`;
   $("jfH").textContent=T.nl.jfH;$("jfSub").textContent=T.nl.jfSub;$("jfRoomL").textContent=T.nl.jfRoomL;
   $("jfNameL").textContent=T.nl.jfNameL;$("jfTeamL").textContent=T.nl.jfTeamL;$("joinBtn").textContent=T.nl.joinBtn;
   $("joinTips").innerHTML=`<li>${T.nl.jfSub}</li>`;
@@ -2271,15 +2276,21 @@ function initPlayerView(){
     const mine=active&&String(active.id)===String(team);
     const turn=snap.turn||{phase:"idle"};
     managePlayerGuessTimer(turn,playerLang);
-    let head=`<div style="display:flex;align-items:center;justify-content:space-between;gap:8px"><h1 style="font-size:20px;margin:0">${esc(L.brand)}</h1><button class="btn ghost sm" id="fullscreenTogglePlayer" data-lang="${playerLang}">${document.fullscreenElement?L.fsExit:L.fsEnter}</button></div>`;
-    if(me)head+=`<p class="s">${esc(me.name)} · ${me.coins} ${L.coinsLbl.toLowerCase()} · ${me.turnsTaken}/${snap.turnsPerTeam}</p>`;
+    let head=`<div style="display:flex;align-items:center;justify-content:space-between;gap:8px"><img src="assets/corpopoly-logo.png" alt="${esc(L.brand)}" class="brand-logo" style="height:28px"><button class="btn ghost sm" id="fullscreenTogglePlayer" data-lang="${playerLang}">${document.fullscreenElement?L.fsExit:L.fsEnter}</button></div>`;
     if(snap.appStage==="setup"||snap.appStage==="intro"){
-      head+=`<p class="s">${esc(L.jwWait)}</p>`;
+      if(me)head+=`<p class="s">${esc(me.name)}</p>`;
+    }else if(me){
+      head+=`<p class="s">${esc(me.name)} · ${me.coins} ${L.coinsLbl.toLowerCase()} · ${me.turnsTaken}/${snap.turnsPerTeam}</p>`;
     }
 
     let main="";
-    if(snap.appStage==="intro"){
-      main+=`<div style="text-align:start"><h2 style="margin-top:0">${esc(L.introTitle)}</h2><p class="hint">${esc(L.introAbout)}</p><div class="banner" style="border-color:#1F5AFF;background:#EAF0FF">${L.introMission}</div><h3 style="margin-bottom:8px">${esc(L.introRulesTitle)}</h3><ol>${L.introRules.map(r=>`<li>${r}</li>`).join("")}</ol><h3 style="margin-bottom:8px">${esc(L.introWinTitle)}</h3><p class="hint">${esc(L.introWin)}</p></div>`;
+    /* Zolang de host nog aan het opzetten is (regels-scherm of team/duur-
+       instellingen), zien spelers geen enkel detail van dat proces - alleen
+       een branded wachtscherm. Zodra de host op "Spel starten" klikt en
+       appStage naar "play" gaat, verschijnt dit vanzelf, live, op elk
+       gekoppeld spelerscherm. */
+    if(snap.appStage==="setup"||snap.appStage==="intro"){
+      main+=`<div style="text-align:center;padding:26px 0 10px"><img src="assets/corpopoly-logo.png" alt="Corpopoly" style="max-width:260px;width:80%;height:auto;margin:0 auto 20px;display:block"><h2 style="margin:0 0 8px">${esc(L.waitForHostTitle)}</h2><p class="hint" style="font-size:15px">${esc(L.waitForHostMsg)}</p></div>`;
     }
     if(snap.appStage==="play"&&active){
       main+=`<div class="yourturn" style="background:${active.color};font-size:16px">${esc(L.yourTurnBanner(active.name))}</div>`;
