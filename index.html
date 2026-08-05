@@ -283,6 +283,12 @@
   .investcard .ic-gain{color:#137a44;background:#e5f7ee;border-radius:20px;padding:2px 9px}
   .investfoot{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line);flex-wrap:wrap}
   .investfoot .iftotal{font-size:14px;font-weight:700}
+  .investpreview{margin-top:14px;padding:12px 14px;border-radius:14px;background:var(--soft);min-height:20px}
+  .investpreview-title{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.3px;opacity:.75;margin-bottom:7px}
+  .investpreview-chips{display:flex;flex-wrap:wrap;gap:8px}
+  .pichip{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;border-radius:20px;padding:5px 12px;background:#e5f7ee;color:#137a44;border:1px solid #8fddb4}
+  .pichip img{width:18px;height:18px;object-fit:contain}
+  @media (prefers-color-scheme:dark){.pichip{background:#12301f;border-color:#1f5a3a}}
   .optbtn{text-align:start;padding:13px 16px;line-height:1.45;width:100%;font-size:16px}
   .optbtn b{font-size:17px;color:var(--blue)}
   .turntimer{display:inline-flex;align-items:center;gap:7px;font-size:13.5px;font-weight:800;letter-spacing:.3px;background:var(--soft);color:var(--blue);border-radius:20px;padding:6px 15px;margin:0 auto 10px;text-transform:uppercase}
@@ -687,40 +693,43 @@ const SECTOR_EN=[
  {id:"SE7",t:"New climate standard",x:"A tightened standard forces everyone to go greener.",coins:0,fx:{dur:-1}},
  {id:"SE8",t:"Labour shortage",x:"A tight labour market slows all corporations.",coins:0,fx:{comp:-1}}
 ];
-/* Investeringen: aan het einde van het spel (na de laatste beurt, voor de
-   eindstand) mag elk team overgebleven munten besteden aan investeringen die
-   een specifieke metric verbeteren. Bewust duurder dan een task/shock-kaart
-   kost - en hoe duurder, hoe groter het effect - zodat munten sparen ergens
-   toe dient, maar de eindscore zelf toch echt om de metrics blijft draaien.
-   Drie prijsniveaus per metric (klein/middel/groot), getoetst op realisme
-   voor Nederlandse woningcorporaties. */
+/* Investeringen: zowel tussentijds (elke keer dat een team langs Start komt,
+   zie startLapInvest()) als aan het einde van het spel (na de laatste beurt,
+   voor de eindstand, zie startInvestPhase()) mag een team geld besteden aan
+   investeringen die een specifieke metric verbeteren. Drie prijsniveaus per
+   metric (klein/middel/groot). Bewust GEEN lineaire prijs/effect-verhouding:
+   het topniveau kost meer dan de twee goedkopere niveaus samen, maar levert
+   ook meer op dan die twee samen zouden doen - sparen voor het topniveau is
+   dus altijd de betere keuze dan twee keer het middelste niveau kopen. Zo
+   loont sparen echt, in plaats van dat elk niveau evenveel 'waard' is per
+   munt. Getoetst op realisme voor Nederlandse woningcorporaties. */
 const INVEST_NL=[
  {id:"IS1",metric:"sat",cost:3,gain:1,t:"Bewonersavond organiseren",x:"Een informele avond waarop bewoners hun zorgen kwijt kunnen en zich gehoord voelen."},
  {id:"IS2",metric:"sat",cost:6,gain:2,t:"Klantenservice uitbreiden",x:"Meer capaciteit voor meldingen en vragen, snellere opvolging voor huurders."},
- {id:"IS3",metric:"sat",cost:10,gain:3,t:"Bouw van nieuwe huurwoningen",x:"Een nieuwbouwproject voegt echte extra huurwoningen toe aan de wijk - de meest ingrijpende investering in tevredenheid en beschikbaarheid."},
+ {id:"IS3",metric:"sat",cost:12,gain:5,t:"Bouw van nieuwe huurwoningen",x:"Een nieuwbouwproject voegt echte extra huurwoningen toe aan de wijk - de meest ingrijpende investering in tevredenheid en beschikbaarheid."},
  {id:"IF1",metric:"fin",cost:3,gain:1,t:"Kleine efficiencyslag",x:"Interne processen stroomlijnen levert direct wat lucht op in de begroting."},
  {id:"IF2",metric:"fin",cost:6,gain:2,t:"Herfinanciering tegen lager rentetarief",x:"Bestaande leningen herfinancieren verlaagt de rentelasten structureel."},
- {id:"IF3",metric:"fin",cost:10,gain:3,t:"Strategische portefeuilleoptimalisatie",x:"Een grondige doorlichting van het bezit verbetert het rendement op de lange termijn."},
+ {id:"IF3",metric:"fin",cost:12,gain:5,t:"Strategische portefeuilleoptimalisatie",x:"Een grondige doorlichting van het bezit verbetert het rendement op de lange termijn."},
  {id:"IC1",metric:"comp",cost:3,gain:1,t:"Extra brandveiligheidscontroles",x:"Een controleronde langs de meest kwetsbare complexen sluit acute risico's uit."},
  {id:"IC2",metric:"comp",cost:6,gain:2,t:"Achterstallig onderhoud inhalen",x:"Een inhaalslag op uitgesteld onderhoud brengt het bezit weer op norm."},
- {id:"IC3",metric:"comp",cost:10,gain:3,t:"Volledige asbestinventarisatie en -sanering",x:"Een grondige sanering van verouderd bezit haalt een hardnekkig risico definitief weg."},
+ {id:"IC3",metric:"comp",cost:12,gain:5,t:"Volledige asbestinventarisatie en -sanering",x:"Een grondige sanering van verouderd bezit haalt een hardnekkig risico definitief weg."},
  {id:"ID1",metric:"dur",cost:3,gain:1,t:"Zonnepanelen op een aantal daken",x:"Een eerste, zichtbare stap in verduurzaming van het bezit."},
  {id:"ID2",metric:"dur",cost:6,gain:2,t:"Woningen isoleren",x:"Dubbel glas en spouwmuurisolatie voor een groep woningen verlaagt het energieverbruik merkbaar."},
- {id:"ID3",metric:"dur",cost:10,gain:3,t:"Volledige verduurzaming naar energielabel A",x:"Een ingrijpende renovatie tilt een deel van het bezit naar het hoogste energielabel."}
+ {id:"ID3",metric:"dur",cost:12,gain:5,t:"Volledige verduurzaming naar energielabel A",x:"Een ingrijpende renovatie tilt een deel van het bezit naar het hoogste energielabel."}
 ];
 const INVEST_EN=[
  {id:"IS1",metric:"sat",cost:3,gain:1,t:"Organise a residents' evening",x:"An informal evening where residents can voice concerns and feel heard."},
  {id:"IS2",metric:"sat",cost:6,gain:2,t:"Expand customer service",x:"More capacity for reports and questions, faster follow-up for tenants."},
- {id:"IS3",metric:"sat",cost:10,gain:3,t:"Build new rental homes",x:"A new-build project adds genuinely more rental homes to the neighbourhood - the most impactful investment in satisfaction and availability."},
+ {id:"IS3",metric:"sat",cost:12,gain:5,t:"Build new rental homes",x:"A new-build project adds genuinely more rental homes to the neighbourhood - the most impactful investment in satisfaction and availability."},
  {id:"IF1",metric:"fin",cost:3,gain:1,t:"Small efficiency drive",x:"Streamlining internal processes directly frees up some room in the budget."},
  {id:"IF2",metric:"fin",cost:6,gain:2,t:"Refinance at a lower interest rate",x:"Refinancing existing loans structurally lowers interest costs."},
- {id:"IF3",metric:"fin",cost:10,gain:3,t:"Strategic portfolio optimisation",x:"A thorough review of the property portfolio improves long-term returns."},
+ {id:"IF3",metric:"fin",cost:12,gain:5,t:"Strategic portfolio optimisation",x:"A thorough review of the property portfolio improves long-term returns."},
  {id:"IC1",metric:"comp",cost:3,gain:1,t:"Extra fire-safety inspections",x:"An inspection round through the most vulnerable buildings rules out acute risks."},
  {id:"IC2",metric:"comp",cost:6,gain:2,t:"Catch up on overdue maintenance",x:"Catching up on deferred maintenance brings the property portfolio back up to standard."},
- {id:"IC3",metric:"comp",cost:10,gain:3,t:"Full asbestos survey and removal",x:"A thorough clean-up of older property permanently removes a stubborn risk."},
+ {id:"IC3",metric:"comp",cost:12,gain:5,t:"Full asbestos survey and removal",x:"A thorough clean-up of older property permanently removes a stubborn risk."},
  {id:"ID1",metric:"dur",cost:3,gain:1,t:"Solar panels on a number of roofs",x:"A first, visible step toward making the property portfolio more sustainable."},
  {id:"ID2",metric:"dur",cost:6,gain:2,t:"Insulate homes",x:"Double glazing and cavity wall insulation for a group of homes noticeably lowers energy use."},
- {id:"ID3",metric:"dur",cost:10,gain:3,t:"Full renovation to energy label A",x:"A major renovation lifts part of the property portfolio to the highest energy label."}
+ {id:"ID3",metric:"dur",cost:12,gain:5,t:"Full renovation to energy label A",x:"A major renovation lifts part of the property portfolio to the highest energy label."}
 ];
 const KD_NL=[
  {id:"KD1",kd:true,t:"Kennisduel: DAEB",x:"Wat betekent de afkorting DAEB, de kern van het sociale huurwerk van corporaties?",o:[
@@ -990,11 +999,15 @@ const T={
   flipBoardBanner:(n)=>`${n} GOOIT HET BORD OM!`,
   investH:"Investeer in de toekomst",
   investP:"Voordat de eindstand bekend wordt, mag elk team overgebleven munten besteden aan investeringen die tevredenheid, financieel beheer, compliance of duurzaamheid verbeteren. Hoe duurder de investering, hoe groter het effect.",
+  investHLap:"Tussentijdse investeringsronde",
+  investPLap:"Je bent net langs Start gekomen. Voordat je verdergaat, mag je (een deel van) je geld investeren in tevredenheid, financieel beheer, compliance of duurzaamheid. Hoe duurder de investering, hoe groter het effect.",
   investWaitBanner:(n)=>`${n} is aan het investeren...`,
   investYourTurn:(coins)=>`Jullie mogen investeren - jullie hebben ${coins} munten.`,
   investBudget:(remain,total)=>`Nog te besteden: ${remain} van ${total} munten`,
   investConfirm:"Investering afronden",
   investCoinsAvail:(coins)=>`Beschikbaar budget: ${coins} munten`,
+  investPreviewLbl:"Verwachte impact van je keuze",
+  investPreviewEmpty:"Nog niets geselecteerd - kies hierboven een of meer investeringen.",
   scoresH:"Eindstand",scoresP:"Bekijk de resultaten en bespreek de belangrijkste keuzes na.",againBtn:"Nieuw spel",
   winnerHeadline:(n,c)=>`<b>${n}</b> wint met <b>${c} punten</b>!`,
   finalScoreLbl:"Punten",balansBonusLbl:"Balansbonus",balansHint:"De punten zijn de optelling van de 4 metrics (tevredenheid, financieel, compliance, duurzaamheid). Geld telt niet rechtstreeks mee, alleen via investeringen aan het einde.",scoreBreakdown:(coins)=>`${coins} geld over - telt niet mee voor de punten, tenzij geïnvesteerd`,
@@ -1045,11 +1058,15 @@ const T={
   flipBoardBanner:(n)=>`${n} FLIPS THE BOARD!`,
   investH:"Invest in the future",
   investP:"Before the final standings are revealed, each team may spend any coins left on investments that improve satisfaction, financial management, compliance or sustainability. The pricier the investment, the bigger the effect.",
+  investHLap:"Interim investment round",
+  investPLap:"You just passed Start. Before you continue, you may invest (some of) your money in satisfaction, financial management, compliance or sustainability. The pricier the investment, the bigger the effect.",
   investWaitBanner:(n)=>`${n} is investing...`,
   investYourTurn:(coins)=>`Your turn to invest - you have ${coins} coins.`,
   investBudget:(remain,total)=>`Left to spend: ${remain} of ${total} coins`,
   investConfirm:"Finish investing",
   investCoinsAvail:(coins)=>`Available budget: ${coins} coins`,
+  investPreviewLbl:"Expected impact of your choice",
+  investPreviewEmpty:"Nothing selected yet - choose one or more investments above.",
   scoresH:"Final standings",scoresP:"Review the results and debrief the key choices.",againBtn:"New game",
   winnerHeadline:(n,c)=>`<b>${n}</b> wins with <b>${c} points</b>!`,
   finalScoreLbl:"Points",balansBonusLbl:"Balance bonus",balansHint:"Points are the sum of the 4 metrics (satisfaction, financial, compliance, sustainability). Money does not count directly, only through investments at the end.",scoreBreakdown:(coins)=>`${coins} money left - not counted toward the points unless invested`,
@@ -1242,6 +1259,7 @@ function freshState(){
        kaart krijgen. Reset pas zodra de hele pool voor dat kaarttype op is. */
     seenTaskGlobal:[],seenShockGlobal:[],seenChanceGlobal:[],seenKDGlobal:[],
     lastLeaderId:null,leadChangeBanner:null,
+    lapInvestActive:false,investDone:[],investToken:null,
     soundOn:true,fxOn:true,
     players:{},
     createdAt:Date.now()
@@ -1273,6 +1291,7 @@ function startGame(){
   state.appStage="play";
   state.lastLeaderId=state.teams[0]?state.teams[0].id:null;
   state.leadChangeBanner=null;
+  state.lapInvestActive=false;state.investDone=[];
   NET.clearAction();
   render();saveLocal();NET.publish();
 }
@@ -1509,7 +1528,19 @@ function nextTurn(){
   const team=activeTeam();
   team.turnsTaken++;
   NET.clearAction();
+  const hadLapGain=!!state.turn.lapGain;
   state.turn={phase:"idle",dice:null,walkTo:null,cardType:null,card:null,pendingCard:null,chosenIdx:null,lapGain:0,token:uid(),guesses:{},guessResults:null,guessDeadline:null};
+  if(hadLapGain){
+    startLapInvest();
+    return;
+  }
+  finishNextTurn();
+}
+/* Het echte "wie mag er nu" na een afgeronde beurt - losgetrokken van
+   nextTurn() zodat een tussentijdse investeringsronde (zie startLapInvest)
+   hier eerst voor kan tussenkomen zonder de beurt-/einde-spel-logica te
+   dupliceren. */
+function finishNextTurn(){
   const allDone=state.teams.every(t=>t.turnsTaken>=state.turnsPerTeam);
   if(allDone){
     startInvestPhase();
@@ -1531,8 +1562,27 @@ function nextTurn(){
    in plaats van state.turn.token, want state.turn zelf doet in deze fase niks. */
 function startInvestPhase(){
   state.appStage="invest";
+  state.lapInvestActive=false;
   state.activeTeamIdx=0;
   state.investDone=[];
+  state.investToken=uid();
+  NET.clearAction();
+  render();saveLocal();NET.publish();
+}
+/* Tussentijdse investeringsronde: elke keer dat een team langs Start komt (en
+   dus net huurinkomsten heeft ontvangen, zie de rentToast-melding) krijgt
+   ALLEEN dat team meteen de kans om te investeren, voordat de beurt echt aan
+   het volgende team overgaat. Hergebruikt dezelfde view-invest UI en dezelfde
+   applyInvestment()/advanceInvestPhase() als de eindspel-investeringsronde,
+   maar met state.investDone alvast gevuld met alle ANDERE teams zodat alleen
+   het actieve team aan de beurt is - advanceInvestPhase() ziet dan meteen
+   "niemand meer te gaan" zodra dit ene team klaar is, en geeft de controle
+   terug aan finishNextTurn() in plaats van naar de eindstand te gaan. */
+function startLapInvest(){
+  const team=state.teams[state.activeTeamIdx];
+  state.lapInvestActive=true;
+  state.appStage="invest";
+  state.investDone=state.teams.map(t=>t.id).filter(id=>id!==team.id);
   state.investToken=uid();
   NET.clearAction();
   render();saveLocal();NET.publish();
@@ -1577,6 +1627,12 @@ function advanceInvestPhase(){
   NET.clearAction();
   const remaining=state.teams.map((t,i)=>i).filter(i=>!state.investDone.includes(state.teams[i].id));
   if(!remaining.length){
+    if(state.lapInvestActive){
+      state.lapInvestActive=false;
+      state.appStage="play";
+      finishNextTurn();
+      return;
+    }
     state.appStage="scores";
     render();saveLocal();NET.publish();
     setTimeout(()=>celebrate("win"),200);
@@ -1588,8 +1644,8 @@ function advanceInvestPhase(){
 }
 function renderInvest(){
   const L=T[state.lang];
-  $("investH").textContent=L.investH;
-  $("investP").textContent=L.investP;
+  $("investH").textContent=state.lapInvestActive?L.investHLap:L.investH;
+  $("investP").textContent=state.lapInvestActive?L.investPLap:L.investP;
   const team=activeTeam();
   const grid=$("investGrid"),foot=$("investFoot"),banner=$("investTeamBanner");
   if(!team){banner.innerHTML="";grid.innerHTML="";foot.innerHTML="";return;}
@@ -2429,6 +2485,7 @@ function initPlayerView(){
               <div class="ic-desc">${esc(o.x)}</div>
               <div class="ic-tags"><span class="ic-cost">${L.coinsLbl} -${o.cost}</span><span class="ic-gain">+${o.gain}</span></div>
             </div>`)+`</div>
+          <div class="investpreview" id="pInvestPreview"></div>
           <div class="investfoot"><span class="iftotal" id="pInvestTotal"></span><button class="btn warn" id="pInvestConfirm">${L.investConfirm}</button></div>`;
         }
       }else{
@@ -2515,6 +2572,21 @@ function initPlayerView(){
         const totalCost=[...sel].reduce((s,id)=>s+opts.find(o=>o.id===id).cost,0);
         const totalEl=$("pInvestTotal");
         if(totalEl)totalEl.textContent=L.investBudget(budget-totalCost,budget);
+        const previewEl=$("pInvestPreview");
+        if(previewEl){
+          if(!sel.size){
+            previewEl.innerHTML=`<span class="hint">${esc(L.investPreviewEmpty)}</span>`;
+          }else{
+            const byMetric={};
+            [...sel].forEach(id=>{
+              const o=opts.find(x=>x.id===id);
+              byMetric[o.metric]=(byMetric[o.metric]||0)+o.gain;
+            });
+            const order=["sat","fin","comp","dur"];
+            const chips=order.filter(mk=>byMetric[mk]).map(mk=>`<span class="pichip"><img src="assets/${MET_ICON[mk]}.png" alt="">${esc(MET[playerLang][mk])} +${byMetric[mk]}</span>`).join("");
+            previewEl.innerHTML=`<div class="investpreview-title">${esc(L.investPreviewLbl)}</div><div class="investpreview-chips">${chips}</div>`;
+          }
+        }
         investGrid.querySelectorAll(".investcard").forEach(card=>{
           const cost=parseInt(card.dataset.cost,10);
           const isSel=sel.has(card.dataset.id);

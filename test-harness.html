@@ -110,6 +110,7 @@
       <h2>6 · Investeringen &amp; score</h2>
       <div class="btnrow">
         <button class="tbtn" data-fn="testInvest">Ga naar investeringsfase (kolommen)</button>
+        <button class="tbtn" data-fn="testLapInvest">Tussentijdse investeringsronde (na Start)</button>
         <button class="tbtn" data-fn="testScores">Toon eindstand</button>
       </div>
     </div>
@@ -294,6 +295,30 @@ function triggerRent(){
   w.render();
   syncPlayer();
   logMsg("Huurinkomsten-popup getriggerd voor "+team.name+" (+5 munten).");
+}
+
+/* Simuleert de volledige flow: huurinkomsten-popup, en meteen daarna (net als
+   in het echte spel na klikken op "Volgende beurt") de tussentijdse
+   investeringsronde voor alleen dat ene team, gebruikmakend van dezelfde
+   nextTurn()->startLapInvest()-route als de echte gameplay. */
+function testLapInvest(){
+  const w=ensureTestGame(hostWin());
+  const team=w.activeTeam();
+  team.coins+=5;
+  w.state.turn.token=w.uid();
+  w.state.turn.cardType="task";
+  w.state.turn.card=null;
+  w.state.turn.chosenIdx=null;
+  w.state.turn.lapGain=5;
+  w.state.turn.phase="resolved";
+  w.render();
+  syncPlayer();
+  logMsg("Huurinkomsten getriggerd voor "+team.name+", ga over 0.5s automatisch door naar de tussentijdse investeringsronde...");
+  setTimeout(()=>{
+    w.nextTurn();
+    syncPlayer();
+    logMsg("Tussentijdse investeringsronde gestart voor "+team.name+" (state.lapInvestActive="+w.state.lapInvestActive+").");
+  },500);
 }
 
 function testCoinChip(sign){
