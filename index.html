@@ -128,6 +128,15 @@
     78%{transform:translate(calc(var(--fx,0) * .12),calc(var(--fy,0) * .12 - 10px)) rotate(-4deg) scale(1.03)}
     100%{transform:translate(0,0) rotate(0deg) scale(1)}
   }
+  .pw2.pawnfall{animation-duration:1.1s;animation-timing-function:cubic-bezier(.36,.07,.19,.97);animation-fill-mode:forwards}
+  .pw2.pf1{animation-name:pawnfall1}
+  .pw2.pf2{animation-name:pawnfall2}
+  .pw2.pf3{animation-name:pawnfall3}
+  .pw2.pf4{animation-name:pawnfall4}
+  @keyframes pawnfall1{0%{transform:rotate(0) translate(0,0)}25%{transform:rotate(-14deg) translate(-3px,-3px)}55%{transform:rotate(70deg) translate(6px,4px)}100%{transform:rotate(88deg) translate(9px,6px)}}
+  @keyframes pawnfall2{0%{transform:rotate(0) translate(0,0)}25%{transform:rotate(12deg) translate(3px,-2px)}55%{transform:rotate(-75deg) translate(-7px,5px)}100%{transform:rotate(-92deg) translate(-10px,7px)}}
+  @keyframes pawnfall3{0%{transform:rotate(0) translate(0,0)}30%{transform:rotate(-18deg) translate(-4px,-4px)}60%{transform:rotate(100deg) translate(8px,5px)}100%{transform:rotate(104deg) translate(11px,7px)}}
+  @keyframes pawnfall4{0%{transform:rotate(0) translate(0,0)}30%{transform:rotate(16deg) translate(4px,-3px)}60%{transform:rotate(-95deg) translate(-9px,6px)}100%{transform:rotate(-100deg) translate(-12px,8px)}}
   .dice{width:88px;height:88px;border-radius:20px;background:var(--card);border:3px solid var(--line);box-shadow:0 10px 22px rgba(0,0,0,.2);display:flex;align-items:center;justify-content:center;font-size:48px;margin:0 auto 8px}
   .dice.rolling{animation:diceroll .7s cubic-bezier(.34,1.4,.4,1)}
   @keyframes diceroll{0%{transform:rotate(0) scale(1)}12%{transform:rotate(-28deg) scale(1.18)}26%{transform:rotate(24deg) scale(1.24)}40%{transform:rotate(-20deg) scale(1.16)}55%{transform:rotate(14deg) scale(1.1)}70%{transform:rotate(-9deg) scale(1.05)}85%{transform:rotate(4deg) scale(1.02)}100%{transform:rotate(0) scale(1)}}
@@ -1003,6 +1012,38 @@ function triggerFlipBoard(name){
   }
   celebrate("flip");
 }
+/* De "echte" Flip the Board: alleen de host mag dit aanroepen, want het grijpt
+   in op het bord zelf en gaat automatisch door naar de volgende beurt. Verbergt
+   direct de resolved-pop-up (die anders het effect verbergt), laat het bord
+   trillen, gooit alle pionnen om met een willekeurige val-animatie, en herstelt
+   alles vanzelf zodra nextTurn() daarna een verse render triggert (die de
+   pion-laag en de fases sowieso opnieuw opbouwt, dus geen losse cleanup nodig). */
+function hostFlipBoardAndAdvance(name){
+  const L=T[state.lang];
+  const stageEl=$("stage"),backdropEl=$("stageBackdrop");
+  if(stageEl){stageEl.innerHTML="";stageEl.classList.add("hide");}
+  if(backdropEl)backdropEl.classList.add("hide");
+  const frame=$("stageFrame");
+  if(frame){
+    frame.classList.remove("boardflip");
+    void frame.offsetWidth;
+    frame.classList.add("boardflip");
+    setTimeout(()=>frame.classList.remove("boardflip"),950);
+  }
+  const fallVariants=["pf1","pf2","pf3","pf4"];
+  document.querySelectorAll("#pawnLayer .pw2").forEach(el=>{
+    el.classList.add("pawnfall",fallVariants[Math.floor(Math.random()*fallVariants.length)]);
+  });
+  const toast=$("flipToast");
+  if(toast){
+    toast.textContent=L.flipBoardBanner(name||"");
+    toast.classList.add("show");
+    clearTimeout(toast._hideT);
+    toast._hideT=setTimeout(()=>toast.classList.remove("show"),2600);
+  }
+  celebrate("flip");
+  setTimeout(()=>{if(state.turn.phase==="resolved")nextTurn();},1400);
+}
 function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 /* Handgetekend dobbelsteen-icoon (geen emoji): een simpele vector-weergave van
    een dobbelsteen met vijf ogen, gebruikt tijdens de "gooien"-animatie. */
@@ -1579,7 +1620,7 @@ function renderStage(){
   const dcb=$("drawCardBtn");if(dcb)dcb.onclick=()=>drawCard();
   const ack=$("ackCardBtn");if(ack)ack.onclick=()=>ackAutoCard();
   const nb=$("nextTurnBtn");if(nb)nb.onclick=()=>nextTurn();
-  const fbb=$("flipBoardBtn");if(fbb)fbb.onclick=()=>triggerFlipBoard(team.name);
+  const fbb=$("flipBoardBtn");if(fbb)fbb.onclick=()=>hostFlipBoardAndAdvance(team.name);
   el.querySelectorAll(".optbtn").forEach(b=>b.onclick=()=>resolveChoice(parseInt(b.dataset.idx,10)));
   manageTurnTimer();
 }
@@ -1823,10 +1864,10 @@ function handleIncomingAction(action){
   }else if(action.type==="nextTurn"&&state.turn.phase==="resolved"){
     nextTurn();
   }else if(action.type==="flipBoard"&&state.turn.phase==="resolved"){
-    /* Puur cosmetisch: geen state-mutatie/publish nodig, dus de action zelf
-       moet hier expliciet geleegd worden zodat hij niet blijft "hangen". */
-    triggerFlipBoard(action.name||team.name);
+    /* De action zelf leegt hier meteen zodat hij niet blijft "hangen" tijdens
+       de vertraagde nextTurn() die hostFlipBoardAndAdvance afvuurt. */
     NET.clearAction();
+    hostFlipBoardAndAdvance(action.name||team.name);
   }else{
     NET.clearAction();
   }
@@ -1997,7 +2038,8 @@ function initPlayerView(){
         }
         if(mine){
           const sent=wasSent(turn,"nextTurn");
-          const flipBtn=negOutcome?`<button class="btn ghost sm" id="playerFlipBtn" title="${L.flipBoardTip}" style="margin-inline-start:8px">${L.flipBoardBtn}</button>`:"";
+          const flipSent=wasSent(turn,"flipBoard");
+          const flipBtn=negOutcome?`<button class="btn ghost sm" id="playerFlipBtn" title="${L.flipBoardTip}" style="margin-inline-start:8px" ${flipSent?"disabled":""}>${flipSent?L.choiceSent:L.flipBoardBtn}</button>`:"";
           main+=`<div style="text-align:center;margin-top:8px"><button class="btn soft pulseglow" id="playerNextBtn" ${sent?"disabled":""}>${sent?L.choiceSent:L.continueBtn}</button>${flipBtn}</div>`;
         }
       }
@@ -2068,8 +2110,10 @@ function initPlayerView(){
     const flipBtn=$("playerFlipBtn");
     if(flipBtn)flipBtn.onclick=()=>{
       const flipName=(me?me.name:"");
+      markSent(turn,"flipBoard");
       triggerFlipBoard(flipName);
       NET.submitAction(joinedRoom,{type:"flipBoard",team,token:turn.token,name:flipName});
+      renderPlayerDashboard(snap,team);
     };
     if(turn.phase==="card"&&turn.cardType!=="chance"&&turn.card&&turn.card.o){
       $("pdashMain").querySelectorAll(".playerOpt").forEach(btn=>{
