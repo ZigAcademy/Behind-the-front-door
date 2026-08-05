@@ -282,6 +282,10 @@
   .turntimer .ttdot{width:8px;height:8px;border-radius:50%;background:var(--blue);flex:none}
   .turntimer.low{background:#fde2dc;color:#a4321f}
   .turntimer.low .ttdot{background:#a4321f;animation:pulse .6s infinite}
+  .turntimer.guesstimer{background:#FFF4E5;color:#B45309}
+  .turntimer.guesstimer .ttdot{background:#B45309}
+  .turntimer.guesstimer.low{background:#fde2dc;color:#a4321f}
+  .turntimer.guesstimer.low .ttdot{background:#a4321f}
   .spbox{max-width:560px;margin:10px auto 0;text-align:start;background:var(--soft);border-radius:12px;padding:10px 14px}
   .spbox b{display:block;font-size:13.5px;text-transform:uppercase;letter-spacing:.3px;color:var(--blue);margin-bottom:5px}
   .spbox p{margin:0;font-size:16px;line-height:1.45;font-weight:500}
@@ -327,6 +331,7 @@
       <div class="cover" style="background-image:url('assets/gameboard.jpg')"></div>
       <h2 id="introTitle" style="margin-top:0"></h2>
       <p class="hint" id="introAbout"></p>
+      <div class="banner" id="introMission" style="border-color:#1F5AFF;background:#EAF0FF"></div>
       <h3 id="introRulesTitle" style="margin-bottom:8px"></h3>
       <div id="introRules"></div>
       <h3 id="introWinTitle" style="margin-bottom:8px"></h3>
@@ -946,6 +951,7 @@ const T={
  nl:{brand:"Behind the Front Door",room:"Kamer",joinLink:"Join-link",newGame:"Nieuw spel",help:"Uitleg",sector:"Sector",soundOnLbl:"Geluid aan",soundOffLbl:"Geluid uit",fxOnLbl:"Effecten aan",fxOffLbl:"Effecten uit",
   introTitle:"Welkom bij Behind the Front Door",
   introAbout:"Een bordspel waarin jullie team, net als een echte woningcorporatie, elke beurt een lastige keuze maakt over onderhoud, betaalbaarheid, verduurzaming, leefbaarheid en digitalisering — met altijd een addertje onder het gras.",
+  introMission:"Een woningcorporatie heeft geen winstoogmerk — succes betekent <b>tevredenheid</b>, <b>beschikbaarheid</b>, <b>betaalbaarheid</b> en <b>kwaliteit</b> van de woningen. Munten in dit spel staan voor middelen, niet voor winst: ze zijn nodig om te investeren, maar de eindscore draait om deze vier pijlers.",
   introRulesTitle:"Spelregels",
   introRules:["Elk team gooit om de beurt met de dobbelsteen; de pion loopt stap voor stap naar het nieuwe vakje.",
     "Op het vakje wacht een <b>opdracht</b> (kies uit 3 opties), een <b>kans</b> (automatisch effect), een <b>kennisduel</b> (sectorkennis — verover munten van een rivaal) of een <b>shock</b> (grote onvoorziene gebeurtenis).",
@@ -959,6 +965,7 @@ const T={
   durLbl:"Speelduur",custLbl:"Beurten per team",durShort:"Kort · ~45 min",durMedium:"Gemiddeld · ~70 min",durLong:"Lang · ~100 min",durCustom:"Zelf instellen",
   timerLbl:"Tijdslimiet per beurt",timerOff:"Uit",timer30:"30 seconden",timer60:"60 seconden",timer90:"90 seconden",timesUp:"Tijd is om!",
   guessPrompt:"Wat kiest het actieve team, denk je? Gok mee voor een bonusmunt:",guessSent:"Gok verstuurd, wachten op de uitkomst…",guessCorrectMsg:"Goed gegokt! +1 munt bonus.",guessWrongMsg:"Helaas, verkeerd gegokt.",guessBonusLbl:"gokbonus",guessHit:"Goed! +1",guessMiss:"Mis",
+  guessTimerLbl:(n)=>`Gok-tijd: nog ${n}s`,guessTimeUp:"Gok-tijd voorbij",
   estimate:(turns,mins,teams)=>`Elk team krijgt <b>${turns} beurten</b> · totale speeltijd ≈ <b>${mins} minuten</b> voor ${teams} team${teams>1?"s":""}.`,
   startGame:"Spel starten →",boardH:"Speelbord",standH:"Stand",fsEnter:"Volledig scherm",fsExit:"Scherm herstellen",
   rollBtn:"Gooi de dobbelsteen",yourTurnBanner:(n)=>`${n} is aan zet`,
@@ -998,6 +1005,7 @@ const T={
  en:{brand:"Behind the Front Door",room:"Room",joinLink:"Join link",newGame:"New game",help:"Guide",sector:"Sector",soundOnLbl:"Sound on",soundOffLbl:"Sound off",fxOnLbl:"Effects on",fxOffLbl:"Effects off",
   introTitle:"Welcome to Behind the Front Door",
   introAbout:"A board game where your team, just like a real housing corporation, faces a tough call every turn — on maintenance, affordability, sustainability, liveability and digitalisation — always with a catch.",
+  introMission:"A housing corporation is not-for-profit — success means <b>satisfaction</b>, <b>availability</b>, <b>affordability</b> and <b>quality</b> of homes. Coins in this game represent resources, not profit: you need them to invest, but the final score is all about these four pillars.",
   introRulesTitle:"How to play",
   introRules:["Each team takes turns rolling the dice; the pawn walks step by step to the new tile.",
     "The tile decides what's waiting: a <b>task</b> (choose from 3 options), a <b>chance</b> (automatic effect), a <b>knowledge duel</b> (sector knowledge — steal coins from a rival) or a <b>shock</b> (major unforeseen event).",
@@ -1011,6 +1019,7 @@ const T={
   durLbl:"Play duration",custLbl:"Turns per team",durShort:"Short · ~45 min",durMedium:"Medium · ~70 min",durLong:"Long · ~100 min",durCustom:"Custom",
   timerLbl:"Time limit per turn",timerOff:"Off",timer30:"30 seconds",timer60:"60 seconds",timer90:"90 seconds",timesUp:"Time's up!",
   guessPrompt:"What will the active team choose, you think? Guess along for a bonus coin:",guessSent:"Guess sent, waiting for the outcome…",guessCorrectMsg:"Good guess! +1 bonus coin.",guessWrongMsg:"No luck, wrong guess.",guessBonusLbl:"guess bonus",guessHit:"Right! +1",guessMiss:"Miss",
+  guessTimerLbl:(n)=>`Guess time: ${n}s left`,guessTimeUp:"Guess time over",
   estimate:(turns,mins,teams)=>`Each team gets <b>${turns} turns</b> · total playtime ≈ <b>${mins} minutes</b> for ${teams} team${teams>1?"s":""}.`,
   startGame:"Start game →",boardH:"Game board",standH:"Standings",fsEnter:"Fullscreen",fsExit:"Exit fullscreen",
   rollBtn:"Roll the dice",yourTurnBanner:(n)=>`${n} is up`,
@@ -1221,7 +1230,7 @@ function freshState(){
     teams:[0,1].map(i=>freshTeam(i)),
     durationMode:"medium",customTurns:8,turnsPerTeam:8,turnTimerSec:0,
     activeTeamIdx:0,
-    turn:{phase:"idle",dice:null,walkTo:null,cardType:null,card:null,pendingCard:null,chosenIdx:null,lapGain:0,token:null},
+    turn:{phase:"idle",dice:null,walkTo:null,cardType:null,card:null,pendingCard:null,chosenIdx:null,lapGain:0,token:null,guessDeadline:null},
     usedSectorIds:[],lastSectorBanner:null,
     lastLeaderId:null,leadChangeBanner:null,
     soundOn:true,fxOn:true,
@@ -1250,7 +1259,7 @@ function startGame(){
   state.teams.forEach(tm=>{tm.coins=10;tm.met={sat:0,fin:0,comp:0,dur:0};tm.boardPos=0;tm.turnsTaken=0;tm.history=[];tm.seenTask=[];tm.seenChance=[];tm.seenKD=[];tm.seenShock=[];tm.laps=0;});
   state.activeTeamIdx=0;
   _lastPawnPos={};
-  state.turn={phase:"idle",dice:null,walkTo:null,cardType:null,card:null,pendingCard:null,chosenIdx:null,lapGain:0,token:uid(),guesses:{},guessResults:null};
+  state.turn={phase:"idle",dice:null,walkTo:null,cardType:null,card:null,pendingCard:null,chosenIdx:null,lapGain:0,token:uid(),guesses:{},guessResults:null,guessDeadline:null};
   state.appStage="play";
   state.lastLeaderId=state.teams[0]?state.teams[0].id:null;
   state.leadChangeBanner=null;
@@ -1359,9 +1368,20 @@ function drawCard(){
       }
     }
   }
+  /* Vaste, gedeelde deadline (epoch ms) voor het 30s gok-venster van de
+     wachtende teams bij een opdracht/gebeurtenis-kaart - alleen relevant
+     wanneer er echt iets te gokken valt (niet bij kans/kennisduel). Wordt
+     via NET.publish() meegestuurd zodat host en spelers exact dezelfde
+     deadline zien, ongeacht kleine verschillen in renderklok. */
+  state.turn.guessDeadline=(type!=="chance"&&type!=="kennisduel")?(Date.now()+30000):null;
   state.turn.phase="card";
   NET.clearAction();
   render();saveLocal();NET.publish();
+}
+
+function guessRemainSec(turn){
+  if(!turn||!turn.guessDeadline)return 0;
+  return Math.max(0,Math.ceil((turn.guessDeadline-Date.now())/1000));
 }
 
 function drawTaskFor(team){
@@ -1410,6 +1430,9 @@ function applyCardEffect(team,fx,coins){
    bepaald zodra de keuze definitief is in resolveChoice(). */
 function submitGuess(teamId,optIdx){
   if(state.turn.phase!=="card"||state.turn.cardType==="chance"||state.turn.cardType==="kennisduel")return;
+  /* Het gok-venster sluit na de vaste 30s - kleine buffer voor netwerk-
+     vertraging, maar daarna telt een gok niet meer mee. */
+  if(state.turn.guessDeadline&&Date.now()>state.turn.guessDeadline+2000)return;
   if(!state.turn.card||!state.turn.card.o||!state.turn.card.o[optIdx])return;
   const active=activeTeam();
   if(String(active.id)===String(teamId))return;
@@ -1469,7 +1492,7 @@ function nextTurn(){
   const team=activeTeam();
   team.turnsTaken++;
   NET.clearAction();
-  state.turn={phase:"idle",dice:null,walkTo:null,cardType:null,card:null,pendingCard:null,chosenIdx:null,lapGain:0,token:uid(),guesses:{},guessResults:null};
+  state.turn={phase:"idle",dice:null,walkTo:null,cardType:null,card:null,pendingCard:null,chosenIdx:null,lapGain:0,token:uid(),guesses:{},guessResults:null,guessDeadline:null};
   const allDone=state.teams.every(t=>t.turnsTaken>=state.turnsPerTeam);
   if(allDone){
     startInvestPhase();
@@ -1726,7 +1749,11 @@ function renderStage(){
     }else{
       const cat=CAT[card.id];
       const timg=card.img?card.img:(cat?imgFor(card.id,cat):null);
-      html=timerBox+`<div class="cardface">${timg?`<div class="illo" style="background-image:url('assets/${timg}.jpg')"></div>`:""}<div class="badge">${type==="shock"?L.drawShock:L.drawTask}</div>
+      /* Vast (niet-instelbaar) gok-venster van 30s voor de wachtende teams -
+         zichtbaar voor iedereen op het gedeelde scherm, om de groep aan te
+         zetten hardop te overleggen voordat het venster sluit. */
+      const guessTimerBox=`<div style="text-align:center;margin-bottom:6px"><div class="turntimer guesstimer" id="guessTimerBox"><span class="ttdot"></span><span id="guessTimerTxt"></span></div></div>`;
+      html=timerBox+guessTimerBox+`<div class="cardface">${timg?`<div class="illo" style="background-image:url('assets/${timg}.jpg')"></div>`:""}<div class="badge">${type==="shock"?L.drawShock:L.drawTask}</div>
         <h3>${esc(card.t)}</h3><p>${esc(card.x)}</p>
         <p class="hint" style="margin-bottom:6px">${L.chooseOpt}</p>
         <div class="opts">`+
@@ -1814,6 +1841,7 @@ function renderStage(){
   if(backdrop)backdrop.onclick=(ev)=>{if(ev.target===backdrop){el.classList.add("hide");backdrop.classList.add("hide");}};
   el.querySelectorAll(".optbtn").forEach(b=>b.onclick=()=>resolveChoice(parseInt(b.dataset.idx,10)));
   manageTurnTimer();
+  manageGuessTimer();
 }
 
 /* Optionele, zachte beurttimer - puur visueel, dwingt niets af. Draait alleen
@@ -1856,6 +1884,44 @@ function manageTurnTimer(){
   },1000);
 }
 
+/* Vast 30s gok-venster voor de wachtende teams (host/gedeeld scherm) - los van
+   de optionele/instelbare beurttimer hierboven. Gebaseerd op state.turn.
+   guessDeadline (epoch ms, gezet in drawCard()) zodat host en spelers exact
+   dezelfde aftelling zien. Herstart alleen bij een echt nieuwe beurt/kaart. */
+let _gtToken=null,_gtInterval=null;
+function stopGuessTimer(){
+  if(_gtInterval){clearInterval(_gtInterval);_gtInterval=null;}
+  _gtToken=null;
+}
+function manageGuessTimer(){
+  const box=$("guessTimerBox");
+  if(!box||!state.turn.guessDeadline){stopGuessTimer();return;}
+  const tok=state.turn.token;
+  if(_gtToken===tok&&_gtInterval)return;
+  stopGuessTimer();
+  _gtToken=tok;
+  const L=T[state.lang];
+  const paint=()=>{
+    const b=$("guessTimerBox");
+    if(!b)return;
+    const txt=$("guessTimerTxt");
+    const remain=guessRemainSec(state.turn);
+    if(remain<=0){
+      b.classList.add("low");
+      if(txt)txt.textContent=L.guessTimeUp;
+    }else{
+      b.classList.toggle("low",remain<=10);
+      if(txt)txt.textContent=L.guessTimerLbl(remain);
+    }
+  };
+  paint();
+  _gtInterval=setInterval(()=>{
+    if(state.turn.token!==tok||state.turn.phase!=="card"){stopGuessTimer();return;}
+    paint();
+    if(guessRemainSec(state.turn)<=0){clearInterval(_gtInterval);_gtInterval=null;}
+  },1000);
+}
+
 function renderCompactStand(){
   const L=T[state.lang];
   const wrap=$("standCompact");
@@ -1876,6 +1942,7 @@ function renderIntro(){
   const L=T[state.lang];
   $("introTitle").textContent=L.introTitle;
   $("introAbout").textContent=L.introAbout;
+  $("introMission").innerHTML=L.introMission;
   $("introRulesTitle").textContent=L.introRulesTitle;
   $("introRules").innerHTML=`<ol>${L.introRules.map(r=>`<li>${r}</li>`).join("")}</ol>`;
   $("introWinTitle").textContent=L.introWinTitle;
@@ -2101,6 +2168,44 @@ function initPlayerView(){
   $("joinTips").innerHTML=`<li>${T.nl.jfSub}</li>`;
   let joinedRoom=null,playerLang="nl",knownTeams=null,lastSubmittedKey=null;
   let _lastHead=null,_lastMainKey=null,_lastSide=null;
+  /* Vast 30s gok-venster-timer op het spelerscherm - los getikt via een eigen
+     interval (niet afhankelijk van hoe vaak renderPlayerDashboard opnieuw
+     wordt aangeroepen), zodat de aftelling en de uiteindelijke lock ook
+     doorlopen als er verder niets in de state verandert. */
+  let _pgtToken=null,_pgtInterval=null;
+  function stopPlayerGuessTimer(){
+    if(_pgtInterval){clearInterval(_pgtInterval);_pgtInterval=null;}
+    _pgtToken=null;
+  }
+  function managePlayerGuessTimer(turn,lang){
+    const box=$("pGuessTimerBox");
+    if(!box||!turn||!turn.guessDeadline){stopPlayerGuessTimer();return;}
+    const tok=turn.token;
+    if(_pgtToken===tok&&_pgtInterval)return;
+    stopPlayerGuessTimer();
+    _pgtToken=tok;
+    const L=T[lang]||T.nl;
+    const paint=()=>{
+      const b=$("pGuessTimerBox");
+      if(!b)return;
+      const txt=$("pGuessTimerTxt");
+      const remain=guessRemainSec(turn);
+      if(remain<=0){
+        b.classList.add("low");
+        if(txt)txt.textContent=L.guessTimeUp;
+        $("pdashMain").querySelectorAll(".guessOpt").forEach(btn=>btn.disabled=true);
+      }else{
+        b.classList.toggle("low",remain<=10);
+        if(txt)txt.textContent=L.guessTimerLbl(remain);
+      }
+    };
+    paint();
+    _pgtInterval=setInterval(()=>{
+      if(_pgtToken!==tok||!$("pGuessTimerBox")){stopPlayerGuessTimer();return;}
+      paint();
+      if(guessRemainSec(turn)<=0){clearInterval(_pgtInterval);_pgtInterval=null;}
+    },1000);
+  }
   function markSent(turn,actionType){lastSubmittedKey=turn.token+":"+actionType;}
   function wasSent(turn,actionType){return lastSubmittedKey===turn.token+":"+actionType;}
   NET.init();
@@ -2157,6 +2262,7 @@ function initPlayerView(){
     const active=snap.teams[snap.activeTeamIdx];
     const mine=active&&String(active.id)===String(team);
     const turn=snap.turn||{phase:"idle"};
+    managePlayerGuessTimer(turn,playerLang);
     let head=`<div style="display:flex;align-items:center;justify-content:space-between;gap:8px"><h1 style="font-size:20px;margin:0">${esc(L.brand)}</h1><button class="btn ghost sm" id="fullscreenTogglePlayer" data-lang="${playerLang}">${document.fullscreenElement?L.fsExit:L.fsEnter}</button></div>`;
     if(me)head+=`<p class="s">${esc(me.name)} · ${me.coins} ${L.coinsLbl.toLowerCase()} · ${me.turnsTaken}/${snap.turnsPerTeam}</p>`;
     if(snap.appStage==="setup"||snap.appStage==="intro"){
@@ -2165,7 +2271,7 @@ function initPlayerView(){
 
     let main="";
     if(snap.appStage==="intro"){
-      main+=`<div style="text-align:start"><h2 style="margin-top:0">${esc(L.introTitle)}</h2><p class="hint">${esc(L.introAbout)}</p><h3 style="margin-bottom:8px">${esc(L.introRulesTitle)}</h3><ol>${L.introRules.map(r=>`<li>${r}</li>`).join("")}</ol><h3 style="margin-bottom:8px">${esc(L.introWinTitle)}</h3><p class="hint">${esc(L.introWin)}</p></div>`;
+      main+=`<div style="text-align:start"><h2 style="margin-top:0">${esc(L.introTitle)}</h2><p class="hint">${esc(L.introAbout)}</p><div class="banner" style="border-color:#1F5AFF;background:#EAF0FF">${L.introMission}</div><h3 style="margin-bottom:8px">${esc(L.introRulesTitle)}</h3><ol>${L.introRules.map(r=>`<li>${r}</li>`).join("")}</ol><h3 style="margin-bottom:8px">${esc(L.introWinTitle)}</h3><p class="hint">${esc(L.introWin)}</p></div>`;
     }
     if(snap.appStage==="play"&&active){
       main+=`<div class="yourturn" style="background:${active.color};font-size:16px">${esc(L.yourTurnBanner(active.name))}</div>`;
@@ -2215,7 +2321,8 @@ function initPlayerView(){
             if(already){
               main+=`<p class="hint" style="margin-bottom:6px">${L.guessSent}</p><div class="opts">`+turn.card.o.map(o=>`<div class="btn soft optbtn" style="opacity:.7">${esc(o.l)}<br><span class="hint">${esc(o.e)}</span></div>`).join("")+`</div>`;
             }else{
-              main+=`<p class="hint" style="margin-bottom:6px">${L.guessPrompt}</p><div class="opts">`+
+              const pGuessTimerBox=`<div style="text-align:center;margin-bottom:6px"><div class="turntimer guesstimer" id="pGuessTimerBox"><span class="ttdot"></span><span id="pGuessTimerTxt"></span></div></div>`;
+              main+=pGuessTimerBox+`<p class="hint" style="margin-bottom:6px">${L.guessPrompt}</p><div class="opts">`+
                 turn.card.o.map((o,idx)=>`<button class="btn soft optbtn guessOpt" data-idx="${idx}">${esc(o.l)}<br><span class="hint">${esc(o.e)}</span></button>`).join("")+
                 `</div>`;
             }
