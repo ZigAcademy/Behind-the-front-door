@@ -121,7 +121,7 @@
   .stageshort{background:var(--card);border-radius:14px;box-shadow:0 14px 30px rgba(0,0,0,.3);padding:16px 20px;max-width:92%;max-height:92%;overflow:auto}
   .pawnlayer{position:absolute;inset:0;pointer-events:none;z-index:6;display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr);gap:5px}
   .pawncell{display:flex;align-items:flex-end;justify-content:center;flex-wrap:nowrap;padding:2px;overflow:visible}
-  .pw2{width:68px;height:88px;background-size:contain;background-repeat:no-repeat;background-position:center bottom;filter:hue-rotate(var(--pawnhue,0deg)) saturate(var(--pawnsat,1)) drop-shadow(1px 0 0 rgba(255,255,255,.95)) drop-shadow(-1px 0 0 rgba(255,255,255,.95)) drop-shadow(0 1px 0 rgba(255,255,255,.95)) drop-shadow(0 -1px 0 rgba(255,255,255,.95)) drop-shadow(2px 0 0 rgba(21,35,48,.55)) drop-shadow(-2px 0 0 rgba(21,35,48,.55)) drop-shadow(0 2px 0 rgba(21,35,48,.55)) drop-shadow(0 -2px 0 rgba(21,35,48,.55)) drop-shadow(0 4px 6px rgba(0,0,0,.45));position:relative;flex:0 0 auto;transform-origin:center bottom}
+  .pw2{width:68px;height:88px;background-size:contain;background-repeat:no-repeat;background-position:center bottom;filter:hue-rotate(var(--pawnhue,0deg)) saturate(var(--pawnsat,1)) brightness(var(--pawnbright,1)) drop-shadow(1px 0 0 rgba(255,255,255,.95)) drop-shadow(-1px 0 0 rgba(255,255,255,.95)) drop-shadow(0 1px 0 rgba(255,255,255,.95)) drop-shadow(0 -1px 0 rgba(255,255,255,.95)) drop-shadow(2px 0 0 rgba(21,35,48,.55)) drop-shadow(-2px 0 0 rgba(21,35,48,.55)) drop-shadow(0 2px 0 rgba(21,35,48,.55)) drop-shadow(0 -2px 0 rgba(21,35,48,.55)) drop-shadow(0 4px 6px rgba(0,0,0,.45));position:relative;flex:0 0 auto;transform-origin:center bottom}
   .pw2.hop{animation:pawnhop .42s cubic-bezier(.4,0,.3,1)}
   @keyframes pawnhop{
     0%{transform:translate(var(--fx,0),var(--fy,0)) rotate(0deg) scale(1)}
@@ -824,16 +824,18 @@ const PAWN_DEFS=[
   {hex:"#8B5CF6",img:"pion-paars"},
   {hex:"#E4572E",img:"pion-rood"},
   {hex:"#0EA5B5",img:"pion-turquoise"},
-  {hex:"#F2B705",img:"pion-rood",hue:"45deg",sat:"1.35"},
-  {hex:"#D6336C",img:"pion-paars",hue:"165deg",sat:"1.25"}
+  {hex:"#D18600",img:"pion-oranje",hue:"20deg",sat:"1.15",bright:"1"},
+  {hex:"#FF09AA",img:"pion-blauw",hue:"90deg",sat:"1.2",bright:"1.1"}
 ];
 const TEAM_COLORS=PAWN_DEFS.map(d=>d.hex);
 const PAWN_IMG_BY_COLOR={};PAWN_DEFS.forEach(d=>{PAWN_IMG_BY_COLOR[d.hex]=d.img;});
 const PAWN_HUE_BY_COLOR={};PAWN_DEFS.forEach(d=>{if(d.hue)PAWN_HUE_BY_COLOR[d.hex]=d.hue;});
 const PAWN_SAT_BY_COLOR={};PAWN_DEFS.forEach(d=>{if(d.sat)PAWN_SAT_BY_COLOR[d.hex]=d.sat;});
+const PAWN_BRIGHT_BY_COLOR={};PAWN_DEFS.forEach(d=>{if(d.bright)PAWN_BRIGHT_BY_COLOR[d.hex]=d.bright;});
 function pawnImgFor(color){return PAWN_IMG_BY_COLOR[color]||"pion-groen";}
 function pawnHueFor(color){return PAWN_HUE_BY_COLOR[color]||"0deg";}
 function pawnSatFor(color){return PAWN_SAT_BY_COLOR[color]||"1";}
+function pawnBrightFor(color){return PAWN_BRIGHT_BY_COLOR[color]||"1";}
 /* ---- board: fixed 28-tile ring, every tile matters ---- */
 const RING_LEN=28;
 const TILE_TYPES=["start","task","task","chance","task","task","kennisduel","task","chance","task","task","chance","task","kennisduel","shock","task","chance","task","task","kennisduel","task","chance","task","task","chance","task","kennisduel","task"];
@@ -1519,7 +1521,7 @@ function renderPawns(){
       const prevRaw=_lastPawnPos[team.id];
       const moved=prevRaw!==undefined&&prevRaw!==team.boardPos;
       let styleVars=pIdx>0?"margin-left:-26px;":"";
-      styleVars+=`--pawnhue:${pawnHueFor(team.color)};--pawnsat:${pawnSatFor(team.color)};`;
+      styleVars+=`--pawnhue:${pawnHueFor(team.color)};--pawnsat:${pawnSatFor(team.color)};--pawnbright:${pawnBrightFor(team.color)};`;
       if(moved){
         const prevIdx=((prevRaw%RING_LEN)+RING_LEN)%RING_LEN;
         const prevPos=RING_LAYOUT[prevIdx];
