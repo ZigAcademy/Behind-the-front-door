@@ -176,7 +176,6 @@
   .effectchip .echead{display:flex;align-items:center;gap:8px;font-size:19px;font-weight:800;white-space:nowrap}
   .effectchip img{width:28px;height:28px;object-fit:contain}
   .effectchip .ereason{font-size:15.5px;font-weight:600;line-height:1.4;opacity:.95}
-  .effectchip.coin{background:linear-gradient(180deg,#ffe392,#f3b73f);color:#7a4100;border:1px solid #e7b768}
   .effectchip.pos{background:#e5f7ee;color:#137a44;border:1px solid #8fddb4}
   .effectchip.neg{background:#fdeee9;color:#a4321f;border:1px solid #f2b3a1}
   @media (prefers-color-scheme:dark){.effectchip.pos{background:#12301f;border-color:#1f5a3a}.effectchip.neg{background:#331912;border-color:#5a2a1c}}
@@ -1179,7 +1178,7 @@ const DICE_SVG='<svg viewBox="0 0 24 24" width="34" height="34" fill="none" xmln
 function effectChipsHtml(lang,coins,fx,mx){
   const chips=[];
   /* Consistent met de metric-chips hieronder: eerst het label, dan het +/- bedrag. */
-  if(coins!=null)chips.push(`<span class="effectchip coin"><span class="echead"><img src="assets/icoon-financieel.png">${T[lang].coinsLbl} ${coins>0?"+":""}${coins}</span></span>`);
+  if(coins!=null)chips.push(`<span class="effectchip ${coins>0?"pos":"neg"}"><span class="echead"><img src="assets/icoon-financieel.png">${T[lang].coinsLbl} ${coins>0?"+":""}${coins}</span></span>`);
   Object.keys(MET[lang]).forEach(k=>{
     if(!fx||!fx[k])return;
     const v=fx[k];
