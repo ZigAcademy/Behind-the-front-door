@@ -260,6 +260,22 @@
   .recapopt{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:8px;border:1px solid var(--line);font-size:13px;color:var(--muted)}
   .recapopt.chosen{background:#EAF0FF;border-color:#1F5AFF;color:var(--ink);font-weight:700}
   .recapopt .rchosen{margin-inline-start:auto;flex:0 0 auto;font-size:11px;font-weight:800;letter-spacing:.3px;text-transform:uppercase;color:#1F5AFF;background:#fff;border:1px solid #1F5AFF;border-radius:20px;padding:2px 8px}
+  /* Investeringsfase: bewust andere, "shop"-achtige visuele stijl dan de
+     opdracht/kans-kaarten, zodat dit moment duidelijk anders aanvoelt. */
+  .investgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:14px}
+  .investcard{border:2px solid var(--line);border-radius:14px;padding:12px 14px;cursor:pointer;background:var(--card);transition:border-color .15s,background .15s;text-align:start}
+  .investcard:hover{border-color:var(--blue)}
+  .investcard.sel{border-color:var(--blue);background:#EAF0FF}
+  .investcard.unaffordable{opacity:.45;cursor:not-allowed}
+  .investcard .ic-top{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+  .investcard .ic-top img{width:22px;height:22px}
+  .investcard .ic-title{font-weight:800;font-size:14px;flex:1}
+  .investcard .ic-desc{font-size:12.5px;color:var(--muted);margin-bottom:8px}
+  .investcard .ic-tags{display:flex;gap:6px;font-size:12px;font-weight:700}
+  .investcard .ic-cost{color:#a4321f;background:#fde2dc;border-radius:20px;padding:2px 9px}
+  .investcard .ic-gain{color:#137a44;background:#e5f7ee;border-radius:20px;padding:2px 9px}
+  .investfoot{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line);flex-wrap:wrap}
+  .investfoot .iftotal{font-size:14px;font-weight:700}
   .optbtn{text-align:start;padding:13px 16px;line-height:1.45;width:100%;font-size:16px}
   .optbtn b{font-size:17px;color:var(--blue)}
   .turntimer{display:inline-flex;align-items:center;gap:7px;font-size:13.5px;font-weight:800;letter-spacing:.3px;background:var(--soft);color:var(--blue);border-radius:20px;padding:6px 15px;margin:0 auto 10px;text-transform:uppercase}
@@ -368,6 +384,14 @@
       </div>
     </section>
 
+    <section id="view-invest" class="panel hide">
+      <h2 id="investH" style="margin-top:0"></h2>
+      <p class="hint" id="investP"></p>
+      <div class="banner" id="investTeamBanner" style="text-align:center;font-size:15px"></div>
+      <div class="investgrid" id="investGrid"></div>
+      <div class="investfoot" id="investFoot"></div>
+    </section>
+
     <section id="view-scores" class="panel hide">
       <h2 id="scoresH">Eindstand</h2>
       <p class="hint" id="scoresP" style="margin-top:0"></p>
@@ -434,7 +458,13 @@ function metricsBonus(team){
   const met=team.met||{};
   return ["sat","fin","comp","dur"].reduce((sum,k)=>sum+(met[k]||0),0);
 }
-function finalScore(team){return team.coins+metricsBonus(team);}
+/* Winnen is met opzet NIET munten-gedreven - een woningcorporatie heeft geen
+   winstoogmerk. De eindscore is puur de optelling van de 4 metrics (tevredenheid,
+   financieel, compliance, duurzaamheid). Munten blijven relevant als middel: aan
+   het eind kun je ze investeren in scenario's die de metrics verbeteren (zie
+   de investeringsfase), maar overgebleven, niet-geinvesteerde munten leveren
+   zelf geen score op. */
+function finalScore(team){return metricsBonus(team);}
 const CAT={A:"onderhoud",B:"wooncrisis",C:"sociaal",D:"duurzaam",E:"onderhoud",J1:"onderhoud",J2:"digitaal",J3:"leefbaarheid",J4:"toewijzing",J5:"financien",J6:"sociaal",J7:"financien",J8:"toewijzing",J9:"duurzaam",J10:"digitaal",J11:"zorg",J12:"toewijzing",C1:"duurzaam",C2:"digitaal",C3:"duurzaam",C4:"onderhoud",C5:"financien",C6:"financien",S:"shock",S2:"shock",S3:"shock",N1:"onderhoud",N2:"wooncrisis",N3:"participatie",N4:"duurzaam",N5:"digitaal",N6:"financien",N7:"veiligheid",N8:"toewijzing",N9:"sociaal",N10:"duurzaam",N11:"digitaal",N12:"financien",N13:"veiligheid",N14:"toewijzing",N15:"zorg",N16:"duurzaam",N17:"digitaal",N18:"financien",N19:"veiligheid",N20:"wooncrisis",N21:"sociaal",N22:"digitaal",KD1:"kennisduel",KD2:"kennisduel",KD3:"kennisduel",KD4:"kennisduel",KD5:"kennisduel",KD6:"kennisduel",KD7:"kennisduel",KD8:"kennisduel",KD9:"kennisduel",KD10:"kennisduel",KD11:"kennisduel",KD12:"kennisduel",KD13:"kennisduel",KD14:"kennisduel",KD15:"kennisduel",KD16:"kennisduel"};
 const IMG_VARIANTS={
   onderhoud:["onderhoud","onderhoud-2","onderhoud-3","onderhoud-4"],
@@ -644,6 +674,41 @@ const SECTOR_EN=[
  {id:"SE6",t:"Lower construction costs",x:"Construction costs fall unexpectedly across the sector.",coins:1,fx:{}},
  {id:"SE7",t:"New climate standard",x:"A tightened standard forces everyone to go greener.",coins:0,fx:{dur:-1}},
  {id:"SE8",t:"Labour shortage",x:"A tight labour market slows all corporations.",coins:0,fx:{comp:-1}}
+];
+/* Investeringen: aan het einde van het spel (na de laatste beurt, voor de
+   eindstand) mag elk team overgebleven munten besteden aan investeringen die
+   een specifieke metric verbeteren. Bewust duurder dan een task/shock-kaart
+   kost - en hoe duurder, hoe groter het effect - zodat munten sparen ergens
+   toe dient, maar de eindscore zelf toch echt om de metrics blijft draaien.
+   Drie prijsniveaus per metric (klein/middel/groot), getoetst op realisme
+   voor Nederlandse woningcorporaties. */
+const INVEST_NL=[
+ {id:"IS1",metric:"sat",cost:3,gain:1,t:"Bewonersavond organiseren",x:"Een informele avond waarop bewoners hun zorgen kwijt kunnen en zich gehoord voelen."},
+ {id:"IS2",metric:"sat",cost:6,gain:2,t:"Klantenservice uitbreiden",x:"Meer capaciteit voor meldingen en vragen, snellere opvolging voor huurders."},
+ {id:"IS3",metric:"sat",cost:10,gain:3,t:"Wijkvernieuwingsproject",x:"Een gezamenlijk project met bewoners dat de leefbaarheid van de wijk merkbaar verbetert."},
+ {id:"IF1",metric:"fin",cost:3,gain:1,t:"Kleine efficiencyslag",x:"Interne processen stroomlijnen levert direct wat lucht op in de begroting."},
+ {id:"IF2",metric:"fin",cost:6,gain:2,t:"Herfinanciering tegen lager rentetarief",x:"Bestaande leningen herfinancieren verlaagt de rentelasten structureel."},
+ {id:"IF3",metric:"fin",cost:10,gain:3,t:"Strategische portefeuilleoptimalisatie",x:"Een grondige doorlichting van het bezit verbetert het rendement op de lange termijn."},
+ {id:"IC1",metric:"comp",cost:3,gain:1,t:"Extra brandveiligheidscontroles",x:"Een controleronde langs de meest kwetsbare complexen sluit acute risico's uit."},
+ {id:"IC2",metric:"comp",cost:6,gain:2,t:"Achterstallig onderhoud inhalen",x:"Een inhaalslag op uitgesteld onderhoud brengt het bezit weer op norm."},
+ {id:"IC3",metric:"comp",cost:10,gain:3,t:"Volledige asbestinventarisatie en -sanering",x:"Een grondige sanering van verouderd bezit haalt een hardnekkig risico definitief weg."},
+ {id:"ID1",metric:"dur",cost:3,gain:1,t:"Zonnepanelen op een aantal daken",x:"Een eerste, zichtbare stap in verduurzaming van het bezit."},
+ {id:"ID2",metric:"dur",cost:6,gain:2,t:"Woningen isoleren",x:"Dubbel glas en spouwmuurisolatie voor een groep woningen verlaagt het energieverbruik merkbaar."},
+ {id:"ID3",metric:"dur",cost:10,gain:3,t:"Volledige verduurzaming naar energielabel A",x:"Een ingrijpende renovatie tilt een deel van het bezit naar het hoogste energielabel."}
+];
+const INVEST_EN=[
+ {id:"IS1",metric:"sat",cost:3,gain:1,t:"Organise a residents' evening",x:"An informal evening where residents can voice concerns and feel heard."},
+ {id:"IS2",metric:"sat",cost:6,gain:2,t:"Expand customer service",x:"More capacity for reports and questions, faster follow-up for tenants."},
+ {id:"IS3",metric:"sat",cost:10,gain:3,t:"Neighbourhood renewal project",x:"A joint project with residents that noticeably improves the neighbourhood's liveability."},
+ {id:"IF1",metric:"fin",cost:3,gain:1,t:"Small efficiency drive",x:"Streamlining internal processes directly frees up some room in the budget."},
+ {id:"IF2",metric:"fin",cost:6,gain:2,t:"Refinance at a lower interest rate",x:"Refinancing existing loans structurally lowers interest costs."},
+ {id:"IF3",metric:"fin",cost:10,gain:3,t:"Strategic portfolio optimisation",x:"A thorough review of the property portfolio improves long-term returns."},
+ {id:"IC1",metric:"comp",cost:3,gain:1,t:"Extra fire-safety inspections",x:"An inspection round through the most vulnerable buildings rules out acute risks."},
+ {id:"IC2",metric:"comp",cost:6,gain:2,t:"Catch up on overdue maintenance",x:"Catching up on deferred maintenance brings the property portfolio back up to standard."},
+ {id:"IC3",metric:"comp",cost:10,gain:3,t:"Full asbestos survey and removal",x:"A thorough clean-up of older property permanently removes a stubborn risk."},
+ {id:"ID1",metric:"dur",cost:3,gain:1,t:"Solar panels on a number of roofs",x:"A first, visible step toward making the property portfolio more sustainable."},
+ {id:"ID2",metric:"dur",cost:6,gain:2,t:"Insulate homes",x:"Double glazing and cavity wall insulation for a group of homes noticeably lowers energy use."},
+ {id:"ID3",metric:"dur",cost:10,gain:3,t:"Full renovation to energy label A",x:"A major renovation lifts part of the property portfolio to the highest energy label."}
 ];
 const KD_NL=[
  {id:"KD1",kd:true,t:"Kennisduel: DAEB",x:"Wat betekent de afkorting DAEB, de kern van het sociale huurwerk van corporaties?",o:[
@@ -887,7 +952,7 @@ const T={
     "Denk goed na: bijna geen enkele keuze is vanzelfsprekend goed. Elke optie raakt bewoners, munten, onderhoud of duurzaamheid net iets anders.",
     "Elke ronde langs Start levert het team huurinkomsten op."],
   introWinTitle:"Hoe win je?",
-  introWin:"Na het ingestelde aantal beurten per team stopt het spel. De eindscore is: munten + de score op elke metric (tevredenheid, financieel, compliance, duurzaamheid) bij elkaar opgeteld. Elk punt op een metric telt dus 1-op-1 mee, zowel in de plus als in de min. Het team met de hoogste eindscore wint, dus een keuze die munten kost maar de metrics flink verbetert kan zich echt uitbetalen.",
+  introWin:"Na het ingestelde aantal beurten per team volgt eerst een investeringsronde: elk team mag overgebleven munten besteden aan investeringen die tevredenheid, financieel beheer, compliance of duurzaamheid verbeteren. Daarna wordt de eindscore bepaald: de optelling van deze vier metrics. Munten die je niet investeert tellen zelf niet mee voor de score - een woningcorporatie heeft immers geen winstoogmerk. Het team met de hoogste eindscore wint.",
   introStartBtn:"Volgende: teams instellen →",
   setupH:"Teams instellen",setupP:"Voeg teams toe, kies de speelduur en start het spel. Spelers openen de join-link of vullen de kamercode in — op telefoon of computer.",
   addTeam:"+ Team toevoegen",teamName:"Teamnaam",removeTeam:"Verwijderen",
@@ -913,9 +978,16 @@ const T={
   newLeader:(n)=>`${n} neemt de leiding!`,dismiss:"OK",
   flipBoardBtn:"Flip het bord!",flipBoardTip:"Voor als het even niet meezit — puur voor de lol, telt niet mee voor de score.",
   flipBoardBanner:(n)=>`${n} GOOIT HET BORD OM!`,
+  investH:"Investeer in de toekomst",
+  investP:"Voordat de eindstand bekend wordt, mag elk team overgebleven munten besteden aan investeringen die tevredenheid, financieel beheer, compliance of duurzaamheid verbeteren. Hoe duurder de investering, hoe groter het effect.",
+  investWaitBanner:(n)=>`${n} is aan het investeren...`,
+  investYourTurn:(coins)=>`Jullie mogen investeren - jullie hebben ${coins} munten.`,
+  investBudget:(remain,total)=>`Nog te besteden: ${remain} van ${total} munten`,
+  investConfirm:"Investering afronden",
+  investCoinsAvail:(coins)=>`Beschikbaar budget: ${coins} munten`,
   scoresH:"Eindstand",scoresP:"Bekijk de resultaten en bespreek de belangrijkste keuzes na.",againBtn:"Nieuw spel",
   winnerHeadline:(n,c)=>`<b>${n}</b> wint met <b>${c} punten</b>!`,
-  finalScoreLbl:"Eindscore",balansBonusLbl:"Balansbonus",balansHint:"De waarde van elke metric (tevredenheid, financieel, compliance, duurzaamheid) telt 1-op-1 mee bij de munten, in de plus en in de min.",
+  finalScoreLbl:"Eindscore",balansBonusLbl:"Balansbonus",balansHint:"De eindscore is de optelling van de 4 metrics (tevredenheid, financieel, compliance, duurzaamheid). Munten tellen niet rechtstreeks mee, alleen via investeringen aan het einde.",scoreBreakdown:(coins)=>`${coins} munten over - telt niet mee voor de score, tenzij geïnvesteerd`,
   sectorBanner:(t,x)=>`<b>Sectorgebeurtenis — ${t}</b><br>${x}`,sectorBtnTip:"Los een gebeurtenis los die alle teams raakt",
   legend:"Legenda vakjes",legStart:"Start/Finish — inkomsten bij passeren",legTask:"Opdracht — kies uit 3 opties",legChance:"Kans — automatisch effect",legShock:"Shock — grote onverwachte gebeurtenis",
   helpTitle:"Hoe werkt het?",helpBody:"<ol><li>Elk team gooit op zijn beurt één dobbelsteen en de pion loopt stap voor stap naar het nieuwe vakje.</li><li>Het vakje bepaalt wat je krijgt: een <b>opdracht</b> (kies uit 3 opties), een <b>kans</b> (automatisch effect), een <b>kennisduel</b> (meerkeuzevraag over de sector — bij een goed antwoord tik je munten af bij je rivaal) of de <b>shock</b> (bijzondere gebeurtenis).</li><li>Elke ronde langs Start levert het team huurinkomsten op.</li><li>De host kan via de <b>Sector</b>-knop op elk moment een sectorbrede gebeurtenis loslaten die alle teams tegelijk raakt — gebruik dit bewust om het spel spannender te maken.</li><li>Na het ingestelde aantal beurten per team volgt de eindstand.</li></ol>",
@@ -932,7 +1004,7 @@ const T={
     "Think it through: almost no choice is obviously right. Every option affects residents, coins, maintenance or sustainability a little differently.",
     "Each lap past Start earns the team rent income."],
   introWinTitle:"How do you win?",
-  introWin:"After the configured number of turns per team, the game ends. The final score is: coins plus the scores on every metric (satisfaction, financial, compliance, sustainability) added together. Every point on a metric counts 1-to-1, both positive and negative. The team with the highest final score wins, so a choice that costs coins but boosts the metrics can genuinely pay off.",
+  introWin:"After the configured number of turns per team, an investment round comes first: each team may spend any coins they have left on investments that improve satisfaction, financial management, compliance, or sustainability. The final score is then determined: the sum of these four metrics. Coins you do not invest do not count toward the score themselves - a housing corporation is not-for-profit, after all. The team with the highest final score wins.",
   introStartBtn:"Next: set up teams →",
   setupH:"Set up teams",setupP:"Add teams, choose the play duration and start the game. Players open the join link or enter the room code — on a phone or a computer.",
   addTeam:"+ Add team",teamName:"Team name",removeTeam:"Remove",
@@ -958,9 +1030,16 @@ const T={
   newLeader:(n)=>`${n} takes the lead!`,dismiss:"OK",
   flipBoardBtn:"Flip the board!",flipBoardTip:"For when it just isn't going your way — purely for fun, does not affect the score.",
   flipBoardBanner:(n)=>`${n} FLIPS THE BOARD!`,
+  investH:"Invest in the future",
+  investP:"Before the final standings are revealed, each team may spend any coins left on investments that improve satisfaction, financial management, compliance or sustainability. The pricier the investment, the bigger the effect.",
+  investWaitBanner:(n)=>`${n} is investing...`,
+  investYourTurn:(coins)=>`Your turn to invest - you have ${coins} coins.`,
+  investBudget:(remain,total)=>`Left to spend: ${remain} of ${total} coins`,
+  investConfirm:"Finish investing",
+  investCoinsAvail:(coins)=>`Available budget: ${coins} coins`,
   scoresH:"Final standings",scoresP:"Review the results and debrief the key choices.",againBtn:"New game",
   winnerHeadline:(n,c)=>`<b>${n}</b> wins with <b>${c} points</b>!`,
-  finalScoreLbl:"Final score",balansBonusLbl:"Balance bonus",balansHint:"The value of every metric (satisfaction, financial, compliance, sustainability) counts 1-to-1 toward the coins, both positive and negative.",
+  finalScoreLbl:"Final score",balansBonusLbl:"Balance bonus",balansHint:"The final score is the sum of the 4 metrics (satisfaction, financial, compliance, sustainability). Coins do not count directly, only through investments at the end.",scoreBreakdown:(coins)=>`${coins} coins left - not counted toward the score unless invested`,
   sectorBanner:(t,x)=>`<b>Sector event — ${t}</b><br>${x}`,sectorBtnTip:"Trigger an event that affects all teams",
   legend:"Tile legend",legStart:"Start/Finish — income when passing",legTask:"Task — choose from 3 options",legChance:"Chance — automatic effect",legShock:"Shock — major unforeseen event",
   helpTitle:"How does it work?",helpBody:"<ol><li>Each team rolls one die on its turn and the pawn walks step by step to the new tile.</li><li>The tile decides what you get: a <b>task</b> (choose from 3 options), a <b>chance</b> (automatic effect), a <b>knowledge duel</b> (multiple-choice question about the sector — a correct answer steals coins from your rival) or the <b>shock</b> (special event).</li><li>Each lap past Start earns the team rent income.</li><li>The host can trigger a sector-wide event at any moment via the <b>Sector</b> button, affecting all teams at once — use it deliberately to raise the stakes.</li><li>After the configured number of turns per team, the final standings appear.</li></ol>",
@@ -1393,9 +1472,7 @@ function nextTurn(){
   state.turn={phase:"idle",dice:null,walkTo:null,cardType:null,card:null,pendingCard:null,chosenIdx:null,lapGain:0,token:uid(),guesses:{},guessResults:null};
   const allDone=state.teams.every(t=>t.turnsTaken>=state.turnsPerTeam);
   if(allDone){
-    state.appStage="scores";
-    render();saveLocal();NET.publish();
-    setTimeout(()=>celebrate("win"),200);
+    startInvestPhase();
     return;
   }
   let next=(state.activeTeamIdx+1)%state.teams.length;
@@ -1403,6 +1480,67 @@ function nextTurn(){
   while(state.teams[next].turnsTaken>=state.turnsPerTeam&&guard<state.teams.length){next=(next+1)%state.teams.length;guard++;}
   state.activeTeamIdx=next;
   render();saveLocal();NET.publish();
+}
+
+/* ============ investeringsfase ============
+   Na de laatste beurt van elk team volgt, in plaats van meteen de eindstand,
+   een investeringsronde: elk team krijgt (net als bij een gewone beurt, om de
+   beurt) de kans om overgebleven munten te besteden aan investeringen die een
+   metric verbeteren. Hergebruikt state.activeTeamIdx voor "wie is aan de
+   beurt" - net als tijdens het gewone spel - maar heeft een eigen investToken
+   in plaats van state.turn.token, want state.turn zelf doet in deze fase niks. */
+function startInvestPhase(){
+  state.appStage="invest";
+  state.activeTeamIdx=0;
+  state.investDone=[];
+  state.investToken=uid();
+  NET.clearAction();
+  render();saveLocal();NET.publish();
+}
+function investOptions(){return state.lang==="nl"?INVEST_NL:INVEST_EN;}
+function applyInvestment(selectedIds){
+  const team=activeTeam();
+  if(!team)return;
+  const opts=investOptions();
+  const chosen=opts.filter(o=>selectedIds.includes(o.id));
+  const totalCost=chosen.reduce((s,o)=>s+o.cost,0);
+  if(totalCost>team.coins)return;
+  chosen.forEach(o=>{
+    team.coins-=o.cost;
+    team.met[o.metric]=(team.met[o.metric]||0)+o.gain;
+  });
+  team.investBought=chosen.map(o=>o.id);
+  if(!state.investDone.includes(team.id))state.investDone.push(team.id);
+  advanceInvestPhase();
+}
+function advanceInvestPhase(){
+  NET.clearAction();
+  const remaining=state.teams.map((t,i)=>i).filter(i=>!state.investDone.includes(state.teams[i].id));
+  if(!remaining.length){
+    state.appStage="scores";
+    render();saveLocal();NET.publish();
+    setTimeout(()=>celebrate("win"),200);
+    return;
+  }
+  state.activeTeamIdx=remaining[0];
+  state.investToken=uid();
+  render();saveLocal();NET.publish();
+}
+function renderInvest(){
+  const L=T[state.lang];
+  $("investH").textContent=L.investH;
+  $("investP").textContent=L.investP;
+  const team=activeTeam();
+  const grid=$("investGrid"),foot=$("investFoot"),banner=$("investTeamBanner");
+  if(!team){banner.innerHTML="";grid.innerHTML="";foot.innerHTML="";return;}
+  banner.innerHTML=`<b>${esc(L.investWaitBanner(team.name))}</b>`;
+  const opts=investOptions();
+  grid.innerHTML=opts.map(o=>`<div class="investcard" style="cursor:default">
+      <div class="ic-top"><img src="assets/${MET_ICON[o.metric]}.png"><span class="ic-title">${esc(o.t)}</span></div>
+      <div class="ic-desc">${esc(o.x)}</div>
+      <div class="ic-tags"><span class="ic-cost">${L.coinsLbl} -${o.cost}</span><span class="ic-gain">${MET[state.lang][o.metric]} +${o.gain}</span></div>
+    </div>`).join("");
+  foot.innerHTML=`<span class="iftotal">${L.investCoinsAvail(team.coins)}</span>`;
 }
 
 function triggerSectorEvent(){
@@ -1451,11 +1589,13 @@ function render(){
   $("view-intro").classList.toggle("hide",state.appStage!=="intro");
   $("view-setup").classList.toggle("hide",state.appStage!=="setup");
   $("view-play").classList.toggle("hide",state.appStage!=="play");
+  $("view-invest").classList.toggle("hide",state.appStage!=="invest");
   $("view-scores").classList.toggle("hide",state.appStage!=="scores");
 
   if(state.appStage==="intro")renderIntro();
   if(state.appStage==="setup")renderSetup();
   if(state.appStage==="play"){renderBoardPath();renderPawns();renderStage();renderCompactStand();renderRoundBar();}
+  if(state.appStage==="invest")renderInvest();
   if(state.appStage==="scores")renderScores();
 
   if(state.lastSectorBanner){
@@ -1790,10 +1930,9 @@ function renderScores(){
   const sorted=state.teams.slice().sort((a,b)=>finalScore(b)-finalScore(a));
   let html=`<div class="podiumhero"><div class="podiumimg" style="background-image:url('assets/podium-winnaar.jpg')"></div><div class="podiumcaption">${L.winnerHeadline(esc(sorted[0].name),finalScore(sorted[0]))}</div></div>`;
   html+=sorted.map((t,i)=>{
-    const bonus=metricsBonus(t);
     return `<div class="rank${i===0?" first":""}"><span class="pos">${i+1}</span>
     <div><div class="rn">${esc(t.name)}</div><div class="rd">${Object.keys(MET[state.lang]).map(k=>`<img class="meticon" src="assets/${MET_ICON[k]}.png" title="${MET[state.lang][k]}"> ${t.met[k]>0?"+":""}${t.met[k]}`).join(" &nbsp;·&nbsp; ")}</div>
-      <div class="rd" style="margin-top:2px" title="${L.balansHint}">${t.coins} ${L.coinsLbl.toLowerCase()} ${bonus>=0?"+":""}${bonus} ${L.balansBonusLbl.toLowerCase()}</div></div>
+      <div class="rd" style="margin-top:2px;color:var(--muted)" title="${L.balansHint}">${L.scoreBreakdown(t.coins)}</div></div>
     <span class="rs">${finalScore(t)}</span></div>`;
   }).join("");
   html+=`<div class="debrief">`+state.teams.map(t=>`
@@ -1907,8 +2046,20 @@ function wireFacilitator(){
    drawing, choosing, advancing) while the facilitator's screen still works as
    a fallback for any of these steps. Anything that doesn't match is discarded. */
 function handleIncomingAction(action){
-  if(!state||!action||state.appStage!=="play")return;
+  if(!state||!action)return;
+  if(state.appStage!=="play"&&state.appStage!=="invest")return;
   const team=activeTeam();
+  if(state.appStage==="invest"){
+    /* Investeringsfase heeft geen state.turn - een eigen investToken bewaakt
+       dat een inzending bij de juiste, actief investerende beurt hoort. */
+    const sameInvestToken=state.investToken&&state.investToken===action.token;
+    const sameInvestTeam=team&&String(team.id)===String(action.team);
+    if(action.type==="invest"&&sameInvestToken&&sameInvestTeam){
+      applyInvestment(action.selected||[]);
+    }
+    NET.clearAction();
+    return;
+  }
   const sameToken=state.turn.token&&state.turn.token===action.token;
   if(action.type==="guess"){
     if(sameToken&&action.team!=null&&String(team.id)!==String(action.team))submitGuess(action.team,action.optIdx);
@@ -2111,6 +2262,25 @@ function initPlayerView(){
         }
       }
     }
+    if(snap.appStage==="invest"&&active){
+      const opts=investOptions();
+      if(mine){
+        const investSent=wasSent({token:snap.investToken},"invest");
+        main+=`<div class="banner" style="text-align:center;font-size:15px"><b>${esc(L.investYourTurn(me?me.coins:0))}</b></div>`;
+        if(investSent){
+          main+=`<p class="hint" style="text-align:center">${L.choiceSent}</p>`;
+        }else{
+          main+=`<div class="investgrid" id="pInvestGrid">`+opts.map(o=>`<div class="investcard" data-id="${o.id}" data-cost="${o.cost}">
+            <div class="ic-top"><img src="assets/${MET_ICON[o.metric]}.png"><span class="ic-title">${esc(o.t)}</span></div>
+            <div class="ic-desc">${esc(o.x)}</div>
+            <div class="ic-tags"><span class="ic-cost">${L.coinsLbl} -${o.cost}</span><span class="ic-gain">${MET[playerLang][o.metric]} +${o.gain}</span></div>
+          </div>`).join("")+`</div>
+          <div class="investfoot"><span class="iftotal" id="pInvestTotal"></span><button class="btn warn" id="pInvestConfirm">${L.investConfirm}</button></div>`;
+        }
+      }else{
+        main+=`<p class="hint" style="text-align:center">${esc(L.investWaitBanner(active.name))}</p>`;
+      }
+    }
     if(snap.appStage==="scores"){
       const sorted=snap.teams.slice().sort((a,b)=>finalScore(b)-finalScore(a));
       main+=`<div class="podiumhero"><div class="podiumimg" style="background-image:url('assets/podium-winnaar.jpg')"></div><div class="podiumcaption">${L.winnerHeadline(esc(sorted[0].name),finalScore(sorted[0]))}</div></div>`;
@@ -2182,6 +2352,42 @@ function initPlayerView(){
       NET.submitAction(joinedRoom,{type:"flipBoard",team,token:turn.token,name:flipName});
       renderPlayerDashboard(snap,team);
     };
+    const investGrid=$("pInvestGrid");
+    if(investGrid){
+      const opts=investOptions();
+      const sel=new Set();
+      const budget=me?me.coins:0;
+      const paintInvest=()=>{
+        const totalCost=[...sel].reduce((s,id)=>s+opts.find(o=>o.id===id).cost,0);
+        const totalEl=$("pInvestTotal");
+        if(totalEl)totalEl.textContent=L.investBudget(budget-totalCost,budget);
+        investGrid.querySelectorAll(".investcard").forEach(card=>{
+          const cost=parseInt(card.dataset.cost,10);
+          const isSel=sel.has(card.dataset.id);
+          card.classList.toggle("sel",isSel);
+          card.classList.toggle("unaffordable",!isSel&&(totalCost+cost>budget));
+        });
+      };
+      investGrid.querySelectorAll(".investcard").forEach(card=>{
+        card.onclick=()=>{
+          const id=card.dataset.id,cost=parseInt(card.dataset.cost,10);
+          if(sel.has(id))sel.delete(id);
+          else{
+            const totalCost=[...sel].reduce((s,i)=>s+opts.find(o=>o.id===i).cost,0);
+            if(totalCost+cost>budget)return;
+            sel.add(id);
+          }
+          paintInvest();
+        };
+      });
+      paintInvest();
+      const confirmBtn=$("pInvestConfirm");
+      if(confirmBtn)confirmBtn.onclick=()=>{
+        markSent({token:snap.investToken},"invest");
+        NET.submitAction(joinedRoom,{type:"invest",team,token:snap.investToken,selected:[...sel]});
+        renderPlayerDashboard(snap,team);
+      };
+    }
     if(turn.phase==="card"&&turn.cardType!=="chance"&&turn.card&&turn.card.o){
       $("pdashMain").querySelectorAll(".playerOpt").forEach(btn=>{
         btn.onclick=()=>{
