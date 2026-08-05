@@ -189,6 +189,8 @@
   .colorswatch.sel{border-color:var(--ink);box-shadow:0 0 0 2px var(--card),0 0 0 3px var(--ink)}
   .srow2 .nm{font-weight:800;font-size:12.5px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .srow2 .sc{font-weight:900;font-size:15px;flex:0 0 auto}
+  .sc,.rs{display:inline-flex;align-items:center;gap:4px}
+  .scoreicon{height:0.85em;width:auto;display:inline-block;vertical-align:middle}
   .srow2 .sr-bot{display:flex;justify-content:space-between;align-items:center;margin-top:5px;font-size:10.5px;color:var(--muted);flex-wrap:wrap;gap:4px}
   .srow2 .mets{display:flex;gap:6px;flex-wrap:wrap}
   .meticon{width:13px;height:13px;vertical-align:-2px;margin-inline-end:3px;object-fit:contain}
@@ -267,8 +269,8 @@
   @media (max-width:760px){.investgrid{grid-template-columns:repeat(2,1fr)}}
   @media (max-width:480px){.investgrid{grid-template-columns:1fr}}
   .investcol{display:flex;flex-direction:column;gap:10px;min-width:0}
-  .investcol-h{display:flex;align-items:center;gap:7px;font-weight:800;font-size:13px;padding-bottom:7px;margin-bottom:2px;border-bottom:2px solid var(--line);text-transform:uppercase;letter-spacing:.3px}
-  .investcol-h img{width:20px;height:20px}
+  .investcol-h{display:flex;flex-direction:column;align-items:center;gap:8px;font-weight:800;font-size:13.5px;padding-bottom:12px;margin-bottom:4px;border-bottom:2px solid var(--line);text-transform:uppercase;letter-spacing:.3px;text-align:center}
+  .investcol-h img{width:58px;height:58px}
   .investcard{border:2px solid var(--line);border-radius:14px;padding:12px 14px;cursor:pointer;background:var(--card);transition:border-color .15s,background .15s;text-align:start}
   .investcard:hover{border-color:var(--blue)}
   .investcard.sel{border-color:var(--blue);background:#EAF0FF}
@@ -994,7 +996,7 @@ const T={
   investCoinsAvail:(coins)=>`Beschikbaar budget: ${coins} munten`,
   scoresH:"Eindstand",scoresP:"Bekijk de resultaten en bespreek de belangrijkste keuzes na.",againBtn:"Nieuw spel",
   winnerHeadline:(n,c)=>`<b>${n}</b> wint met <b>${c} punten</b>!`,
-  finalScoreLbl:"Eindscore",balansBonusLbl:"Balansbonus",balansHint:"De eindscore is de optelling van de 4 metrics (tevredenheid, financieel, compliance, duurzaamheid). Munten tellen niet rechtstreeks mee, alleen via investeringen aan het einde.",scoreBreakdown:(coins)=>`${coins} munten over - telt niet mee voor de score, tenzij geïnvesteerd`,
+  finalScoreLbl:"Punten",balansBonusLbl:"Balansbonus",balansHint:"De punten zijn de optelling van de 4 metrics (tevredenheid, financieel, compliance, duurzaamheid). Geld telt niet rechtstreeks mee, alleen via investeringen aan het einde.",scoreBreakdown:(coins)=>`${coins} geld over - telt niet mee voor de punten, tenzij geïnvesteerd`,
   sectorBanner:(t,x)=>`<b>Sectorgebeurtenis — ${t}</b><br>${x}`,sectorBtnTip:"Los een gebeurtenis los die alle teams raakt",
   legend:"Legenda vakjes",legStart:"Start/Finish — inkomsten bij passeren",legTask:"Opdracht — kies uit 3 opties",legChance:"Kans — automatisch effect",legShock:"Shock — grote onverwachte gebeurtenis",
   helpTitle:"Hoe werkt het?",helpBody:"<ol><li>Elk team gooit op zijn beurt één dobbelsteen en de pion loopt stap voor stap naar het nieuwe vakje.</li><li>Het vakje bepaalt wat je krijgt: een <b>opdracht</b> (kies uit 3 opties), een <b>kans</b> (automatisch effect), een <b>kennisduel</b> (meerkeuzevraag over de sector — bij een goed antwoord tik je munten af bij je rivaal) of de <b>shock</b> (bijzondere gebeurtenis).</li><li>Elke ronde langs Start levert het team huurinkomsten op.</li><li>De host kan via de <b>Sector</b>-knop op elk moment een sectorbrede gebeurtenis loslaten die alle teams tegelijk raakt — gebruik dit bewust om het spel spannender te maken.</li><li>Na het ingestelde aantal beurten per team volgt de eindstand.</li></ol>",
@@ -1002,7 +1004,7 @@ const T={
   jwH:"Je bent binnen!",jwWait:"Hou 'm in de gaten — zodra jullie aan de beurt zijn, gebeurt het hier live!",jwRoomL:"kamer",
   waitForHostTitle:"Bijna zover!",waitForHostMsg:"De host is het spel nog aan het klaarzetten. Zodra alles staat, begint het spel automatisch op dit scherm.",
   netLive:"Live verbonden",netOff:"Offline (lokaal)",netLiveTip:"Live verbonden — wijzigingen worden direct gedeeld met alle spelers.",netOffTip:"Offline (lokaal) — dit spel wordt niet gedeeld, alleen zichtbaar op dit scherm.",footNL:"Zig Grow · Corpopoly",
-  roundHint:(done,total)=>`Voortgang: ${done} van ${total} beurten gespeeld`,metricsLbl:"Meters",coinsLbl:"Munten"},
+  roundHint:(done,total)=>`Voortgang: ${done} van ${total} beurten gespeeld`,metricsLbl:"Meters",coinsLbl:"Geld"},
  en:{brand:"Corpopoly",room:"Room",joinLink:"Join link",newGame:"New game",testEnvBtn:"Test environment",help:"Guide",sector:"Sector",soundOnLbl:"Sound on",soundOffLbl:"Sound off",fxOnLbl:"Effects on",fxOffLbl:"Effects off",
   introTitle:"Welcome to Corpopoly",
   introAbout:"A board game where your team, just like a real housing corporation, faces a tough call every turn — on maintenance, affordability, sustainability, liveability and digitalisation — always with a catch.",
@@ -1049,7 +1051,7 @@ const T={
   investCoinsAvail:(coins)=>`Available budget: ${coins} coins`,
   scoresH:"Final standings",scoresP:"Review the results and debrief the key choices.",againBtn:"New game",
   winnerHeadline:(n,c)=>`<b>${n}</b> wins with <b>${c} points</b>!`,
-  finalScoreLbl:"Final score",balansBonusLbl:"Balance bonus",balansHint:"The final score is the sum of the 4 metrics (satisfaction, financial, compliance, sustainability). Coins do not count directly, only through investments at the end.",scoreBreakdown:(coins)=>`${coins} coins left - not counted toward the score unless invested`,
+  finalScoreLbl:"Points",balansBonusLbl:"Balance bonus",balansHint:"Points are the sum of the 4 metrics (satisfaction, financial, compliance, sustainability). Money does not count directly, only through investments at the end.",scoreBreakdown:(coins)=>`${coins} money left - not counted toward the points unless invested`,
   sectorBanner:(t,x)=>`<b>Sector event — ${t}</b><br>${x}`,sectorBtnTip:"Trigger an event that affects all teams",
   legend:"Tile legend",legStart:"Start/Finish — income when passing",legTask:"Task — choose from 3 options",legChance:"Chance — automatic effect",legShock:"Shock — major unforeseen event",
   helpTitle:"How does it work?",helpBody:"<ol><li>Each team rolls one die on its turn and the pawn walks step by step to the new tile.</li><li>The tile decides what you get: a <b>task</b> (choose from 3 options), a <b>chance</b> (automatic effect), a <b>knowledge duel</b> (multiple-choice question about the sector — a correct answer steals coins from your rival) or the <b>shock</b> (special event).</li><li>Each lap past Start earns the team rent income.</li><li>The host can trigger a sector-wide event at any moment via the <b>Sector</b> button, affecting all teams at once — use it deliberately to raise the stakes.</li><li>After the configured number of turns per team, the final standings appear.</li></ol>",
@@ -1057,7 +1059,7 @@ const T={
   jwH:"You're in!",jwWait:"Keep an eye on this screen — the moment it's your turn, it happens right here!",jwRoomL:"room",
   waitForHostTitle:"Almost there!",waitForHostMsg:"The host is still setting up the game. As soon as everything is ready, the game will start automatically on this screen.",
   netLive:"Live connected",netOff:"Offline (local)",netLiveTip:"Live connected — changes are shared with all players instantly.",netOffTip:"Offline (local) — this game is not shared, only visible on this screen.",footNL:"Zig Grow · Corpopoly",
-  roundHint:(done,total)=>`Progress: ${done} of ${total} turns played`,metricsLbl:"Meters",coinsLbl:"Coins"}
+  roundHint:(done,total)=>`Progress: ${done} of ${total} turns played`,metricsLbl:"Meters",coinsLbl:"Money"}
 };
 /* ============ helpers ============ */
 const $=id=>document.getElementById(id);
@@ -1179,7 +1181,7 @@ const DICE_SVG='<svg viewBox="0 0 24 24" width="34" height="34" fill="none" xmln
 function effectChipsHtml(lang,coins,fx,mx){
   const chips=[];
   /* Consistent met de metric-chips hieronder: eerst het label, dan het +/- bedrag. */
-  if(coins!=null)chips.push(`<span class="effectchip ${coins>0?"pos":"neg"}"><span class="echead"><img src="assets/icoon-financieel.png">${T[lang].coinsLbl} ${coins>0?"+":""}${coins}</span></span>`);
+  if(coins!=null)chips.push(`<span class="effectchip ${coins>0?"pos":"neg"}"><span class="echead"><img src="assets/icoon-geld.png">${T[lang].coinsLbl} ${coins>0?"+":""}${coins}</span></span>`);
   Object.keys(MET[lang]).forEach(k=>{
     if(!fx||!fx[k])return;
     const v=fx[k];
@@ -1956,7 +1958,7 @@ function renderCompactStand(){
   wrap.innerHTML=sorted.map(t=>{
     const metsHtml=Object.keys(MET[state.lang]).map(k=>`<span${t.met[k]<0?' class="low"':''} title="${MET[state.lang][k]}"><img class="meticon" src="assets/${MET_ICON[k]}.png">${t.met[k]>0?"+":""}${t.met[k]}</span>`).join(" ");
     return `<div class="srow2${t.id===activeTeam().id&&state.appStage==="play"?" up":""}${t.id===hitId?" hit":""}">
-      <div class="sr-top"><span class="pos">${sorted.indexOf(t)+1}</span><span class="dot2" style="background:${t.color}"></span><span class="nm">${esc(t.name)}</span><span class="sc" title="${L.balansHint}">${finalScore(t)}</span></div>
+      <div class="sr-top"><span class="pos">${sorted.indexOf(t)+1}</span><span class="dot2" style="background:${t.color}"></span><span class="nm">${esc(t.name)}</span><span class="sc" title="${L.balansHint}"><img class="scoreicon" src="assets/icoon-punten.png" alt="">${finalScore(t)}</span></div>
       <div class="sr-bot"><span class="mets">${metsHtml}</span><span class="cn">${t.turnsTaken}/${state.turnsPerTeam}</span></div>
     </div>`;
   }).join("");
@@ -2026,7 +2028,7 @@ function renderScores(){
     return `<div class="rank${i===0?" first":""}"><span class="pos">${i+1}</span>
     <div><div class="rn">${esc(t.name)}</div><div class="rd">${Object.keys(MET[state.lang]).map(k=>`<img class="meticon" src="assets/${MET_ICON[k]}.png" title="${MET[state.lang][k]}"> ${t.met[k]>0?"+":""}${t.met[k]}`).join(" &nbsp;·&nbsp; ")}</div>
       <div class="rd" style="margin-top:2px;color:var(--muted)" title="${L.balansHint}">${L.scoreBreakdown(t.coins)}</div></div>
-    <span class="rs">${finalScore(t)}</span></div>`;
+    <span class="rs"><img class="scoreicon" src="assets/icoon-punten.png" alt="">${finalScore(t)}</span></div>`;
   }).join("");
   html+=`<div class="debrief">`+state.teams.map(t=>`
     <div class="dbteam"><div class="dbh">${esc(t.name)}</div>`+
@@ -2430,7 +2432,7 @@ function initPlayerView(){
     if(snap.appStage==="scores"){
       const sorted=snap.teams.slice().sort((a,b)=>finalScore(b)-finalScore(a));
       main+=`<div class="podiumhero"><div class="podiumimg" style="background-image:url('assets/podium-winnaar.jpg')"></div><div class="podiumcaption">${L.winnerHeadline(esc(sorted[0].name),finalScore(sorted[0]))}</div></div>`;
-      main+="<div>"+sorted.map((t,i)=>`<div class="rank${i===0?" first":""}"><span class="pos">${i+1}</span><div class="rn" style="flex:1">${esc(t.name)}</div><span class="rs">${finalScore(t)}</span></div>`).join("")+"</div>";
+      main+="<div>"+sorted.map((t,i)=>`<div class="rank${i===0?" first":""}"><span class="pos">${i+1}</span><div class="rn" style="flex:1">${esc(t.name)}</div><span class="rs"><img class="scoreicon" src="assets/icoon-punten.png" alt="">${finalScore(t)}</span></div>`).join("")+"</div>";
     }
 
     let side="";
@@ -2440,7 +2442,7 @@ function initPlayerView(){
       side=`<h3>${L.standH}</h3><div class="stand2">`+sorted.map(t=>{
         const metsHtml=Object.keys(MET[playerLang]).map(k=>`<span${t.met[k]<0?' class="low"':''} title="${MET[playerLang][k]}"><img class="meticon" src="assets/${MET_ICON[k]}.png">${t.met[k]>0?"+":""}${t.met[k]}</span>`).join(" ");
         return `<div class="srow2${active&&t.id===active.id?" up":""}">
-          <div class="sr-top"><span class="dot2" style="background:${t.color}"></span><span class="nm">${esc(t.name)}</span><span class="sc" title="${L.balansHint}">${finalScore(t)}</span></div>
+          <div class="sr-top"><span class="dot2" style="background:${t.color}"></span><span class="nm">${esc(t.name)}</span><span class="sc" title="${L.balansHint}"><img class="scoreicon" src="assets/icoon-punten.png" alt="">${finalScore(t)}</span></div>
           <div class="sr-bot"><span class="mets">${metsHtml}</span><span class="cn">${t.turnsTaken}/${snap.turnsPerTeam}</span></div>
         </div>`;
       }).join("")+`</div>`+legendHtml;
